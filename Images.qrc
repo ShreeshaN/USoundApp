@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>images/chslt.PNG</file>
         <file>images/chslt_icon.ico</file>
+        <file>images/chslt_cropped.png</file>
     </qresource>
 </RCC>

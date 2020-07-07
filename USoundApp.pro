@@ -38,14 +38,21 @@ else {
 }
 
 SOURCES += \
-    camerasettings.cpp \
+    cameracontrols.cpp \
+    cameracontrolsui.cpp \
+    defaults.cpp \
+    imageacquisition.cpp \
+    imagestreamwindow.cpp \
     main.cpp \
     homescreen.cpp
 
 HEADERS += \
-    camerasettings.h \
-    homescreen.h
-
+    cameracontrols.h \
+    cameracontrolsui.h \
+    defaults.h \
+    homescreen.h \
+    imageacquisition.h \
+    imagestreamwindow.h
 FORMS += \
     homescreen.ui
 
