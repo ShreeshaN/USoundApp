@@ -1,13 +1,13 @@
 #ifndef DEFAULTS_H
 #define DEFAULTS_H
-#include <string>
+#include <QString>
 
 
 struct CameraControlDefaults{
     std::string RESOLUTION="";
 
     // exposure controls
-    float EXPOSURETIME = 0.0;
+    long EXPOSURETIME = 0;
     float ANALOGGAIN = 0.0;
     float EXPOSURETARGET = 0.0;  // not sure about this implementation
     bool AUTOEXPOSURE=false;
@@ -18,10 +18,30 @@ struct CameraControlDefaults{
     float BRIGHTNESS = 0.0;
     float CONTRAST = 0.0;
     float GAMMA = 0.0;
-    int FRAMERATE=60;
+    int FRAMERATE=10;
     bool MONOCHROME=true; // not sure about this implementation
     bool RGB=false; // not sure about this implementation
 };
+
+
+class HalconCameraParameters{
+public:
+    static const std::string EXPOSURETIME;
+    static const std::string AUTOEXPOSURE;
+    static const std::string GAMMA;
+    static const std::string ACQUISITIONFRAMERATE;
+    static const std::string RESULTINGFRAMERATE;
+    static const  std::string GAIN;
+    static const  std::string HUE;
+    static const  std::string SATURATION;
+    static const  std::string BRIGHTNESS;
+    static const  std::string CONTRAST;
+    static const  std::string MONOCHROME;
+    static const  std::string RGB;
+
+
+};
+
 
 
 #endif // DEFAULTS_H

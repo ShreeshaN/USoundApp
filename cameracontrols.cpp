@@ -3,22 +3,22 @@
 
 #include <QDebug>
 
-float CameraControls::getExposureTime() const
+long CameraControls::getExposureTime() const
 {
     return exposureTime;
 }
 
-void CameraControls::setExposureTime(float value)
+void CameraControls::setExposureTime(long value)
 {
     exposureTime = value;
 }
 
-float CameraControls::getAnalogGain() const
+long CameraControls::getAnalogGain() const
 {
     return analogGain;
 }
 
-void CameraControls::setAnalogGain(float value)
+void CameraControls::setAnalogGain(long value)
 {
     analogGain = value;
 }
@@ -83,22 +83,22 @@ void CameraControls::setContrast(float value)
     contrast = value;
 }
 
-float CameraControls::getGamma() const
+long CameraControls::getGamma() const
 {
     return gamma;
 }
 
-void CameraControls::setGamma(float value)
+void CameraControls::setGamma(long value)
 {
     gamma = value;
 }
 
-int CameraControls::getFrameRate() const
+double CameraControls::getFrameRate() const
 {
     return frameRate;
 }
 
-void CameraControls::setFrameRate(int value)
+void CameraControls::setFrameRate(double value)
 {
     frameRate = value;
 }
@@ -127,8 +127,6 @@ CameraControls::CameraControls()
 {
 
 }
-
-
 
 std::string CameraControls::getResolution() const
 {

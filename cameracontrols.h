@@ -4,6 +4,9 @@
 #include <defaults.h>
 #include <QString>
 #include <QThread>
+#include <HalconCpp.h>
+#include <Halcon.h>
+#include <HFramegrabber.h>
 
 class CameraControls
 {
@@ -18,11 +21,11 @@ public:
     void flipOnY();
 
 
-    float getExposureTime() const;
-    void setExposureTime(float value);
+    long getExposureTime() const;
+    void setExposureTime(long value);
 
-    float getAnalogGain() const;
-    void setAnalogGain(float value);
+    long getAnalogGain() const;
+    void setAnalogGain(long value);
 
     float getExposureTarget() const;
     void setExposureTarget(float value);
@@ -42,11 +45,11 @@ public:
     float getContrast() const;
     void setContrast(float value);
 
-    float getGamma() const;
-    void setGamma(float value);
+    long getGamma() const;
+    void setGamma(long value);
 
-    int getFrameRate() const;
-    void setFrameRate(int value);
+    double getFrameRate() const;
+    void setFrameRate(double value);
 
     bool getMonochrome() const;
     void setMonochrome(bool value);
@@ -58,17 +61,19 @@ public:
     CameraControls(CameraControlDefaults cameraControlsDefaults);
 
 
-    void setupCameraControls();
+    void setupCameraControls(HalconCpp::HFramegrabber * acq);
 
     std::string getResolution() const;
     void setResolution(const std::string &value);
 
 private:
+    friend std::ostream& operator<<(std::ostream &strm, const CameraControls &a);
+
     std::string resolution;
 
     // exposure controls
-    float exposureTime;
-    float analogGain;
+    long exposureTime;
+    long analogGain;
     float exposureTarget;  // not sure about this implementation
     bool autoExposure;
 
@@ -77,10 +82,15 @@ private:
     float saturation;
     float brightness;
     float contrast;
-    float gamma;
-    int frameRate;
+    long gamma;
+    double frameRate;
     bool monochrome;  // not sure about this implementation
     bool rgb;  // not sure about this implementation
 };
+
+static std::ostream& operator<<(std::ostream &strm, const CameraControls &a) {
+  return strm << "A(" << a.exposureTime << ")";
+}
+
 
 #endif // CAMERACONTROLS_H

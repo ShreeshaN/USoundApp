@@ -54,30 +54,27 @@ public:
     QList<ImageStreamWindow *> newCameraConnectionWindows;
     QList<QLabel *> newCameraConnectionLabels;
 
+    QGraphicsView *graphicsView;
+    QGraphicsScene *graphicsScene;
+    QGraphicsPixmapItem *graphicsPixmapItem;
+
+    QList<QGraphicsPixmapItem *> graphicsPixmapItemList;
+
 
 
 
 
     // functions
     void onApplicationStartup();
-    void setupCameraControls();
     void setupDevicesUI();
     void detectAttachedDevices();
-    CameraControls getDeviceInSelection();
     QString cameraInSelection;
-//    QGraphicsScene scene;
-//    QGraphicsView view(&scene);
-
 
 
 
 public slots:
     void on_devicesRefresh_clicked();
-    void showCameraControlsUI(QString deviceName);
-
     void prepareMenu(const QPoint &pos);
-
-    void updateMapValue(int value);
     void on_devicesTreeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void connectToCamera(QString deviceName);
     void on_devicesTreeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column);

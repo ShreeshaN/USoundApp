@@ -6,22 +6,36 @@
 #include "HFramegrabber.h"
 #include <HFramegrabber.h>
 #include <QImage>
-
-
+#include "cameracontrols.h"
+#include "defaults.h"
 
 
 
 class ImageAcquisition : public QThread
 {
     Q_OBJECT
-public:
-    ImageAcquisition(QObject *parent=0);
-    bool HImage2QImage(HalconCpp::HImage &from, QImage &to);
 
+private:
     HalconCpp::HFramegrabber acq;
     bool stop=false;
+    int counter=0;
+    QString deviceName;
+    int windowIndex;
 
 
+public:
+    // Constructor
+    ImageAcquisition(QObject *parent=0);
+
+    // Functions
+    bool HImage2QImage(HalconCpp::HImage &from, QImage &to);
+    CameraControls setupCameraControls();
+    HalconCpp::HTuple getValueForParam(std::string paramString);
+    void setValueForParam(std::string paramString, int paramValue);
+    void setValueForParam(std::string paramString, std::string paramValue);
+    void setValueForParam(std::string paramString, double paramValue);
+
+    // Setters and Getters
     int getWindowIndex() const;
     void setWindowIndex(int value);
 
@@ -32,9 +46,12 @@ public:
     HalconCpp::HFramegrabber getAcq() const;
     void setAcq(const HalconCpp::HFramegrabber &value);
 
-private:
-    QString deviceName;
-    int windowIndex;
+    bool getStop() const;
+    void setStop(bool value);
+
+    int getCounter() const;
+    void setCounter(int value);
+
 
 signals:
     void renderImageSignal(QImage, int);

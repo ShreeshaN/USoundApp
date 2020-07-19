@@ -21,7 +21,10 @@
 #include <QException>
 #include <exception>
 #include<QDialog>
-
+#include "qteditorfactory.h"
+#include "qttreepropertybrowser.h"
+#include "qtpropertymanager.h"
+#include "qtvariantproperty.h"
 
 Homescreen::Homescreen(QWidget *parent)
     : QMainWindow(parent)
@@ -33,180 +36,13 @@ Homescreen::Homescreen(QWidget *parent)
 
 }
 
-CameraControls Homescreen::getDeviceInSelection(){
-    return cameraControlsMap["camera_1"];
-}
-
-void Homescreen::showCameraControlsUI(QString deviceName){
-
-    ui->cameraControlsTreeWidget->clear();
-
-    QVBoxLayout* mainLayout = new QVBoxLayout();
-    QList<QTreeWidgetItem *> topLevelItems;
-    CameraControls selectedCameraControls;
-    if(QString::compare(deviceName, "")!=0)
-    {
-        selectedCameraControls = cameraControlsMap[deviceName];
-    }
-
-    // exposure controls
-    // parent
-    exposureControls = new QTreeWidgetItem();
-    exposureControls->setText(0, "Exposure Controls");
-    topLevelItems.append(exposureControls);
-
-    // child
-    exposureTime = new QTreeWidgetItem(QStringList() << "Exposure Time");
-    QSpinBox *exposureTimeSpinBox = new QSpinBox;
-    exposureTimeSpinBox->setRange(0, 100);
-    exposureTimeSpinBox->setSingleStep(1);
-    exposureTimeSpinBox->setValue(selectedCameraControls.getExposureTime());
-    connect(exposureTimeSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
-        cameraControlsMap[cameraInSelection].setExposureTime(exposureTimeSpinBox->value());
-    });
-
-    analogGain = new QTreeWidgetItem(QStringList() << "Analog Gain");
-    QSpinBox *analogGainSpinBox = new QSpinBox;
-    analogGainSpinBox->setRange(0, 100);
-    analogGainSpinBox->setSingleStep(1);
-    analogGainSpinBox->setValue(selectedCameraControls.getAnalogGain());
-    connect(analogGainSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
-        cameraControlsMap[cameraInSelection].setAnalogGain(analogGainSpinBox->value());
-    });
-
-    auto autoExposure = new QTreeWidgetItem(QStringList() << "Auto Exposure");
-    QCheckBox *autoExposureCheckbox = new QCheckBox();
-    autoExposureCheckbox->setCheckState(Qt::Checked);
-    connect(autoExposureCheckbox, &QCheckBox::clicked, [=]{
-        cameraControlsMap[cameraInSelection].setAutoExposure(autoExposureCheckbox->isChecked());
-    });
-
-    exposureControls->addChild(exposureTime);
-    exposureControls->addChild(analogGain);
-    exposureControls->addChild(autoExposure);
-    ui->cameraControlsTreeWidget->setItemWidget(exposureTime, 1, exposureTimeSpinBox);
-    ui->cameraControlsTreeWidget->setItemWidget(analogGain, 1, analogGainSpinBox);
-    ui->cameraControlsTreeWidget->setItemWidget(autoExposure, 1, autoExposureCheckbox);
-
-    // color appearance parameters
-    // parent
-    colorAppearance = new QTreeWidgetItem();
-    colorAppearance->setExpanded(true);
-    colorAppearance->setText(0, "Color and Appearance");
-    topLevelItems.append(colorAppearance);
-
-
-    // child    
-    hue = new QTreeWidgetItem(QStringList() << "Hue");
-    QSpinBox *hueSpinBox = new QSpinBox(this);
-    hueSpinBox->setRange(0, 100);
-    hueSpinBox->setSingleStep(1);
-    hueSpinBox->setValue(selectedCameraControls.getHue());
-    colorAppearance->addChild(hue);
-    connect(hueSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
-        cameraControlsMap[cameraInSelection].setHue(hueSpinBox->value());
-    });
-    ui->cameraControlsTreeWidget->setItemWidget(hue, 1, hueSpinBox);
-
-
-    saturation = new QTreeWidgetItem(QStringList() << "Saturation");
-    QSpinBox *saturationSpinBox = new QSpinBox;
-    saturationSpinBox->setRange(0, 100);
-    saturationSpinBox->setSingleStep(1);
-    saturationSpinBox->setValue(selectedCameraControls.getSaturation());
-    colorAppearance->addChild(saturation);
-    connect(saturationSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
-        cameraControlsMap[cameraInSelection].setSaturation(saturationSpinBox->value());
-    });
-    ui->cameraControlsTreeWidget->setItemWidget(saturation, 1, saturationSpinBox);
-
-
-    auto brightness = new QTreeWidgetItem(QStringList() << "Brightness");
-    QSpinBox *brightnessSpinBox = new QSpinBox;
-    brightnessSpinBox->setRange(0, 100);
-    brightnessSpinBox->setSingleStep(1);
-    brightnessSpinBox->setValue(selectedCameraControls.getBrightness());
-    colorAppearance->addChild(brightness);
-    connect(brightnessSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
-        cameraControlsMap[cameraInSelection].setBrightness(brightnessSpinBox->value());
-    });
-    ui->cameraControlsTreeWidget->setItemWidget(brightness, 1, brightnessSpinBox);
-
-    contrast = new QTreeWidgetItem(QStringList() << "Contrast");
-    QSpinBox *contrastSpinBox = new QSpinBox;
-    contrastSpinBox->setRange(0, 100);
-    contrastSpinBox->setSingleStep(1);
-    contrastSpinBox->setValue(selectedCameraControls.getContrast());
-    colorAppearance->addChild(contrast);
-    connect(contrastSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
-        cameraControlsMap[cameraInSelection].setContrast(contrastSpinBox->value());
-    });
-    ui->cameraControlsTreeWidget->setItemWidget(contrast, 1, contrastSpinBox);
-
-    gamma = new QTreeWidgetItem(QStringList() << "Gamma");
-    QSpinBox *gammaSpinBox = new QSpinBox;
-    gammaSpinBox->setRange(0, 100);
-    gammaSpinBox->setSingleStep(1);
-    gammaSpinBox->setValue(selectedCameraControls.getGamma());
-    colorAppearance->addChild(gamma);
-    connect(gammaSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
-        cameraControlsMap[cameraInSelection].setGamma(gammaSpinBox->value());
-    });
-    ui->cameraControlsTreeWidget->setItemWidget(gamma, 1, gammaSpinBox);
-
-    framerate = new QTreeWidgetItem(QStringList() << "Frame Rate");
-    QSpinBox *framerateSpinBox = new QSpinBox;
-    framerateSpinBox->setRange(0, 100);
-    framerateSpinBox->setSingleStep(1);
-    framerateSpinBox->setValue(selectedCameraControls.getFrameRate());
-    colorAppearance->addChild(framerate);
-    connect(framerateSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
-        cameraControlsMap[cameraInSelection].setFrameRate(framerateSpinBox->value());
-    });
-    ui->cameraControlsTreeWidget->setItemWidget(framerate, 1, framerateSpinBox);
-
-
-
-    monochrome = new QTreeWidgetItem(QStringList() << "Monochrome");
-    QCheckBox *monochromeCheckbox = new QCheckBox();
-    monochromeCheckbox->setTristate(false);
-
-    monochromeCheckbox->setCheckState(selectedCameraControls.getMonochrome()?Qt::CheckState(2):Qt::CheckState(0));
-    colorAppearance->addChild(monochrome);
-    connect(monochromeCheckbox, &QCheckBox::clicked, [=]{
-        cameraControlsMap[cameraInSelection].setMonochrome(monochromeCheckbox->isChecked());
-    });
-    ui->cameraControlsTreeWidget->setItemWidget(monochrome, 1, monochromeCheckbox);
-
-    rgb = new QTreeWidgetItem(QStringList() << "RGB");
-    QCheckBox *rgbCheckbox = new QCheckBox();
-    rgbCheckbox->setTristate(false);
-    rgbCheckbox->setCheckState(selectedCameraControls.getRgb()?Qt::CheckState(2):Qt::CheckState(0));
-    colorAppearance->addChild(rgb);
-    connect(rgbCheckbox, &QCheckBox::clicked, [=]{
-        cameraControlsMap[cameraInSelection].setRgb(rgbCheckbox->isChecked());
-    });
-    ui->cameraControlsTreeWidget->setItemWidget(rgb, 1, rgbCheckbox);
-
-    ui->cameraControlsTreeWidget->addTopLevelItems(topLevelItems);
-    ui->cameraControlsTreeWidget->setLayout(mainLayout);
-    exposureControls->setExpanded(true);
-    colorAppearance->setExpanded(true);
-
-}
-
-void Homescreen::updateMapValue(int value)
-{
-    qDebug() << "THe value : " << value;
-    cameraControlsMap[cameraInSelection].setHue(value);
-
-}
 
 void Homescreen::setupDevicesUI()
 {
 
     QList<QTreeWidgetItem *> topLevelItems;
     QListIterator<QString> devicesIterator(devices);
+    QVBoxLayout* mainLayout = new QVBoxLayout();
 
 
     // USB
@@ -220,10 +56,11 @@ void Homescreen::setupDevicesUI()
 
         // child
         auto * usbCamera = new QTreeWidgetItem(QStringList() << devicesIterator.next());
-
+        usbCamera->setToolTip(0,usbCamera->text(0));
         usb3->addChild(usbCamera);
     }
     ui->devicesTreeWidget->addTopLevelItems(topLevelItems);
+    ui->devicesTreeWidget->setLayout(mainLayout);
     ui->devicesTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->devicesTreeWidget,&QTreeWidget::customContextMenuRequested,this, &Homescreen::prepareMenu);
 }
@@ -293,38 +130,38 @@ void Homescreen::onApplicationStartup()
 {
     detectAttachedDevices();
     setupDevicesUI();
-    setupCameraControls();
-    showCameraControlsUI("");
-
-
 }
 
-void Homescreen::setupCameraControls()
-{
-    int numberOfCameras = devices.count();
-    for(int i=0;i<numberOfCameras;i++){
-        CameraControlDefaults cameraControlsDefaults;
-        CameraControls cameraControlSettings(cameraControlsDefaults);
-        cameraControlsMap[devices.at(i)] = cameraControlSettings;
-    }
-}
 
 
 void Homescreen::on_devicesRefresh_clicked()
 {
 
-//    HalconCpp::HFramegrabber acq("USB3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "267601642BB5_Basler_acA2040120um", 0, -1);
-//    qDebug() <<"Params: ";
-//    HalconCpp::HTuple h = acq.GetFramegrabberParam("Gain");
+    HalconCpp::HFramegrabber acq("USB3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "267601642BB5_Basler_acA2040120um", 0, -1);
+    qDebug() <<"Params: ";
+    HalconCpp::HTuple h;
+    qDebug() <<"********************available_param_names******************************";
+    try {
+         h = acq.GetFramegrabberParam("available_param_names");
+    } catch (HalconCpp::HException &e) {
+        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    }
+    qDebug() << h.ToString().Text() ;
 
+//    try {
+//         h = acq.GetFramegrabberParam("ResultingFrameRate");
+//    } catch (HalconCpp::HException &e) {
+//        qDebug() << "Exception "<< e.ErrorMessage().Text();
+//    }
 //    qDebug() << h.ToString().Text() ;
-//    acq.SetFramegrabberParam("Gain",10);
+
+    acq.SetFramegrabberParam("AcquisitionFrameRate",90);
 
 
-//    using namespace HalconCpp;
-//    HalconCpp::HTuple *information = new HalconCpp::HTuple;
-//    HalconCpp::HTuple * valueList = new HalconCpp::HTuple;
-//    QList<QString> list = {"bits_per_channel", "camera_type", "color_space","external_trigger","generic","info_boards","line_in","parameters","parameters_readonly","parameters_writeonly","port","revision"};
+    using namespace HalconCpp;
+    HalconCpp::HTuple *information = new HalconCpp::HTuple;
+    HalconCpp::HTuple * valueList = new HalconCpp::HTuple;
+    QList<QString> list = { "bits_per_channel", "camera_type", "color_space", "defaults", "device", "external_trigger", "field", "general", "generic", "horizontal_resolution", "image_height", "image_width", "info_boards", "parameters", "parameters_readonly", "parameters_writeonly", "port", "revision", "start_column", "start_row", "vertical_resolution"};
 //    for (auto param : list) {
 //        qDebug()<< "************" << param << "*************";
 //        HalconCpp::InfoFramegrabber("usb3vision",HTuple(HString::FromUtf8(param.toUtf8())),information, valueList);
@@ -337,6 +174,15 @@ void Homescreen::on_devicesRefresh_clicked()
 //        }
 
 //    }
+//    HalconCpp::InfoFramegrabber("usb3vision","parameters",information, valueList);
+//    qDebug () << "Information: "<< information->S().Text();
+//    qDebug() << "Valuelist length: "<<valueList->Length();
+//    auto deviceList = valueList->ToSArr();
+//    for(int i=0;i<valueList->Length();i++)
+//    {
+//        qDebug() << QString(deviceList[i].Text());
+//    }
+
 
 
 
@@ -362,7 +208,6 @@ void Homescreen::on_devicesTreeWidget_itemClicked(QTreeWidgetItem *item, int col
     cameraInSelection = item->text(0);
     if(devices.contains(cameraInSelection))
     {
-        showCameraControlsUI(cameraInSelection);
         qDebug() << "Item clicked " << cameraInSelection << (new QSpinBox(ui->cameraControlsTreeWidget->itemWidget(hue,column)))->value();
 
     }
@@ -374,26 +219,237 @@ void Homescreen::on_devicesTreeWidget_itemClicked(QTreeWidgetItem *item, int col
 void Homescreen::connectToCamera(QString deviceName)
 {
     try {
+//        ImageAcquisition *imgAcq = new ImageAcquisition(this);
+//        /*HalconCpp::HFramegrabber acq = */HalconCpp::HFramegrabber acq("USB3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", HalconCpp::HString(deviceName.toLocal8Bit().constData()).Text(), 0, -1);
+//        imgAcq->setAcq(acq);
+//        imgAcq->setDeviceName(deviceName);
+//        windowWidget = new ImageStreamWindow();
+//        windowWidget->imageAcquisitionThread = imgAcq;
+//        windowWidget->resize(600,600);
+//        QVBoxLayout * layout2 = new QVBoxLayout;
+//        windowWidget->setLayout(layout2);
+//        imageLabel = new QLabel(windowWidget);
+//        imageLabel->setContentsMargins(0,0,0,0);
+
+//        QFont font = imageLabel->font();
+//        font.setPointSize(72);
+//        font.setBold(true);
+//        imageLabel->setFont(font);
+
+//        newCameraConnectionLabels.append(imageLabel);
+//        newCameraConnectionWindows.append(windowWidget);
+//        imgAcq->setWindowIndex(newCameraConnectionWindows.length()-1);
+//        connect(imgAcq,SIGNAL(renderImageSignal(QImage, int)),this,SLOT(renderImage(QImage, int)));
+
+//        imgAcq->start();
+
+
+
         ImageAcquisition *imgAcq = new ImageAcquisition(this);
-        /*HalconCpp::HFramegrabber acq = */HalconCpp::HFramegrabber acq("USB3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", HalconCpp::HString(deviceName.toLocal8Bit().constData()).Text(), 0, -1);
+
+        HalconCpp::HFramegrabber acq("USB3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", HalconCpp::HString(deviceName.toLocal8Bit().constData()).Text(), 0, -1);
         imgAcq->setAcq(acq);
         imgAcq->setDeviceName(deviceName);
-        windowWidget = new ImageStreamWindow();
+
+        if(!cameraControlsMap.contains(deviceName))
+        {
+            CameraControls cameraControlSettings = imgAcq->setupCameraControls();
+            cameraControlsMap[deviceName] = cameraControlSettings;
+        }
+        CameraControls selectedCameraControls = cameraControlsMap[deviceName];
+        qDebug() << "Frame rate : "<< selectedCameraControls.getFrameRate();
+
+
+
+        windowWidget = new ImageStreamWindow(this);
+        windowWidget->setWindowTitle(deviceName);
+        QWidget *widget = new QWidget(windowWidget);
+//        QVBoxLayout * cameraAcquisitionLayout = new QVBoxLayout;
+        QHBoxLayout * hlayout = new QHBoxLayout(widget);
+
+        windowWidget->setCentralWidget(widget);
+//        windowWidget->resize(600,600);
         windowWidget->imageAcquisitionThread = imgAcq;
-        windowWidget->resize(600,600);
-        QVBoxLayout * layout2 = new QVBoxLayout;
-        windowWidget->setLayout(layout2);
-        imageLabel = new QLabel(windowWidget);
-        imageLabel->setContentsMargins(0,0,0,0);
-
-        QFont font = imageLabel->font();
-        font.setPointSize(72);
-        font.setBold(true);
-        imageLabel->setFont(font);
-
-        newCameraConnectionLabels.append(imageLabel);
         newCameraConnectionWindows.append(windowWidget);
         imgAcq->setWindowIndex(newCameraConnectionWindows.length()-1);
+
+
+        // Setting up graphics view
+        graphicsView = new QGraphicsView();
+//        windowWidget->setCentralWidget(graphicsView);
+        graphicsScene = new QGraphicsScene();
+        graphicsView->setScene(graphicsScene);
+        graphicsPixmapItem = new QGraphicsPixmapItem();
+        graphicsView->scene()->addItem(graphicsPixmapItem);
+        graphicsPixmapItemList.append(graphicsPixmapItem);
+
+       QTreeWidget *ccTreeWidget = new QTreeWidget;
+        ccTreeWidget->setColumnCount(2);
+        ccTreeWidget->setHeaderLabels(QStringList() <<"Feature"<<"Value");
+
+        QList<QTreeWidgetItem *> topLevelItems;
+
+        // exposure controls
+        // parent
+        exposureControls = new QTreeWidgetItem();
+        exposureControls->setText(0, "Exposure Controls");
+        topLevelItems.append(exposureControls);
+
+        // child
+        exposureTime = new QTreeWidgetItem(QStringList() << "Exposure Time");
+        QSpinBox *exposureTimeSpinBox = new QSpinBox;
+        exposureTimeSpinBox->setRange(0, 10000);
+        exposureTimeSpinBox->setSingleStep(1);
+        exposureTimeSpinBox->setValue(selectedCameraControls.getExposureTime());
+        connect(exposureTimeSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+            cameraControlsMap[cameraInSelection].setExposureTime(exposureTimeSpinBox->value());
+            imgAcq->setValueForParam(HalconCameraParameters::EXPOSURETIME,exposureTimeSpinBox->value());
+        });
+
+        analogGain = new QTreeWidgetItem(QStringList() << "Analog Gain");
+        QSpinBox *analogGainSpinBox = new QSpinBox;
+        analogGainSpinBox->setRange(0, 100);
+        analogGainSpinBox->setSingleStep(1);
+        analogGainSpinBox->setValue(selectedCameraControls.getAnalogGain());
+        connect(analogGainSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+            cameraControlsMap[cameraInSelection].setAnalogGain(analogGainSpinBox->value());
+            imgAcq->setValueForParam(HalconCameraParameters::GAIN,analogGainSpinBox->value());
+        });
+
+        auto autoExposure = new QTreeWidgetItem(QStringList() << "Auto Exposure");
+        QCheckBox *autoExposureCheckbox = new QCheckBox();
+        autoExposureCheckbox->setCheckState(Qt::Checked);
+        connect(autoExposureCheckbox, &QCheckBox::clicked, [=]{
+            cameraControlsMap[cameraInSelection].setAutoExposure(autoExposureCheckbox->isChecked());
+            qDebug() << "AutoExposure"<< autoExposureCheckbox->isChecked();
+            imgAcq->setValueForParam(HalconCameraParameters::AUTOEXPOSURE,autoExposureCheckbox->isChecked()?"Once":"Off");
+        });
+
+        exposureControls->addChild(exposureTime);
+        exposureControls->addChild(analogGain);
+        exposureControls->addChild(autoExposure);
+        ccTreeWidget->setItemWidget(exposureTime, 1, exposureTimeSpinBox);
+        ccTreeWidget->setItemWidget(analogGain, 1, analogGainSpinBox);
+        ccTreeWidget->setItemWidget(autoExposure, 1, autoExposureCheckbox);
+
+        // color appearance parameters
+        // parent
+        colorAppearance = new QTreeWidgetItem();
+        colorAppearance->setExpanded(true);
+        colorAppearance->setText(0, "Color and Appearance");
+        topLevelItems.append(colorAppearance);
+
+
+        // child
+        hue = new QTreeWidgetItem(QStringList() << "Hue");
+        QSpinBox *hueSpinBox = new QSpinBox(this);
+        hueSpinBox->setRange(0, 100);
+        hueSpinBox->setSingleStep(1);
+        hueSpinBox->setValue(selectedCameraControls.getHue());
+        colorAppearance->addChild(hue);
+        connect(hueSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+            cameraControlsMap[cameraInSelection].setHue(hueSpinBox->value());
+            // imgAcq->setValueForParam(HalconCameraParameters::HUE,hueSpinBox->value());
+        });
+        ccTreeWidget->setItemWidget(hue, 1, hueSpinBox);
+
+
+        saturation = new QTreeWidgetItem(QStringList() << "Saturation");
+        QSpinBox *saturationSpinBox = new QSpinBox;
+        saturationSpinBox->setRange(0, 100);
+        saturationSpinBox->setSingleStep(1);
+        saturationSpinBox->setValue(selectedCameraControls.getSaturation());
+        colorAppearance->addChild(saturation);
+        connect(saturationSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+            cameraControlsMap[cameraInSelection].setSaturation(saturationSpinBox->value());
+            // imgAcq->setValueForParam(HalconCameraParameters::SATURATION,saturationSpinBox->value());
+        });
+        ccTreeWidget->setItemWidget(saturation, 1, saturationSpinBox);
+
+
+        brightness = new QTreeWidgetItem(QStringList() << "Brightness");
+        QSpinBox *brightnessSpinBox = new QSpinBox;
+        brightnessSpinBox->setRange(0, 100);
+        brightnessSpinBox->setSingleStep(1);
+        brightnessSpinBox->setValue(selectedCameraControls.getBrightness());
+        colorAppearance->addChild(brightness);
+        connect(brightnessSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+            cameraControlsMap[cameraInSelection].setBrightness(brightnessSpinBox->value());
+           // imgAcq->setValueForParam(HalconCameraParameters::BRIGHTNESS,brightnessSpinBox->value());
+
+        });
+        ccTreeWidget->setItemWidget(brightness, 1, brightnessSpinBox);
+
+        contrast = new QTreeWidgetItem(QStringList() << "Contrast");
+        QSpinBox *contrastSpinBox = new QSpinBox;
+        contrastSpinBox->setRange(0, 100);
+        contrastSpinBox->setSingleStep(1);
+        contrastSpinBox->setValue(selectedCameraControls.getContrast());
+        colorAppearance->addChild(contrast);
+        connect(contrastSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+            cameraControlsMap[cameraInSelection].setContrast(contrastSpinBox->value());
+            // imgAcq->setValueForParam(HalconCameraParameters::CONTRAST,contrastSpinBox->value());
+        });
+        ccTreeWidget->setItemWidget(contrast, 1, contrastSpinBox);
+
+        gamma = new QTreeWidgetItem(QStringList() << "Gamma");
+        QSpinBox *gammaSpinBox = new QSpinBox;
+        gammaSpinBox->setRange(0, 100);
+        gammaSpinBox->setSingleStep(1);
+        gammaSpinBox->setValue(selectedCameraControls.getGamma());
+        colorAppearance->addChild(gamma);
+        connect(gammaSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+            cameraControlsMap[cameraInSelection].setGamma(gammaSpinBox->value());
+            imgAcq->setValueForParam(HalconCameraParameters::GAMMA,gammaSpinBox->value());
+        });
+        ccTreeWidget->setItemWidget(gamma, 1, gammaSpinBox);
+
+        framerate = new QTreeWidgetItem(QStringList() << "Frame Rate");
+        QSpinBox *framerateSpinBox = new QSpinBox;
+        framerateSpinBox->setRange(0, 120);
+        framerateSpinBox->setSingleStep(1);
+        framerateSpinBox->setValue(selectedCameraControls.getFrameRate());
+        colorAppearance->addChild(framerate);
+        connect(framerateSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+            cameraControlsMap[cameraInSelection].setFrameRate(framerateSpinBox->value());
+            imgAcq->setValueForParam(HalconCameraParameters::RESULTINGFRAMERATE,(double)framerateSpinBox->value());
+        });
+        ccTreeWidget->setItemWidget(framerate, 1, framerateSpinBox);
+
+
+
+        monochrome = new QTreeWidgetItem(QStringList() << "Monochrome");
+        QCheckBox *monochromeCheckbox = new QCheckBox();
+        monochromeCheckbox->setTristate(false);
+
+        monochromeCheckbox->setCheckState(selectedCameraControls.getMonochrome()?Qt::CheckState(2):Qt::CheckState(0));
+        colorAppearance->addChild(monochrome);
+        connect(monochromeCheckbox, &QCheckBox::clicked, [=]{
+            cameraControlsMap[cameraInSelection].setMonochrome(monochromeCheckbox->isChecked());
+            // imgAcq->setValueForParam(HalconCameraParameters::MONOCHROME,monochromeCheckbox->isChecked());
+        });
+        ccTreeWidget->setItemWidget(monochrome, 1, monochromeCheckbox);
+
+        rgb = new QTreeWidgetItem(QStringList() << "RGB");
+        QCheckBox *rgbCheckbox = new QCheckBox();
+        rgbCheckbox->setTristate(false);
+        rgbCheckbox->setCheckState(selectedCameraControls.getRgb()?Qt::CheckState(2):Qt::CheckState(0));
+        colorAppearance->addChild(rgb);
+        connect(rgbCheckbox, &QCheckBox::clicked, [=]{
+            cameraControlsMap[cameraInSelection].setRgb(rgbCheckbox->isChecked());
+            // imgAcq->setValueForParam(HalconCameraParameters::RGB,rgbCheckbox->isChecked());
+        });
+        ccTreeWidget->setItemWidget(rgb, 1, rgbCheckbox);
+        ccTreeWidget->addTopLevelItems(topLevelItems);
+        exposureControls->setExpanded(true);
+        colorAppearance->setExpanded(true);
+
+
+        hlayout->addWidget(ccTreeWidget);
+        hlayout->addWidget(graphicsView);
+
+
+        // all signal/slots conections
         connect(imgAcq,SIGNAL(renderImageSignal(QImage, int)),this,SLOT(renderImage(QImage, int)));
 
         imgAcq->start();
@@ -420,21 +476,31 @@ void Homescreen::on_devicesTreeWidget_itemDoubleClicked(QTreeWidgetItem *item, i
 void Homescreen::renderImage(QImage qImage, int widgetIndex)
 {
 
+    // QLABEL WAY OF STREAMING
+//    windowWidget = newCameraConnectionWindows.at(widgetIndex);
+//    if(!windowWidget->imageAcquisitionThread->stop)
+//    {
+////        qDebug() << "qimage size "<<qImage.width()<<qImage.height();
+//        imageLabel = newCameraConnectionLabels.at(widgetIndex);
+//        int height=windowWidget->height(); int width = windowWidget->width();
+//        imageLabel->setPixmap(QPixmap::fromImage(qImage));
+//        imageLabel->setScaledContents(true);
+//        imageLabel->resize(width, height);
+//        windowWidget->show();
+//    }
+
+    // QGRAPHICSVIEW WAY OF STREAMING
     windowWidget = newCameraConnectionWindows.at(widgetIndex);
-    if(!windowWidget->imageAcquisitionThread->stop)
+    if(!windowWidget->imageAcquisitionThread->getStop())
     {
-        imageLabel = newCameraConnectionLabels.at(widgetIndex);
         int height=windowWidget->height(); int width = windowWidget->width();
-        imageLabel->setPixmap(QPixmap::fromImage(qImage));
-        imageLabel->setScaledContents(true);
-        imageLabel->resize(width, height);
+        graphicsPixmapItem = graphicsPixmapItemList.at(widgetIndex);
+        graphicsPixmapItem->setPixmap(QPixmap::fromImage(qImage));
         windowWidget->show();
     }
 
 
-//    QGraphicsPixmapItem *item = new QGraphicsPixmapItem(QPixmap::fromImage(qImage));
-//    QPixmap pixmap(qImage);
-//    scene.addItem(item);
+
 }
 
 void Homescreen::onCameraWindowClose()

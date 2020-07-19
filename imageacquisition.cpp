@@ -4,13 +4,13 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QCoreApplication>
+#include "defaults.h"
 
-#include <homescreen.h>
 
 
 ImageAcquisition::ImageAcquisition(QObject *parent): QThread(parent)
 {
-
+    
 }
 
 void ImageAcquisition::run()
@@ -23,16 +23,21 @@ void ImageAcquisition::run()
         HImage image = this->getAcq().GrabImage();
         Hlong  width,height;
         image.GetImageSize(&width,&height);
-
-
+        image = image.ZoomImageSize(600,600,"constant");
+        //        image.GetImageSize(&width,&height);
+        //        qDebug()<< "Image size halcon "<<width<<height;
+        //        HalconCpp::WriteImage(image,"tiff",0,"C:/Users/daruizcadalso/Documents/QTApplications/USoundApp/sample.jpg");
+        //        break;
         auto conversionStatus = HImage2QImage(image, qImage);
         if (!conversionStatus)
         {
             // failed to convert himage to qimage. Handle it here
             QCoreApplication::quit();
         }
-//        msleep(1000);
+        //        msleep(1000);
         emit renderImageSignal(qImage, this->getWindowIndex());
+        counter++;
+        qDebug()<< this->getValueForParam(HalconCameraParameters::RESULTINGFRAMERATE).DArr()[0];
 
     }
 
@@ -111,6 +116,96 @@ bool ImageAcquisition::HImage2QImage(HalconCpp::HImage &from, QImage &to)
     return false;
 }
 
+CameraControls ImageAcquisition::setupCameraControls()
+{
+
+    // First set all default parameters.
+    CameraControlDefaults cameraControlsDefaults;
+    CameraControls cameraControlSettings(cameraControlsDefaults);
+    HalconCpp::HTuple value;
+
+    //        Hue
+    //        Saturation
+    //        Brightness
+    //        Contrast
+    //        Monochrome
+    //        RGB
+    // The above parameters need to be set too, but Basler does not have a keyword matching these params
+    // If a wrong parameter name is entered the only watch to gracefully check it is using try catch
+    try {
+        value = this->getValueForParam(HalconCameraParameters::GAIN);
+        cameraControlSettings.setAnalogGain(value.ToDArr()[0]);
+
+        value = this->getValueForParam(HalconCameraParameters::AUTOEXPOSURE);
+        QString::compare(value.SArr()[0],"off") == 0?cameraControlSettings.setAutoExposure(false):cameraControlSettings.setAutoExposure(true);
+
+        value = this->getValueForParam(HalconCameraParameters::EXPOSURETIME);
+        cameraControlSettings.setExposureTime(value.DArr()[0]);
+
+        value = this->getValueForParam(HalconCameraParameters::GAMMA);
+        cameraControlSettings.setGamma(value.DArr()[0]);
+
+        value = this->getValueForParam(HalconCameraParameters::RESULTINGFRAMERATE);
+        cameraControlSettings.setFrameRate(value.DArr()[0]);
+    } catch (HalconCpp::HException &e) {
+        qDebug() << "Exception occured while accessing camera parameter "<<e.ErrorMessage().Text() << e.ErrorCode();
+    }
+
+    return cameraControlSettings;
+
+}
+
+HalconCpp::HTuple ImageAcquisition::getValueForParam(std::string paramString)
+{
+    qDebug() << " Querying ::"<< paramString.c_str();
+    return this->acq.GetFramegrabberParam(paramString.c_str());
+}
+
+void ImageAcquisition::setValueForParam(std::string paramString, int paramValue)
+{
+    try {
+        qDebug() << "in int set param"<< paramString.c_str() << paramValue;
+        this->acq.SetFramegrabberParam(paramString.c_str(), paramValue);
+
+    } catch (HalconCpp::HException &e) {
+        qDebug() << "Exception in setting param value:int message"<<e.ErrorMessage().Text() << e.ErrorCode();
+    }
+}
+
+void ImageAcquisition::setValueForParam(std::string paramString, double paramValue)
+{
+    try {
+        qDebug() << "double set param"<< paramString.c_str() << paramValue;
+        this->acq.SetFramegrabberParam(paramString.c_str(), paramValue);
+
+    } catch (HalconCpp::HException &e) {
+        qDebug() << "Exception in setting param value:double message"<<e.ErrorMessage().Text() << e.ErrorCode();
+    }
+}
+
+void ImageAcquisition::setValueForParam(std::string paramString, std::string paramValue)
+{
+    try {
+        qDebug() << "string set param"<< paramString.c_str() << paramValue.c_str();
+        this->acq.SetFramegrabberParam(paramString.c_str(), paramValue.c_str());
+
+    }  catch (HalconCpp::HException &e) {
+        qDebug() << "Exception in setting param value:string message"<<e.ErrorMessage().Text() << e.ErrorCode();
+    }
+}
+
+
+// Setters and Getters
+bool ImageAcquisition::getStop() const
+{
+    return stop;
+}
+
+void ImageAcquisition::setStop(bool value)
+{
+    stop = value;
+}
+
 HalconCpp::HFramegrabber ImageAcquisition::getAcq() const
 {
     return acq;
@@ -139,5 +234,15 @@ int ImageAcquisition::getWindowIndex() const
 void ImageAcquisition::setWindowIndex(int value)
 {
     windowIndex = value;
+}
+
+int ImageAcquisition::getCounter() const
+{
+    return counter;
+}
+
+void ImageAcquisition::setCounter(int value)
+{
+    counter = value;
 }
 

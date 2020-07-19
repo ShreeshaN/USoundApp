@@ -1,6 +1,7 @@
 #include "imagestreamwindow.h"
 #include "imageacquisition.h"
 #include <QMessageBox>
+#include "homescreen.h"
 
 ImageStreamWindow::ImageStreamWindow(QWidget *parent) : QMainWindow(parent)
 {
@@ -9,9 +10,8 @@ ImageStreamWindow::ImageStreamWindow(QWidget *parent) : QMainWindow(parent)
 
 void ImageStreamWindow::closeEvent(QCloseEvent *event)
 {
-
     ImageAcquisition *imageAcquisitionThread = this->imageAcquisitionThread;
-    imageAcquisitionThread->stop=true;
+    imageAcquisitionThread->setStop(true);
 
     try {
         qDebug() << "Closing device "<< imageAcquisitionThread->getDeviceName()<< ". . . ";
@@ -22,6 +22,7 @@ void ImageStreamWindow::closeEvent(QCloseEvent *event)
         QMessageBox::critical(this, "Close Camera","Error. Could not close camera",QMessageBox::Ok);
     }
     imageAcquisitionThread->exit();
+    qDebug() << "COunter valalue: "<<imageAcquisitionThread->getCounter();
 
 
 
