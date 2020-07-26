@@ -1,12 +1,12 @@
 #include "defaults.h"
 
 
-const std::string HalconCameraParameters::EXPOSURETIME = "ExposureTime";
-const std::string HalconCameraParameters::AUTOEXPOSURE = "ExposureAuto";
-const std::string HalconCameraParameters::GAMMA = "Gamma";
-const std::string HalconCameraParameters::ACQUISITIONFRAMERATE = "AcquisitionFrameRate";
-const std::string HalconCameraParameters::RESULTINGFRAMERATE = "ResultingFrameRate";
-const std::string HalconCameraParameters::GAIN = "Gain";
+const std::string HalconCameraParameterNames::EXPOSURETIME = "ExposureTime";
+const std::string HalconCameraParameterNames::AUTOEXPOSURE = "ExposureAuto";
+const std::string HalconCameraParameterNames::GAMMA = "Gamma";
+const std::string HalconCameraParameterNames::ACQUISITIONFRAMERATE = "AcquisitionFrameRate";
+const std::string HalconCameraParameterNames::RESULTINGFRAMERATE = "ResultingFrameRate";
+const std::string HalconCameraParameterNames::GAIN = "Gain";
 
 // Although, I did not find these controls in acquisition handle's SetFramegrabberParam method
 // Initializing just to maintain equality
