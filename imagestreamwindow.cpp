@@ -15,6 +15,7 @@ ImageStreamWindow::ImageStreamWindow(QWidget *parent) : QMainWindow(parent)
 
 void ImageStreamWindow::setupCameraWindow()
 {
+    QOverload<int> qOverload;
     QWidget *widget = new QWidget(this);
     QHBoxLayout * hlayout = new QHBoxLayout(widget);
 
@@ -46,7 +47,7 @@ void ImageStreamWindow::setupCameraWindow()
     exposureTimeSpinBox->setRange(0, 10000);
     exposureTimeSpinBox->setSingleStep(1);
     exposureTimeSpinBox->setValue( this->imageAcquisitionThread->getCameraControls().getExposureTime());
-    connect(exposureTimeSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+    connect(exposureTimeSpinBox, qOverload(&QSpinBox::valueChanged), [=]{
         this->imageAcquisitionThread->getCameraControls().setExposureTime(exposureTimeSpinBox->value());
         imageAcquisitionThread->setValueForParam(HalconCameraParameterNames::EXPOSURETIME,exposureTimeSpinBox->value());
         updateCameraParametersAndDisplay();
@@ -57,7 +58,7 @@ void ImageStreamWindow::setupCameraWindow()
     analogGainSpinBox->setRange(0, 100);
     analogGainSpinBox->setSingleStep(1);
     analogGainSpinBox->setValue( this->imageAcquisitionThread->getCameraControls().getAnalogGain());
-    connect(analogGainSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+    connect(analogGainSpinBox, qOverload(&QSpinBox::valueChanged), [=]{
         this->imageAcquisitionThread->getCameraControls().setAnalogGain(analogGainSpinBox->value());
         imageAcquisitionThread->setValueForParam(HalconCameraParameterNames::GAIN,analogGainSpinBox->value());
         updateCameraParametersAndDisplay();
@@ -99,7 +100,7 @@ void ImageStreamWindow::setupCameraWindow()
     hueSpinBox->setSingleStep(1);
     hueSpinBox->setValue( this->imageAcquisitionThread->getCameraControls().getHue());
     colorAppearance->addChild(hue);
-    connect(hueSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+    connect(hueSpinBox, qOverload(&QSpinBox::valueChanged), [=]{
         this->imageAcquisitionThread->getCameraControls().setHue(hueSpinBox->value());
         // imageAcquisitionThread->setValueForParam(HalconCameraParameters::HUE,hueSpinBox->value());
         updateCameraParametersAndDisplay();
@@ -113,7 +114,7 @@ void ImageStreamWindow::setupCameraWindow()
     saturationSpinBox->setSingleStep(1);
     saturationSpinBox->setValue( this->imageAcquisitionThread->getCameraControls().getSaturation());
     colorAppearance->addChild(saturation);
-    connect(saturationSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+    connect(saturationSpinBox, qOverload(&QSpinBox::valueChanged), [=]{
         this->imageAcquisitionThread->getCameraControls().setSaturation(saturationSpinBox->value());
         // imageAcquisitionThread->setValueForParam(HalconCameraParameters::SATURATION,saturationSpinBox->value());
         updateCameraParametersAndDisplay();
@@ -127,7 +128,7 @@ void ImageStreamWindow::setupCameraWindow()
     brightnessSpinBox->setSingleStep(1);
     brightnessSpinBox->setValue( this->imageAcquisitionThread->getCameraControls().getBrightness());
     colorAppearance->addChild(brightness);
-    connect(brightnessSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+    connect(brightnessSpinBox, qOverload(&QSpinBox::valueChanged), [=]{
         this->imageAcquisitionThread->getCameraControls().setBrightness(brightnessSpinBox->value());
         // imageAcquisitionThread->setValueForParam(HalconCameraParameters::BRIGHTNESS,brightnessSpinBox->value());
         updateCameraParametersAndDisplay();
@@ -140,7 +141,7 @@ void ImageStreamWindow::setupCameraWindow()
     contrastSpinBox->setSingleStep(1);
     contrastSpinBox->setValue( this->imageAcquisitionThread->getCameraControls().getContrast());
     colorAppearance->addChild(contrast);
-    connect(contrastSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+    connect(contrastSpinBox, qOverload(&QSpinBox::valueChanged), [=]{
         this->imageAcquisitionThread->getCameraControls().setContrast(contrastSpinBox->value());
         // imageAcquisitionThread->setValueForParam(HalconCameraParameters::CONTRAST,contrastSpinBox->value());
         updateCameraParametersAndDisplay();
@@ -153,7 +154,7 @@ void ImageStreamWindow::setupCameraWindow()
     gammaSpinBox->setSingleStep(1);
     gammaSpinBox->setValue( this->imageAcquisitionThread->getCameraControls().getGamma());
     colorAppearance->addChild(gamma);
-    connect(gammaSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+    connect(gammaSpinBox, qOverload(&QSpinBox::valueChanged), [=]{
         this->imageAcquisitionThread->getCameraControls().setGamma(gammaSpinBox->value());
         imageAcquisitionThread->setValueForParam(HalconCameraParameterNames::GAMMA,gammaSpinBox->value());
         updateCameraParametersAndDisplay();
@@ -166,7 +167,7 @@ void ImageStreamWindow::setupCameraWindow()
     acquisitionFramerateSpinBox->setSingleStep(1);
     acquisitionFramerateSpinBox->setValue(this->imageAcquisitionThread->getCameraControls().getAcquisitionFrameRate());
     colorAppearance->addChild(acquisitionFrameRate);
-    connect(acquisitionFramerateSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+    connect(acquisitionFramerateSpinBox, qOverload(&QSpinBox::valueChanged), [=]{
         this->imageAcquisitionThread->getCameraControls().setAcquisitionFrameRate(acquisitionFramerateSpinBox->value());
         imageAcquisitionThread->setValueForParam(HalconCameraParameterNames::ACQUISITIONFRAMERATE,acquisitionFramerateSpinBox->value());
         updateCameraParametersAndDisplay();

@@ -3,10 +3,17 @@
 #include "cameracontrols.h"
 #include "imageacquisition.h"
 
-#include <HalconCpp.h>
-#include <Halcon.h>
-#include "HFramegrabber.h"
-#include <HFramegrabber.h>
+#ifndef __APPLE__
+#  include "HalconCpp.h"
+#  include "Halcon.h"
+#  include "HFramegrabber.h"
+#else
+#  ifndef HC_LARGE_IMAGES
+#    include <HALCONCpp/HalconCpp.h>
+#  else
+#    include <HALCONCppxl/HalconCpp.h>
+#  endif
+#endif
 
 #include <QDebug>
 #include <QPushButton>
@@ -21,10 +28,10 @@
 #include <QException>
 #include <exception>
 #include<QDialog>
-#include "qteditorfactory.h"
-#include "qttreepropertybrowser.h"
-#include "qtpropertymanager.h"
-#include "qtvariantproperty.h"
+//#include "qteditorfactory.h"
+//#include "qttreepropertybrowser.h"
+//#include "qtpropertymanager.h"
+//#include "qtvariantproperty.h"
 
 Homescreen::Homescreen(QWidget *parent)
     : QMainWindow(parent)
@@ -90,8 +97,9 @@ void Homescreen::detectAttachedDevices()
     HalconCpp::HTuple *information = new HalconCpp::HTuple;
     HalconCpp::HTuple * valueList = new HalconCpp::HTuple;
     try {
-        HalconCpp::InfoFramegrabber("usb3vision","device",information, valueList);
+        HalconCpp::InfoFramegrabber("USB3Vision","info_boards",information, valueList);
         qDebug() << "Devices: "<<valueList->Length();
+        qDebug() << "Info: "<<information;
         auto deviceList = valueList->ToSArr();
         for(int i=0;i<valueList->Length();i++)
         {
