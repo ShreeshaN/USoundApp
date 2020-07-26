@@ -73,6 +73,7 @@ void ImageStreamWindow::setupCameraWindow()
         this->imageAcquisitionThread->getCameraControls().setAutoExposure(autoExposureCheckbox->isChecked());
         imageAcquisitionThread->setValueForParam(HalconCameraParameterNames::AUTOEXPOSURE,autoExposureCheckbox->isChecked()?"Once":"Off");
         updateCameraParametersAndDisplay();
+        qDebug() << "Auto exposure "<< this->imageAcquisitionThread->getCameraControls().getAutoExposure();
 
     });
 

@@ -170,25 +170,19 @@ void ImageAcquisition::setupCameraControls()
         value = this->getValueForParam(HalconCameraParameterNames::AUTOEXPOSURE);
         QString::compare(value.SArr()[0],"Off") == 0?cameraControls.setAutoExposure(false):cameraControls.setAutoExposure(true);
 
-        qDebug() << "Auto exposure"<<value.S().Text();
 
         value = this->getValueForParam(HalconCameraParameterNames::EXPOSURETIME);
-        cameraControls.setExposureTime(value.DArr()[0]);
+        cameraControls.setExposureTime(value.D());
 
         value = this->getValueForParam(HalconCameraParameterNames::GAMMA);
-        cameraControls.setGamma(value.DArr()[0]);
+        cameraControls.setGamma(value.D());
 
         value = this->getValueForParam(HalconCameraParameterNames::ACQUISITIONFRAMERATE);
         cameraControls.setAcquisitionFrameRate(value.D());
-        qDebug() <<"From camera controls:acqusition" << cameraControls.getAcquisitionFrameRate();
 
 
         value = this->getValueForParam(HalconCameraParameterNames::RESULTINGFRAMERATE);
         cameraControls.setResultingFrameRate(value.D());
-
-        qDebug() <<"From camera" << value.D();
-        qDebug() <<"From camera controls: resulting" << cameraControls.getResultingFrameRate();
-
 
     } catch (HalconCpp::HException &e) {
         qDebug() << "Exception occured while accessing camera parameter "<<e.ErrorMessage().Text() << e.ErrorCode();
