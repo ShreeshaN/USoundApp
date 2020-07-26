@@ -1,10 +1,17 @@
 #ifndef IMAGEACQUISITION_H
 #define IMAGEACQUISITION_H
 #include <QThread>
-#include <HalconCpp.h>
-#include <Halcon.h>
-#include "HFramegrabber.h"
-#include <HFramegrabber.h>
+#ifndef __APPLE__
+#  include "HalconCpp.h"
+#  include "Halcon.h"
+#  include "HFramegrabber.h"
+#else
+#  ifndef HC_LARGE_IMAGES
+#    include <HALCONCpp/HalconCpp.h>
+#  else
+#    include <HALCONCppxl/HalconCpp.h>
+#  endif
+#endif
 #include <QImage>
 #include "cameracontrols.h"
 #include "defaults.h"

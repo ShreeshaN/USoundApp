@@ -4,9 +4,22 @@
 #include <defaults.h>
 #include <QString>
 #include <QThread>
-#include <HalconCpp.h>
-#include <Halcon.h>
-#include <HFramegrabber.h>
+
+#ifndef __APPLE__
+#  include "HalconCpp.h"
+#  include "Halcon.h"
+#  include "HFramegrabber.h"
+#else
+#  ifndef HC_LARGE_IMAGES
+#    include <HALCONCpp/HalconCpp.h>
+#  else
+#    include <HALCONCppxl/HalconCpp.h>
+#  endif
+#endif
+
+//#include <HalconCpp.h>
+//#include <Halcon.h>
+//#include <HFramegrabber.h>
 
 class CameraControls
 {
@@ -88,9 +101,9 @@ private:
     bool rgb;  // not sure about this implementation
 };
 
-static std::ostream& operator<<(std::ostream &strm, const CameraControls &a) {
-  return strm << "A(" << a.exposureTime << ")";
-}
+//static std::ostream& operator<<(std::ostream &strm, const CameraControls &a) {
+//  return strm << "A(" << a.exposureTime << ")";
+//}
 
 
 #endif // CAMERACONTROLS_H

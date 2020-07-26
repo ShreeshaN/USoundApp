@@ -3,10 +3,17 @@
 #include "cameracontrols.h"
 #include "imageacquisition.h"
 
-#include <HalconCpp.h>
-#include <Halcon.h>
-#include "HFramegrabber.h"
-#include <HFramegrabber.h>
+#ifndef __APPLE__
+#  include "HalconCpp.h"
+#  include "Halcon.h"
+#  include "HFramegrabber.h"
+#else
+#  ifndef HC_LARGE_IMAGES
+#    include <HALCONCpp/HalconCpp.h>
+#  else
+#    include <HALCONCppxl/HalconCpp.h>
+#  endif
+#endif
 
 #include <QDebug>
 #include <QPushButton>
@@ -21,10 +28,10 @@
 #include <QException>
 #include <exception>
 #include<QDialog>
-#include "qteditorfactory.h"
-#include "qttreepropertybrowser.h"
-#include "qtpropertymanager.h"
-#include "qtvariantproperty.h"
+//#include "qteditorfactory.h"
+//#include "qttreepropertybrowser.h"
+//#include "qtpropertymanager.h"
+//#include "qtvariantproperty.h"
 
 Homescreen::Homescreen(QWidget *parent)
     : QMainWindow(parent)
@@ -92,8 +99,9 @@ void Homescreen::detectAttachedDevices()
     HalconCpp::HTuple *information = new HalconCpp::HTuple;
     HalconCpp::HTuple * valueList = new HalconCpp::HTuple;
     try {
-        HalconCpp::InfoFramegrabber("usb3vision","device",information, valueList);
+        HalconCpp::InfoFramegrabber("USB3Vision","info_boards",information, valueList);
         qDebug() << "Devices: "<<valueList->Length();
+        qDebug() << "Info: "<<information;
         auto deviceList = valueList->ToSArr();
         for(int i=0;i<valueList->Length();i++)
         {
@@ -251,6 +259,8 @@ void Homescreen::connectToCamera(QString deviceName)
         imgAcq->setAcq(acq);
         imgAcq->setDeviceName(deviceName);
 
+        QOverload<int> qOverload;
+
         if(!cameraControlsMap.contains(deviceName))
         {
             CameraControls cameraControlSettings = imgAcq->setupCameraControls();
@@ -301,7 +311,7 @@ void Homescreen::connectToCamera(QString deviceName)
         exposureTimeSpinBox->setRange(0, 10000);
         exposureTimeSpinBox->setSingleStep(1);
         exposureTimeSpinBox->setValue(selectedCameraControls.getExposureTime());
-        connect(exposureTimeSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+        connect(exposureTimeSpinBox, qOverload(&QSpinBox::valueChanged), [=]{
             cameraControlsMap[cameraInSelection].setExposureTime(exposureTimeSpinBox->value());
             imgAcq->setValueForParam(HalconCameraParameters::EXPOSURETIME,exposureTimeSpinBox->value());
         });
@@ -311,7 +321,7 @@ void Homescreen::connectToCamera(QString deviceName)
         analogGainSpinBox->setRange(0, 100);
         analogGainSpinBox->setSingleStep(1);
         analogGainSpinBox->setValue(selectedCameraControls.getAnalogGain());
-        connect(analogGainSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+        connect(analogGainSpinBox, qOverload(&QSpinBox::valueChanged), [=]{
             cameraControlsMap[cameraInSelection].setAnalogGain(analogGainSpinBox->value());
             imgAcq->setValueForParam(HalconCameraParameters::GAIN,analogGainSpinBox->value());
         });
@@ -347,7 +357,7 @@ void Homescreen::connectToCamera(QString deviceName)
         hueSpinBox->setSingleStep(1);
         hueSpinBox->setValue(selectedCameraControls.getHue());
         colorAppearance->addChild(hue);
-        connect(hueSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+        connect(hueSpinBox, qOverload(&QSpinBox::valueChanged), [=]{
             cameraControlsMap[cameraInSelection].setHue(hueSpinBox->value());
             // imgAcq->setValueForParam(HalconCameraParameters::HUE,hueSpinBox->value());
         });
@@ -360,7 +370,7 @@ void Homescreen::connectToCamera(QString deviceName)
         saturationSpinBox->setSingleStep(1);
         saturationSpinBox->setValue(selectedCameraControls.getSaturation());
         colorAppearance->addChild(saturation);
-        connect(saturationSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+        connect(saturationSpinBox, qOverload(&QSpinBox::valueChanged), [=]{
             cameraControlsMap[cameraInSelection].setSaturation(saturationSpinBox->value());
             // imgAcq->setValueForParam(HalconCameraParameters::SATURATION,saturationSpinBox->value());
         });
@@ -373,7 +383,7 @@ void Homescreen::connectToCamera(QString deviceName)
         brightnessSpinBox->setSingleStep(1);
         brightnessSpinBox->setValue(selectedCameraControls.getBrightness());
         colorAppearance->addChild(brightness);
-        connect(brightnessSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+        connect(brightnessSpinBox, qOverload(&QSpinBox::valueChanged), [=]{
             cameraControlsMap[cameraInSelection].setBrightness(brightnessSpinBox->value());
            // imgAcq->setValueForParam(HalconCameraParameters::BRIGHTNESS,brightnessSpinBox->value());
 
@@ -386,7 +396,7 @@ void Homescreen::connectToCamera(QString deviceName)
         contrastSpinBox->setSingleStep(1);
         contrastSpinBox->setValue(selectedCameraControls.getContrast());
         colorAppearance->addChild(contrast);
-        connect(contrastSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+        connect(contrastSpinBox, qOverload(&QSpinBox::valueChanged), [=]{
             cameraControlsMap[cameraInSelection].setContrast(contrastSpinBox->value());
             // imgAcq->setValueForParam(HalconCameraParameters::CONTRAST,contrastSpinBox->value());
         });
@@ -398,7 +408,7 @@ void Homescreen::connectToCamera(QString deviceName)
         gammaSpinBox->setSingleStep(1);
         gammaSpinBox->setValue(selectedCameraControls.getGamma());
         colorAppearance->addChild(gamma);
-        connect(gammaSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+        connect(gammaSpinBox, qOverload(&QSpinBox::valueChanged), [=]{
             cameraControlsMap[cameraInSelection].setGamma(gammaSpinBox->value());
             imgAcq->setValueForParam(HalconCameraParameters::GAMMA,gammaSpinBox->value());
         });
@@ -410,7 +420,7 @@ void Homescreen::connectToCamera(QString deviceName)
         framerateSpinBox->setSingleStep(1);
         framerateSpinBox->setValue(selectedCameraControls.getFrameRate());
         colorAppearance->addChild(framerate);
-        connect(framerateSpinBox, qOverload<int>(&QSpinBox::valueChanged), [=]{
+        connect(framerateSpinBox, qOverload(&QSpinBox::valueChanged), [=]{
             cameraControlsMap[cameraInSelection].setFrameRate(framerateSpinBox->value());
             imgAcq->setValueForParam(HalconCameraParameters::RESULTINGFRAMERATE,(double)framerateSpinBox->value());
         });
