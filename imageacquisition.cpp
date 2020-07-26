@@ -6,9 +6,6 @@
 #include <QCoreApplication>
 #include "defaults.h"
 #include <exception>
-#include <QTimer>
-#include <QSignalMapper>
-
 
 CameraControls ImageAcquisition::getCameraControls() const
 {

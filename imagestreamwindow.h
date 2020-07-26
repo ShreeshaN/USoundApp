@@ -77,6 +77,7 @@ signals:
 
 public slots:
     void renderImage(QImage qImage);
+    void saveImage();
 
 
 protected:

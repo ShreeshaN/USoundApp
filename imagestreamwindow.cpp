@@ -5,6 +5,8 @@
 #include <QHBoxLayout>
 #include <QCheckBox>
 #include <QStatusBar>
+#include <QMenuBar>
+#include<QToolBar>
 
 
 
@@ -15,9 +17,18 @@ ImageStreamWindow::ImageStreamWindow(QWidget *parent) : QMainWindow(parent)
 
 void ImageStreamWindow::setupCameraWindow()
 {
+
+    // Example begins: Adding a button in Menu bar
+    QAction *imageSaveButton = this->menuBar()->addAction(tr("ImageSaveButton"));
+    imageSaveButton->setIcon(QIcon("://icons/wpi_logo"));
+    connect(imageSaveButton, SIGNAL(triggered()), this, SLOT(saveImage()));
+    // Example ends
+
+
     QOverload<int> qOverload;
     QWidget *widget = new QWidget(this);
     QHBoxLayout * hlayout = new QHBoxLayout(widget);
+
 
     this->setCentralWidget(widget);
     // Setting up graphics view
@@ -291,6 +302,12 @@ void ImageStreamWindow::renderImage(QImage qImage)
     this->statusBar()->showMessage("Frame Rate: "+ QString::number(this->getImageAcquisitionThread()->getCameraControls().getResultingFrameRate()));
 
 
+
+}
+
+void ImageStreamWindow::saveImage()
+{
+    qDebug() << "Hogbitta charles hogbitta";
 
 }
 
