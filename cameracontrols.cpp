@@ -3,7 +3,7 @@
 
 #include <QDebug>
 
-long CameraControls::getExposureTime() const
+long CameraControls::getExposureTime()
 {
     return exposureTime;
 }
@@ -13,7 +13,7 @@ void CameraControls::setExposureTime(long value)
     exposureTime = value;
 }
 
-long CameraControls::getAnalogGain() const
+long CameraControls::getAnalogGain()
 {
     return analogGain;
 }
@@ -23,7 +23,7 @@ void CameraControls::setAnalogGain(long value)
     analogGain = value;
 }
 
-float CameraControls::getExposureTarget() const
+float CameraControls::getExposureTarget()
 {
     return exposureTarget;
 }
@@ -33,7 +33,7 @@ void CameraControls::setExposureTarget(float value)
     exposureTarget = value;
 }
 
-bool CameraControls::getAutoExposure() const
+bool CameraControls::getAutoExposure()
 {
     return autoExposure;
 }
@@ -43,7 +43,7 @@ void CameraControls::setAutoExposure(bool value)
     autoExposure = value;
 }
 
-float CameraControls::getHue() const
+float CameraControls::getHue()
 {
     return hue;
 }
@@ -53,7 +53,7 @@ void CameraControls::setHue(float value)
     hue = value;
 }
 
-float CameraControls::getSaturation() const
+float CameraControls::getSaturation()
 {
     return saturation;
 }
@@ -63,7 +63,7 @@ void CameraControls::setSaturation(float value)
     saturation = value;
 }
 
-float CameraControls::getBrightness() const
+float CameraControls::getBrightness()
 {
     return brightness;
 }
@@ -73,7 +73,7 @@ void CameraControls::setBrightness(float value)
     brightness = value;
 }
 
-float CameraControls::getContrast() const
+float CameraControls::getContrast()
 {
     return contrast;
 }
@@ -83,7 +83,7 @@ void CameraControls::setContrast(float value)
     contrast = value;
 }
 
-long CameraControls::getGamma() const
+long CameraControls::getGamma()
 {
     return gamma;
 }
@@ -93,17 +93,7 @@ void CameraControls::setGamma(long value)
     gamma = value;
 }
 
-double CameraControls::getFrameRate() const
-{
-    return frameRate;
-}
-
-void CameraControls::setFrameRate(double value)
-{
-    frameRate = value;
-}
-
-bool CameraControls::getMonochrome() const
+bool CameraControls::getMonochrome()
 {
     return monochrome;
 }
@@ -113,7 +103,7 @@ void CameraControls::setMonochrome(bool value)
     monochrome = value;
 }
 
-bool CameraControls::getRgb() const
+bool CameraControls::getRgb()
 {
     return rgb;
 }
@@ -123,23 +113,39 @@ void CameraControls::setRgb(bool value)
     rgb = value;
 }
 
-CameraControls::CameraControls()
-{
-
-}
-
-std::string CameraControls::getResolution() const
+std::string CameraControls::getResolution()
 {
     return resolution;
 }
 
-void CameraControls::setResolution(const std::string &value)
+void CameraControls::setResolution(std::string value)
 {
     resolution = value;
 }
 
-CameraControls::CameraControls(CameraControlDefaults cameraControlsDefaults)
+long CameraControls::getAcquisitionFrameRate() const
 {
+    return acquisitionFrameRate;
+}
+
+void CameraControls::setAcquisitionFrameRate(long value)
+{
+    acquisitionFrameRate = value;
+}
+
+long CameraControls::getResultingFrameRate() const
+{
+    return resultingFrameRate;
+}
+
+void CameraControls::setResultingFrameRate(long value)
+{
+    resultingFrameRate = value;
+}
+
+CameraControls::CameraControls()
+{
+    CameraControlDefaults cameraControlsDefaults;
     this->resolution = cameraControlsDefaults.RESOLUTION;
     this->exposureTime = cameraControlsDefaults.EXPOSURETIME;
     this->analogGain =cameraControlsDefaults.ANALOGGAIN;
@@ -150,10 +156,8 @@ CameraControls::CameraControls(CameraControlDefaults cameraControlsDefaults)
     this->brightness =cameraControlsDefaults.BRIGHTNESS;
     this->contrast =cameraControlsDefaults.CONTRAST;
     this->gamma =cameraControlsDefaults.GAMMA;
-    this->frameRate =cameraControlsDefaults.FRAMERATE;
+    this->acquisitionFrameRate =cameraControlsDefaults.ACQUISITIONFRAMERATE;
+    this->resultingFrameRate =cameraControlsDefaults.RESULTINGFRAMERATE;
     this->monochrome =cameraControlsDefaults.MONOCHROME;
     this->rgb =cameraControlsDefaults.RGB;
 }
-
-
-

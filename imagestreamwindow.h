@@ -3,20 +3,82 @@
 
 #include <QMainWindow>
 #include <QDebug>
+#include <QTreeWidgetItem>
 #include "imageacquisition.h"
+#include <QMap>
+#include <QLabel>
+#include <QGraphicsScene>
+#include <QGraphicsPixmapItem>
+#include<QPixmap>
+#include <QGraphicsView>
+#include <QSpinBox>
+#include <QCheckBox>
 
 class ImageStreamWindow : public QMainWindow
 {
     Q_OBJECT
+
+private:
+    ImageAcquisition *imageAcquisitionThread;
+
 public:
     explicit ImageStreamWindow(QWidget *parent = nullptr);
 
-    ImageAcquisition *imageAcquisitionThread;
+
+    // widgets
+    QTreeWidgetItem *exposureControls;
+    QTreeWidgetItem *exposureTime;
+    QSpinBox *exposureTimeSpinBox;
+    QTreeWidgetItem *analogGain;
+    QSpinBox *analogGainSpinBox;
+    QTreeWidgetItem *autoExposure;
+    QCheckBox *autoExposureCheckbox;
+    QTreeWidgetItem *colorAppearance;
+
+    QTreeWidgetItem *hue;
+    QSpinBox *hueSpinBox;
+    QTreeWidgetItem *saturation;
+    QSpinBox *saturationSpinBox;
+    QTreeWidgetItem *brightness;
+    QSpinBox *brightnessSpinBox;
+    QTreeWidgetItem *contrast;
+    QSpinBox *contrastSpinBox;
+    QTreeWidgetItem *gamma;
+    QTreeWidgetItem *acquisitionFrameRate;
+    QSpinBox *acquisitionFramerateSpinBox;
+    QTreeWidgetItem *monochrome;
+    QCheckBox *monochromeCheckbox;
+    QTreeWidgetItem *rgb;
+    QCheckBox *rgbCheckbox;
+
+    QLabel *imageLabel;
+
+    QGraphicsView *graphicsView;
+    QGraphicsScene *graphicsScene;
+    QGraphicsPixmapItem *graphicsPixmapItem;
+
+    QList<QGraphicsPixmapItem *> graphicsPixmapItemList;
+
+    // member functions
+    void setupCameraWindow();
+    void updateCameraParametersAndDisplay();
+    void displayCameraParameters();
+
+
+    // setters and getters
+    HalconCpp::HFramegrabber getAcquisitionHandle() const;
+    void setAcquisitionHandle(const HalconCpp::HFramegrabber &value);
+    ImageAcquisition *getImageAcquisitionThread() const;
+    void setImageAcquisitionThread(ImageAcquisition *value);
+
 
 signals:
 
 
-    // QWidget interface
+public slots:
+    void renderImage(QImage qImage);
+
+
 protected:
     void closeEvent(QCloseEvent *event);
 };

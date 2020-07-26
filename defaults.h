@@ -18,13 +18,14 @@ struct CameraControlDefaults{
     float BRIGHTNESS = 0.0;
     float CONTRAST = 0.0;
     float GAMMA = 0.0;
-    int FRAMERATE=10;
+    long ACQUISITIONFRAMERATE=0;
+    long RESULTINGFRAMERATE=0;
     bool MONOCHROME=true; // not sure about this implementation
     bool RGB=false; // not sure about this implementation
 };
 
 
-class HalconCameraParameters{
+class HalconCameraParameterNames{
 public:
     static const std::string EXPOSURETIME;
     static const std::string AUTOEXPOSURE;

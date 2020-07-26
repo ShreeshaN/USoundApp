@@ -5,39 +5,73 @@
 #include <QLabel>
 #include <QCoreApplication>
 #include "defaults.h"
+#include <exception>
+#include <QTimer>
+#include <QSignalMapper>
 
 
-
-ImageAcquisition::ImageAcquisition(QObject *parent): QThread(parent)
+CameraControls ImageAcquisition::getCameraControls() const
 {
-    
+    return cameraControls;
+}
+
+void ImageAcquisition::setCameraControls(const CameraControls &value)
+{
+    cameraControls = value;
+}
+
+ImageAcquisition::ImageAcquisition(QString deviceName, QObject *parent): QThread(parent)
+{
+    HalconCpp::HFramegrabber imageAcquisitionHandle("USB3Vision",
+                                                    0, 0, 0, 0, 0, 0,
+                                                    "progressive", -1, "default",
+                                 -1, "false", "default",
+                                 HalconCpp::HString(
+                                     deviceName.toLocal8Bit().constData()).Text(), 0, -1);
+    this->imageAcquisitionHandle = imageAcquisitionHandle;
+    this->deviceName = deviceName;
+}
+
+void ImageAcquisition::setup()
+{
+    setupCameraControls();
+
 }
 
 void ImageAcquisition::run()
 {
     QImage qImage;
     using namespace HalconCpp;
-    qDebug() << "In run. Connected to device  "<< deviceName;
-    while(!stop)
+    while(!stopAcquisition)
     {
-        HImage image = this->getAcq().GrabImage();
+//        long int before = GetTickCount();
+        HImage image = this->imageAcquisitionHandle.GrabImage();
+
         Hlong  width,height;
         image.GetImageSize(&width,&height);
         image = image.ZoomImageSize(600,600,"constant");
+
         //        image.GetImageSize(&width,&height);
         //        qDebug()<< "Image size halcon "<<width<<height;
         //        HalconCpp::WriteImage(image,"tiff",0,"C:/Users/daruizcadalso/Documents/QTApplications/USoundApp/sample.jpg");
         //        break;
         auto conversionStatus = HImage2QImage(image, qImage);
+
+
         if (!conversionStatus)
         {
             // failed to convert himage to qimage. Handle it here
             QCoreApplication::quit();
         }
         //        msleep(1000);
-        emit renderImageSignal(qImage, this->getWindowIndex());
+
+        emit renderImageSignal(qImage);
+//        long int after = GetTickCount();
+
         counter++;
-        qDebug()<< this->getValueForParam(HalconCameraParameters::RESULTINGFRAMERATE).DArr()[0];
+//        qDebug() << before << after<<(after-before)/1000.0;
+
+//        qDebug()<< "Frame rate :"<<this->getValueForParam(HalconCameraParameters::RESULTINGFRAMERATE).DArr()[0];
 
     }
 
@@ -68,7 +102,6 @@ bool ImageAcquisition::HImage2QImage(HalconCpp::HImage &from, QImage &to)
     {
         return false;
     }
-
     QImage::Format format;
     switch(channels[0].I())
     {
@@ -116,12 +149,10 @@ bool ImageAcquisition::HImage2QImage(HalconCpp::HImage &from, QImage &to)
     return false;
 }
 
-CameraControls ImageAcquisition::setupCameraControls()
+void ImageAcquisition::setupCameraControls()
 {
 
     // First set all default parameters.
-    CameraControlDefaults cameraControlsDefaults;
-    CameraControls cameraControlSettings(cameraControlsDefaults);
     HalconCpp::HTuple value;
 
     //        Hue
@@ -133,39 +164,53 @@ CameraControls ImageAcquisition::setupCameraControls()
     // The above parameters need to be set too, but Basler does not have a keyword matching these params
     // If a wrong parameter name is entered the only watch to gracefully check it is using try catch
     try {
-        value = this->getValueForParam(HalconCameraParameters::GAIN);
-        cameraControlSettings.setAnalogGain(value.ToDArr()[0]);
+        value = this->getValueForParam(HalconCameraParameterNames::GAIN);
+        cameraControls.setAnalogGain(value.ToDArr()[0]);
 
-        value = this->getValueForParam(HalconCameraParameters::AUTOEXPOSURE);
-        QString::compare(value.SArr()[0],"off") == 0?cameraControlSettings.setAutoExposure(false):cameraControlSettings.setAutoExposure(true);
+        value = this->getValueForParam(HalconCameraParameterNames::AUTOEXPOSURE);
+        QString::compare(value.SArr()[0],"Off") == 0?cameraControls.setAutoExposure(false):cameraControls.setAutoExposure(true);
 
-        value = this->getValueForParam(HalconCameraParameters::EXPOSURETIME);
-        cameraControlSettings.setExposureTime(value.DArr()[0]);
+        qDebug() << "Auto exposure"<<value.S().Text();
 
-        value = this->getValueForParam(HalconCameraParameters::GAMMA);
-        cameraControlSettings.setGamma(value.DArr()[0]);
+        value = this->getValueForParam(HalconCameraParameterNames::EXPOSURETIME);
+        cameraControls.setExposureTime(value.DArr()[0]);
 
-        value = this->getValueForParam(HalconCameraParameters::RESULTINGFRAMERATE);
-        cameraControlSettings.setFrameRate(value.DArr()[0]);
+        value = this->getValueForParam(HalconCameraParameterNames::GAMMA);
+        cameraControls.setGamma(value.DArr()[0]);
+
+        value = this->getValueForParam(HalconCameraParameterNames::ACQUISITIONFRAMERATE);
+        cameraControls.setAcquisitionFrameRate(value.D());
+        qDebug() <<"From camera controls:acqusition" << cameraControls.getAcquisitionFrameRate();
+
+
+        value = this->getValueForParam(HalconCameraParameterNames::RESULTINGFRAMERATE);
+        cameraControls.setResultingFrameRate(value.D());
+
+        qDebug() <<"From camera" << value.D();
+        qDebug() <<"From camera controls: resulting" << cameraControls.getResultingFrameRate();
+
+
     } catch (HalconCpp::HException &e) {
         qDebug() << "Exception occured while accessing camera parameter "<<e.ErrorMessage().Text() << e.ErrorCode();
     }
-
-    return cameraControlSettings;
-
 }
 
 HalconCpp::HTuple ImageAcquisition::getValueForParam(std::string paramString)
 {
-    qDebug() << " Querying ::"<< paramString.c_str();
-    return this->acq.GetFramegrabberParam(paramString.c_str());
+    try {
+        return imageAcquisitionHandle.GetFramegrabberParam(paramString.c_str());
+    } catch (std::exception &e) {
+        qDebug() << e.what();
+    }
+
+
 }
 
 void ImageAcquisition::setValueForParam(std::string paramString, int paramValue)
 {
     try {
         qDebug() << "in int set param"<< paramString.c_str() << paramValue;
-        this->acq.SetFramegrabberParam(paramString.c_str(), paramValue);
+        imageAcquisitionHandle.SetFramegrabberParam(paramString.c_str(), paramValue);
 
     } catch (HalconCpp::HException &e) {
         qDebug() << "Exception in setting param value:int message"<<e.ErrorMessage().Text() << e.ErrorCode();
@@ -176,7 +221,18 @@ void ImageAcquisition::setValueForParam(std::string paramString, double paramVal
 {
     try {
         qDebug() << "double set param"<< paramString.c_str() << paramValue;
-        this->acq.SetFramegrabberParam(paramString.c_str(), paramValue);
+        imageAcquisitionHandle.SetFramegrabberParam(paramString.c_str(), paramValue);
+
+    } catch (HalconCpp::HException &e) {
+        qDebug() << "Exception in setting param value:double message"<<e.ErrorMessage().Text() << e.ErrorCode();
+    }
+}
+
+void ImageAcquisition::setValueForParam(std::string paramString, long paramValue)
+{
+    try {
+        qDebug() << "long set param"<< paramString.c_str() << paramValue;
+        imageAcquisitionHandle.SetFramegrabberParam(paramString.c_str(), (Hlong)paramValue);
 
     } catch (HalconCpp::HException &e) {
         qDebug() << "Exception in setting param value:double message"<<e.ErrorMessage().Text() << e.ErrorCode();
@@ -186,8 +242,8 @@ void ImageAcquisition::setValueForParam(std::string paramString, double paramVal
 void ImageAcquisition::setValueForParam(std::string paramString, std::string paramValue)
 {
     try {
-        qDebug() << "string set param"<< paramString.c_str() << paramValue.c_str();
-        this->acq.SetFramegrabberParam(paramString.c_str(), paramValue.c_str());
+//        qDebug() << "string set param"<< paramString.c_str() << paramValue.c_str();
+       imageAcquisitionHandle.SetFramegrabberParam(paramString.c_str(), paramValue.c_str());
 
     }  catch (HalconCpp::HException &e) {
         qDebug() << "Exception in setting param value:string message"<<e.ErrorMessage().Text() << e.ErrorCode();
@@ -196,26 +252,6 @@ void ImageAcquisition::setValueForParam(std::string paramString, std::string par
 
 
 // Setters and Getters
-bool ImageAcquisition::getStop() const
-{
-    return stop;
-}
-
-void ImageAcquisition::setStop(bool value)
-{
-    stop = value;
-}
-
-HalconCpp::HFramegrabber ImageAcquisition::getAcq() const
-{
-    return acq;
-}
-
-void ImageAcquisition::setAcq(const HalconCpp::HFramegrabber &value)
-{
-    acq = value;
-}
-
 QString ImageAcquisition::getDeviceName() const
 {
     return deviceName;
@@ -226,16 +262,6 @@ void ImageAcquisition::setDeviceName(const QString &value)
     deviceName = value;
 }
 
-int ImageAcquisition::getWindowIndex() const
-{
-    return windowIndex;
-}
-
-void ImageAcquisition::setWindowIndex(int value)
-{
-    windowIndex = value;
-}
-
 int ImageAcquisition::getCounter() const
 {
     return counter;
@@ -244,5 +270,25 @@ int ImageAcquisition::getCounter() const
 void ImageAcquisition::setCounter(int value)
 {
     counter = value;
+}
+
+HalconCpp::HFramegrabber ImageAcquisition::getImageAcquisitionHandle() const
+{
+    return imageAcquisitionHandle;
+}
+
+void ImageAcquisition::setImageAcquisitionHandle(const HalconCpp::HFramegrabber &value)
+{
+    imageAcquisitionHandle = value;
+}
+
+bool ImageAcquisition::getStopAcquisition() const
+{
+    return stopAcquisition;
+}
+
+void ImageAcquisition::setStopAcquisition(bool value)
+{
+    stopAcquisition = value;
 }
 

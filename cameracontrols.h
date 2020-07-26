@@ -34,50 +34,48 @@ public:
     void flipOnY();
 
 
-    long getExposureTime() const;
+    long getExposureTime();
     void setExposureTime(long value);
 
-    long getAnalogGain() const;
+    long getAnalogGain();
     void setAnalogGain(long value);
 
-    float getExposureTarget() const;
+    float getExposureTarget();
     void setExposureTarget(float value);
 
-    bool getAutoExposure() const;
+    bool getAutoExposure();
     void setAutoExposure(bool value);
 
-    float getHue() const;
+    float getHue();
     void setHue(float value);
 
-    float getSaturation() const;
+    float getSaturation();
     void setSaturation(float value);
 
-    float getBrightness() const;
+    float getBrightness();
     void setBrightness(float value);
 
-    float getContrast() const;
+    float getContrast();
     void setContrast(float value);
 
-    long getGamma() const;
+    long getGamma();
     void setGamma(long value);
 
-    double getFrameRate() const;
-    void setFrameRate(double value);
-
-    bool getMonochrome() const;
+    bool getMonochrome();
     void setMonochrome(bool value);
 
-    bool getRgb() const;
+    bool getRgb();
     void setRgb(bool value);
-
     CameraControls();
-    CameraControls(CameraControlDefaults cameraControlsDefaults);
 
+    std::string getResolution();
+    void setResolution(std::string value);
 
-    void setupCameraControls(HalconCpp::HFramegrabber * acq);
+    long getAcquisitionFrameRate() const;
+    void setAcquisitionFrameRate(long value);
 
-    std::string getResolution() const;
-    void setResolution(const std::string &value);
+    long getResultingFrameRate() const;
+    void setResultingFrameRate(long value);
 
 private:
     friend std::ostream& operator<<(std::ostream &strm, const CameraControls &a);
@@ -96,14 +94,10 @@ private:
     float brightness;
     float contrast;
     long gamma;
-    double frameRate;
+    long acquisitionFrameRate;
+    long resultingFrameRate;
     bool monochrome;  // not sure about this implementation
     bool rgb;  // not sure about this implementation
 };
-
-//static std::ostream& operator<<(std::ostream &strm, const CameraControls &a) {
-//  return strm << "A(" << a.exposureTime << ")";
-//}
-
 
 #endif // CAMERACONTROLS_H
