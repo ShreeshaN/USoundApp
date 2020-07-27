@@ -12,7 +12,7 @@
 #include <QtGui>
 #include <usoundutils.h>
 #include <VideoRecordingThread.h>
-
+#include<defaults.h>
 //#include<QToolTip>
 
 
@@ -355,12 +355,10 @@ Save Image
 */
 {
     try {
-
         //todo: Prathyush SP -> Change from tempPath to user set path
-        std::string filename=QDir::tempPath().toStdString()+"/"+imageAcquisitionThread->getDeviceName().toStdString();
-        filename = filename+"-"+generateTimeStamp()+".jpeg";
-        qInfo() << ("Saving image at "+filename).c_str();
-        imageAcquisitionThread->currentImage.WriteImage("jpeg", 0,filename.c_str());
+        QString filename=getImageSavePathForDevice(imageAcquisitionThread->getDeviceName())+"/"+QString(generateTimeStamp().c_str())+"."+Directories::IMAGEFORMAT;
+        qInfo() << "Saving image at "+filename;
+        imageAcquisitionThread->currentImage.WriteImage(Directories::IMAGEFORMAT.toStdString().c_str(), 0, filename.toStdString().c_str());
     } catch (HalconCpp::HException he) {
         qDebug() << he.ErrorMessage().Text();
     }
