@@ -3,12 +3,13 @@
 #include<QThread>
 #include <imageacquisition.h>
 
+
 // hellothread/hellothread.h
 class VideoRecordingThread : public QThread
 {
     Q_OBJECT
     ImageAcquisition *imageAcquisitionThread;
-
+    QString uid;
 
 public:
     // Constructor

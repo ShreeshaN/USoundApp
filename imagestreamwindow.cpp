@@ -32,10 +32,10 @@ void ImageStreamWindow::setupCameraWindow()
     recordButton->setIcon(QIcon(":icons/icon-media-record.png"));
     connect(recordButton, SIGNAL(triggered()), this, SLOT(startVideoRecord()));
 
-    recordPauseButton = this->menuBar()->addAction(tr("RecordPauseButton"));
-    recordPauseButton->setIcon(QIcon(":icons/icon-media-playback-pause.png"));
-    recordPauseButton->setDisabled(true);
-    connect(recordPauseButton, SIGNAL(triggered()), this, SLOT(pauseVideoRecord()));
+//    recordPauseButton = this->menuBar()->addAction(tr("RecordPauseButton"));
+//    recordPauseButton->setIcon(QIcon(":icons/icon-media-playback-pause.png"));
+//    recordPauseButton->setDisabled(true);
+//    connect(recordPauseButton, SIGNAL(triggered()), this, SLOT(pauseVideoRecord()));
 
     recordStopButton = this->menuBar()->addAction(tr("RecordStopButton"));
     recordStopButton->setIcon(QIcon(":icons/icon-media-playback-stop.png"));
