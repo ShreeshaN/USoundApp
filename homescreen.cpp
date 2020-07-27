@@ -274,5 +274,6 @@ void Homescreen::pushToMessageBoxSlot(QString message)
 {
     qDebug() << "Illige barthane ila bidu";
     ui->plainTextEdit->appendPlainText(message);
+
 }
 
