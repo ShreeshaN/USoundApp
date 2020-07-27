@@ -1,3 +1,4 @@
 *.autoosave
 *.user
 USoundApp.pro.qtds
+.DS_Store
