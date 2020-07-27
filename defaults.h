@@ -48,10 +48,11 @@ public:
 
 class Directories{
 public:
+    static const std::string APPDIR;
     static const std::string LOGDIR;
     static const std::string LOGFILENAME;
     static const std::string LOGFILEFORMAT;
-    static const std::string SAVEDIR;
+    static const std::string DATADIR;
     static const std::string IMAGESAVEDIR;
     static const std::string VIDEOSAVEDIR;
 };

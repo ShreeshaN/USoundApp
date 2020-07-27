@@ -19,6 +19,15 @@ const std::string CONTRAST="constrast";
 const std::string MONOCHROME="monochrome";
 const std::string RGB="rgb";
 
-const std::string Directories::LOGDIR = QDir::tempPath().toStdString();
+//Set App Directory
+const std::string Directories::APPDIR = QDir::tempPath().toStdString()+"/USoundApp";
+// Logging configuration
+const std::string Directories::LOGDIR = APPDIR;
 const std::string Directories::LOGFILENAME = "USoundApp";
 const std::string Directories::LOGFILEFORMAT = "log";
+
+// Data directories configuration
+const std::string Directories::DATADIR = APPDIR+"/data";
+const std::string Directories::IMAGESAVEDIR = DATADIR+"/images";
+const std::string Directories::VIDEOSAVEDIR = DATADIR+"/videos";
+

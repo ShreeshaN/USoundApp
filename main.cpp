@@ -64,6 +64,8 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
 int main(int argc, char *argv[])
 {
     try {
+        // Setup directories
+        createDirectories();
         fprintf(stdout, "Logging to file: %s", (logFilePath+"\n").c_str());
         qInstallMessageHandler(myMessageOutput); // Install the handler
         qInfo() << ("Logging to file:" + logFilePath).c_str();
