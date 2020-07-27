@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
     try {
         fprintf(stdout, "Logging to file: %s", (logFilePath.toStdString()+"\n").c_str());
         qInstallMessageHandler(myMessageOutput); // Install the handler
-        qDebug() << QString("Logging to file: %1").arg(logFilePath);
+        qInfo() << QString("Logging to file: %1").arg(logFilePath);
         QApplication a(argc, argv);
         Homescreen w;
         w.setWindowIcon(QIcon("://icons/wpi_logo.ico"));
