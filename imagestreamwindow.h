@@ -63,7 +63,7 @@ public:
     QList<QGraphicsPixmapItem *> graphicsPixmapItemList;
 
     // Actions
-    QAction *imageSaveButton, *recordButton;
+    QAction *imageSaveButton, *recordButton, *recordPauseButton, *recordStopButton;
 
 
 
@@ -88,7 +88,9 @@ signals:
 public slots:
     void renderImage(QImage qImage);
     void saveImage();
-    void recordVideo();
+    void startVideoRecord();
+    void pauseVideoRecord();
+    void stopVideoRecord();
 
 
 protected:
