@@ -7,20 +7,44 @@
 #include <QStatusBar>
 #include <QMenuBar>
 #include<QToolBar>
+#include<QDateTime>
+#include<QDir>
+#include <QtGui>
+#include <usoundutils.h>
+//#include<QToolTip>
 
+
+//class Menu : public QMenu
+//{
+//    Q_OBJECT
+//public:
+//    Menu(){}
+//    bool event (QEvent * e)
+//    {
+//        const QHelpEvent *helpEvent = static_cast <QHelpEvent *>(e);
+//         if (helpEvent->type() == QEvent::ToolTip && activeAction() != 0)
+//         {
+//              QToolTip::showText(helpEvent->globalPos(), activeAction()->toolTip());
+//         } else
+//         {
+//              QToolTip::hideText();
+//         }
+//         return QMenu::event(e);
+//    }
+//};
 
 
 ImageStreamWindow::ImageStreamWindow(QWidget *parent) : QMainWindow(parent)
 {
 }
 
-
 void ImageStreamWindow::setupCameraWindow()
 {
-
-    // Example begins: Adding a button in Menu bar
     QAction *imageSaveButton = this->menuBar()->addAction(tr("ImageSaveButton"));
-    imageSaveButton->setIcon(QIcon("://icons/wpi_logo"));
+    QPixmap pixmap("icons/icon-single-shot.png");
+    imageSaveButton->setIcon(QIcon(":icons/icon-single-shot.png"));
+    // todo: Prathyush SP -> Fix issue with tooltip display
+    imageSaveButton->setToolTip("Save frame");
     connect(imageSaveButton, SIGNAL(triggered()), this, SLOT(saveImage()));
     // Example ends
 
@@ -331,9 +355,20 @@ void ImageStreamWindow::renderImage(QImage qImage)
 }
 
 void ImageStreamWindow::saveImage()
+/*
+Save Image
+*/
 {
-    qDebug() << "Hogbitta charles hogbitta";
+    try {
 
+        //todo: Prathyush SP -> Change from tempPath to user set path
+        std::string filename=QDir::tempPath().toStdString()+"/"+imageAcquisitionThread->getDeviceName().toStdString();
+        filename = filename+"-"+generateTimeStamp()+".jpeg";
+        qDebug() << ("Saving image at "+filename).c_str();
+        imageAcquisitionThread->currentImage.WriteImage("jpeg", 0,filename.c_str());
+    } catch (HalconCpp::HException he) {
+        qDebug() << he.ErrorMessage().Text();
+    }
 }
 
 

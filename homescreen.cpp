@@ -66,9 +66,11 @@ void Homescreen::setupDevicesUI()
         usbCamera->setToolTip(0,usbCamera->text(0));
         usb3->addChild(usbCamera);
     }
+
     ui->devicesTreeWidget->addTopLevelItems(topLevelItems);
     ui->devicesTreeWidget->setLayout(mainLayout);
     ui->devicesTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    usb3->setExpanded(true);
     connect(ui->devicesTreeWidget,&QTreeWidget::customContextMenuRequested,[=](const QPoint &pos){
         // prepare menu
         QTreeWidget *tree = ui->devicesTreeWidget;
@@ -107,7 +109,7 @@ void Homescreen::detectAttachedDevices()
             // " unique_name:2676016419A3_Basler_acA2040120um ",
             // " interface:Usan_VirtualIF ", " producer:Usan")
             auto device = QString(deviceList[i].Text()).split("|")[1].split(":")[1].trimmed();
-            ui->messagesListWidget->addItem("New camera detected : "+ device);
+//            ui->plainTextEdit->appendPlainText("New camera detected : "+ device);
 //            emit pushToMessageBoxSignal("New camera detected : "+ device);
 //            connect(this, SIGNAL(pushToMessageBoxSignal(QString)),this,SLOT(pushToMessageBoxSlot(QString)));
 
@@ -139,11 +141,15 @@ void Homescreen::onApplicationStartup()
 }
 
 
-
+//2676016419A3_Basler_acA2040120um
 void Homescreen::on_devicesRefresh_clicked()
 {
+    try {
+        HalconCpp::HFramegrabber acq("usb3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "267601642BB5_Basler_acA2040120um", 0, -1);
 
-    HalconCpp::HFramegrabber acq("USB3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "2676016419A3_Basler_acA2040120um", 0, -1);
+    } catch (HalconCpp::HException &e) {
+        qDebug() << e.ErrorMessage().Text();
+    }
 //    acq.SetFramegrabberParam("ExposureAuto","Off");
 
     qDebug() <<"Params: ";
@@ -179,18 +185,18 @@ void Homescreen::on_devicesRefresh_clicked()
     HalconCpp::HTuple *information = new HalconCpp::HTuple;
     HalconCpp::HTuple * valueList = new HalconCpp::HTuple;
     QList<QString> list = { "bits_per_channel", "camera_type", "color_space", "defaults", "device", "external_trigger", "field", "general", "generic", "horizontal_resolution", "image_height", "image_width", "info_boards", "parameters", "parameters_readonly", "parameters_writeonly", "port", "revision", "start_column", "start_row", "vertical_resolution"};
-//    for (auto param : list) {
-//        qDebug()<< "************" << param << "*************";
-//        HalconCpp::InfoFramegrabber("usb3vision",HTuple(HString::FromUtf8(param.toUtf8())),information, valueList);
-//        qDebug () << "Information: "<< information->S().Text();
-//        qDebug() << "Valuelist length: "<<valueList->Length();
-//        auto deviceList = valueList->ToSArr();
-//        for(int i=0;i<valueList->Length();i++)
-//        {
-//            qDebug() << QString(deviceList[i].Text());
-//        }
+    for (auto param : list) {
+        qDebug()<< "************" << param << "*************";
+        HalconCpp::InfoFramegrabber("usb3vision",HTuple(HString::FromUtf8(param.toUtf8())),information, valueList);
+        qDebug () << "Information: "<< information->S().Text();
+        qDebug() << "Valuelist length: "<<valueList->Length();
+        auto deviceList = valueList->ToSArr();
+        for(int i=0;i<valueList->Length();i++)
+        {
+            qDebug() << QString(deviceList[i].Text());
+        }
 
-//    }
+    }
 //    HalconCpp::InfoFramegrabber("usb3vision","parameters",information, valueList);
 //    qDebug () << "Information: "<< information->S().Text();
 //    qDebug() << "Valuelist length: "<<valueList->Length();
@@ -268,6 +274,7 @@ void Homescreen::onCameraWindowClose()
 void Homescreen::pushToMessageBoxSlot(QString message)
 {
     qDebug() << "Illige barthane ila bidu";
-    ui->messagesListWidget->addItem(message);
+//    ui->plainTextEdit->appendPlainText(message);
+
 }
 

@@ -251,7 +251,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
-          <widget class="QListWidget" name="messagesListWidget"/>
+          <widget class="QPlainTextEdit" name="plainTextEdit"/>
          </item>
         </layout>
        </widget>

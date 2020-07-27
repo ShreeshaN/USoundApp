@@ -52,7 +52,8 @@ HEADERS += \
     defaults.h \
     homescreen.h \
     imageacquisition.h \
-    imagestreamwindow.h
+    imagestreamwindow.h \
+    usoundutils.h
 FORMS += \
     homescreen.ui
 
