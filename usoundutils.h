@@ -7,3 +7,4 @@ static std::string generateTimeStamp(){
     QDateTime currentDateTime = QDateTime::currentDateTime();
     return std::to_string(currentDateTime.toTime_t());
 }
+
