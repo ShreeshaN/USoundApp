@@ -67,6 +67,8 @@ int main(int argc, char *argv[])
         qInstallMessageHandler(myMessageOutput); // Install the handler
         qInfo() << QString("Logging to file: %1").arg(logFilePath);
         QApplication a(argc, argv);
+        // This is used as a workaround to display menubar in mac os - https://stackoverflow.com/questions/25261760/menubar-not-showing-for-simple-qmainwindow-code-qt-creator-mac-os
+        QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
         Homescreen w;
         w.setWindowIcon(QIcon("://icons/wpi_logo.ico"));
         w.show();

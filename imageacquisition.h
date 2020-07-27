@@ -29,6 +29,7 @@ private:
     int counter=0;
     QString deviceName;
     CameraControls cameraControls;
+    bool recording;
 
 
 public:
@@ -58,6 +59,8 @@ public:
     void setStopAcquisition(bool value);
     CameraControls getCameraControls() const;
     void setCameraControls(const CameraControls &value);
+    void setRecording(bool value){recording=value;}
+    bool getRecording(){return recording;}
 
 signals:
     void renderImageSignal(QImage);

@@ -37,6 +37,7 @@ else {
 }
 
 SOURCES += \
+    VideoRecordingThread.cpp \
     cameracontrols.cpp \
     cameracontrolsui.cpp \
     defaults.cpp \
@@ -46,6 +47,7 @@ SOURCES += \
     homescreen.cpp
 
 HEADERS += \
+    VideoRecordingThread.h \
     cameracontrols.h \
     cameracontrolsui.h \
     defaults.h \

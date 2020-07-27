@@ -62,6 +62,11 @@ public:
 
     QList<QGraphicsPixmapItem *> graphicsPixmapItemList;
 
+    // Actions
+    QAction *imageSaveButton, *recordButton;
+
+
+
     // member functions
     void setupCameraWindow();
     void updateCameraParametersAndDisplay();
@@ -75,12 +80,15 @@ public:
     void setImageAcquisitionThread(ImageAcquisition *value);
 
 
+
+
 signals:
 
 
 public slots:
     void renderImage(QImage qImage);
     void saveImage();
+    void recordVideo();
 
 
 protected:

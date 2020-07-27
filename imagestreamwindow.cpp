@@ -11,27 +11,9 @@
 #include<QDir>
 #include <QtGui>
 #include <usoundutils.h>
+#include <VideoRecordingThread.h>
+
 //#include<QToolTip>
-
-
-//class Menu : public QMenu
-//{
-//    Q_OBJECT
-//public:
-//    Menu(){}
-//    bool event (QEvent * e)
-//    {
-//        const QHelpEvent *helpEvent = static_cast <QHelpEvent *>(e);
-//         if (helpEvent->type() == QEvent::ToolTip && activeAction() != 0)
-//         {
-//              QToolTip::showText(helpEvent->globalPos(), activeAction()->toolTip());
-//         } else
-//         {
-//              QToolTip::hideText();
-//         }
-//         return QMenu::event(e);
-//    }
-//};
 
 
 ImageStreamWindow::ImageStreamWindow(QWidget *parent) : QMainWindow(parent)
@@ -40,13 +22,16 @@ ImageStreamWindow::ImageStreamWindow(QWidget *parent) : QMainWindow(parent)
 
 void ImageStreamWindow::setupCameraWindow()
 {
-    QAction *imageSaveButton = this->menuBar()->addAction(tr("ImageSaveButton"));
-    QPixmap pixmap("icons/icon-single-shot.png");
+    imageSaveButton = this->menuBar()->addAction(tr("ImageSaveButton"));
     imageSaveButton->setIcon(QIcon(":icons/icon-single-shot.png"));
     // todo: Prathyush SP -> Fix issue with tooltip display
     imageSaveButton->setToolTip("Save frame");
     connect(imageSaveButton, SIGNAL(triggered()), this, SLOT(saveImage()));
-    // Example ends
+
+
+    recordButton = this->menuBar()->addAction(tr("RecordButton"));
+//    recordButton->setIcon(QIcon(":icons/wpi_logo.png"));
+    connect(recordButton, SIGNAL(triggered()), this, SLOT(recordVideo()));
 
 
     QOverload<int> qOverloadInt;
@@ -371,6 +356,35 @@ Save Image
     } catch (HalconCpp::HException he) {
         qDebug() << he.ErrorMessage().Text();
     }
+}
+
+
+void ImageStreamWindow::recordVideo(){
+    try {
+        qDebug() << "In record Video";
+        if (imageAcquisitionThread->getRecording()){
+            imageAcquisitionThread->setRecording(false);
+            this->recordButton->setDisabled(true);
+        }
+        else{
+        imageAcquisitionThread->setRecording(true);
+        qDebug() << "Thread Starting . . .";
+        VideoRecordingThread *thread = new VideoRecordingThread(imageAcquisitionThread);
+        thread->start();
+//        thread.wait(100000);
+//        thread.wait();
+//        std::thread t1(task1, "task1");
+        }
+    } catch (std::exception &e) {
+        qDebug() << e.what();
+    }
+
+
+//    qDebug()<<imageAcquisitionThread->getRecording();
+//    while(imageAcquisitionThread->getRecording()){
+//        qDebug() << "Recording video . . .";
+//    }
+//    qDebug() << "Completed Recording . . .";
 }
 
 
