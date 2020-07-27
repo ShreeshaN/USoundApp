@@ -34,7 +34,7 @@ private:
 public:
     // Constructor
     ImageAcquisition(QString deviceName, QObject *parent=0);
-
+    HalconCpp::HImage currentImage;
 
     // Member Functions
     void setup();
@@ -45,6 +45,7 @@ public:
     void setValueForParam(std::string paramString, std::string paramValue);
     void setValueForParam(std::string paramString, double paramValue);
     void setValueForParam(std::string paramString, long paramValue);
+    void startAquisition();
 
     // Setters and Getters
     QString getDeviceName() const;

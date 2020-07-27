@@ -7,20 +7,58 @@
 #include <QStatusBar>
 #include <QMenuBar>
 #include<QToolBar>
+#include<QDateTime>
+#include<QDir>
+#include <QtGui>
+//#include<QToolTip>
 
+
+//class Menu : public QMenu
+//{
+//    Q_OBJECT
+//public:
+//    Menu(){}
+//    bool event (QEvent * e)
+//    {
+//        const QHelpEvent *helpEvent = static_cast <QHelpEvent *>(e);
+//         if (helpEvent->type() == QEvent::ToolTip && activeAction() != 0)
+//         {
+//              QToolTip::showText(helpEvent->globalPos(), activeAction()->toolTip());
+//         } else
+//         {
+//              QToolTip::hideText();
+//         }
+//         return QMenu::event(e);
+//    }
+//};
 
 
 ImageStreamWindow::ImageStreamWindow(QWidget *parent) : QMainWindow(parent)
 {
 }
 
-
 void ImageStreamWindow::setupCameraWindow()
 {
 
+        this->menuBar()->setVisible(true);
     // Example begins: Adding a button in Menu bar
+    QMenu *menu = new QMenu();
+    menu->setToolTipsVisible(true);
+    this->menuBar()->addMenu(menu);
+
+//    menu->setTitle("Camera menu");
+
+//    this -> menuBar()->addMenu(menu);
+
     QAction *imageSaveButton = this->menuBar()->addAction(tr("ImageSaveButton"));
-    imageSaveButton->setIcon(QIcon("://icons/wpi_logo"));
+    QPixmap pixmap("icons/icon-single-shot.png");
+    imageSaveButton->setIcon(QIcon(":icons/icon-single-shot.png"));
+    imageSaveButton->setToolTip("Save frame");
+    imageSaveButton->setText("Save Frame");
+    imageSaveButton->setWhatsThis("Save frame");
+    imageSaveButton->setIconText("Save Frame");
+    menu->setVisible(true);
+
     connect(imageSaveButton, SIGNAL(triggered()), this, SLOT(saveImage()));
     // Example ends
 
@@ -306,9 +344,20 @@ void ImageStreamWindow::renderImage(QImage qImage)
 }
 
 void ImageStreamWindow::saveImage()
+/*
+Save Image
+*/
 {
-    qDebug() << "Hogbitta charles hogbitta";
-
+    try {
+        QDateTime currentDateTime = QDateTime::currentDateTime();
+        //todo: Prathyush SP -> Change from tempPath to user set path
+        std::string filename=QDir::tempPath().toStdString()+"/"+imageAcquisitionThread->getDeviceName().toStdString();
+        filename = filename+"-"+std::to_string(currentDateTime.toTime_t())+".jpeg";
+        qDebug() << ("Saving image at "+filename).c_str();
+        imageAcquisitionThread->currentImage.WriteImage("jpeg", 0,filename.c_str());
+    } catch (HalconCpp::HException he) {
+        qDebug() << he.ErrorMessage().Text();
+    }
 }
 
 

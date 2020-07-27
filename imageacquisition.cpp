@@ -42,17 +42,18 @@ void ImageAcquisition::run()
     while(!stopAcquisition)
     {
 //        long int before = GetTickCount();
-        HImage image = this->imageAcquisitionHandle.GrabImage();
+        currentImage = this->imageAcquisitionHandle.GrabImage();
 
         Hlong  width,height;
-        image.GetImageSize(&width,&height);
-        image = image.ZoomImageSize(600,600,"constant");
+        currentImage.GetImageSize(&width,&height);
+        // todo: Prathyush SP currentImage is saved to the disk. Check the importance of the resolution saved?
+        HImage zoomedImage = currentImage.ZoomImageSize(600,600,"constant");
 
         //        image.GetImageSize(&width,&height);
         //        qDebug()<< "Image size halcon "<<width<<height;
         //        HalconCpp::WriteImage(image,"tiff",0,"C:/Users/daruizcadalso/Documents/QTApplications/USoundApp/sample.jpg");
         //        break;
-        auto conversionStatus = HImage2QImage(image, qImage);
+        auto conversionStatus = HImage2QImage(zoomedImage, qImage);
 
 
         if (!conversionStatus)
@@ -283,3 +284,6 @@ void ImageAcquisition::setStopAcquisition(bool value)
     stopAcquisition = value;
 }
 
+void ImageAcquisition::startAquisition(){
+    ImageAcquisition::run();
+}
