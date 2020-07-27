@@ -109,7 +109,7 @@ void Homescreen::detectAttachedDevices()
             // " unique_name:2676016419A3_Basler_acA2040120um ",
             // " interface:Usan_VirtualIF ", " producer:Usan")
             auto device = QString(deviceList[i].Text()).split("|")[1].split(":")[1].trimmed();
-            ui->messagesListWidget->addItem("New camera detected : "+ device);
+            ui->plainTextEdit->appendPlainText("New camera detected : "+ device);
 //            emit pushToMessageBoxSignal("New camera detected : "+ device);
 //            connect(this, SIGNAL(pushToMessageBoxSignal(QString)),this,SLOT(pushToMessageBoxSlot(QString)));
 
@@ -273,6 +273,6 @@ void Homescreen::onCameraWindowClose()
 void Homescreen::pushToMessageBoxSlot(QString message)
 {
     qDebug() << "Illige barthane ila bidu";
-    ui->messagesListWidget->addItem(message);
+    ui->plainTextEdit->appendPlainText(message);
 }
 

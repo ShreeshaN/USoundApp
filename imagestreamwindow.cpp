@@ -39,26 +39,11 @@ ImageStreamWindow::ImageStreamWindow(QWidget *parent) : QMainWindow(parent)
 
 void ImageStreamWindow::setupCameraWindow()
 {
-
-        this->menuBar()->setVisible(true);
-    // Example begins: Adding a button in Menu bar
-    QMenu *menu = new QMenu();
-    menu->setToolTipsVisible(true);
-    this->menuBar()->addMenu(menu);
-
-//    menu->setTitle("Camera menu");
-
-//    this -> menuBar()->addMenu(menu);
-
     QAction *imageSaveButton = this->menuBar()->addAction(tr("ImageSaveButton"));
     QPixmap pixmap("icons/icon-single-shot.png");
     imageSaveButton->setIcon(QIcon(":icons/icon-single-shot.png"));
+    // todo: Prathyush SP -> Fix issue with tooltip display
     imageSaveButton->setToolTip("Save frame");
-    imageSaveButton->setText("Save Frame");
-    imageSaveButton->setWhatsThis("Save frame");
-    imageSaveButton->setIconText("Save Frame");
-    menu->setVisible(true);
-
     connect(imageSaveButton, SIGNAL(triggered()), this, SLOT(saveImage()));
     // Example ends
 
