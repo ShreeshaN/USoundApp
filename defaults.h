@@ -45,16 +45,28 @@ public:
 
 };
 
+class AvailableImageFormats{
+public:
+    static const inline QString JPEG="jpeg";
+    static const inline QString BMP="bmp";
+    static const inline QString JP2="jp2";
+    static const inline QString JPEGXR = "jpegxr";
+    static const inline QString PNG="png";
+    static const inline QString HOBJ = "hobj";
+    static const inline QString IMA = "ima";
+};
+
 
 class Directories{
 public:
-    static const std::string APPDIR;
-    static const std::string LOGDIR;
-    static const std::string LOGFILENAME;
-    static const std::string LOGFILEFORMAT;
-    static const std::string DATADIR;
-    static const std::string IMAGESAVEDIR;
-    static const std::string VIDEOSAVEDIR;
+    static const QString APPDIR;
+    static const QString LOGDIR;
+    static const QString LOGFILENAME;
+    static const QString LOGFILEFORMAT;
+    static const QString DATADIR;
+    static const QString IMAGEFORMAT;
+    static const QString IMAGESAVEDIR;
+    static const QString VIDEOSAVEDIR;
 };
 
 
