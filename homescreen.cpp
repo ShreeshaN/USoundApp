@@ -143,7 +143,7 @@ void Homescreen::onApplicationStartup()
 void Homescreen::on_devicesRefresh_clicked()
 {
 
-    HalconCpp::HFramegrabber acq("USB3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "267601642BB5_Basler_acA2040120um", 0, -1);
+    HalconCpp::HFramegrabber acq("USB3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "2676016419A3_Basler_acA2040120um", 0, -1);
 //    acq.SetFramegrabberParam("ExposureAuto","Off");
 
     qDebug() <<"Params: ";
@@ -157,11 +157,12 @@ void Homescreen::on_devicesRefresh_clicked()
 ////    qDebug() << h.ToString().Text() ;
 
 //    try {
-//         h = acq.GetFramegrabberParam("Gamma");
+//         h = acq.GetFramegrabberParam("AcquisitionFrameRateEnable");
 //    } catch (HalconCpp::HException &e) {
 //        qDebug() << "Exception "<< e.ErrorMessage().Text();
 //    }
-//    qDebug() << h.ToString().Text();
+//    qDebug() << "Here ";
+//    qDebug() << "Reading"<<h.ToString().Text();
 //    qDebug() << h.DArr()[0];
 
 //    try {

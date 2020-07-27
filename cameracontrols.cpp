@@ -13,12 +13,12 @@ void CameraControls::setExposureTime(long value)
     exposureTime = value;
 }
 
-long CameraControls::getAnalogGain()
+double CameraControls::getAnalogGain()
 {
     return analogGain;
 }
 
-void CameraControls::setAnalogGain(long value)
+void CameraControls::setAnalogGain(double value)
 {
     analogGain = value;
 }
@@ -83,12 +83,12 @@ void CameraControls::setContrast(float value)
     contrast = value;
 }
 
-long CameraControls::getGamma()
+double CameraControls::getGamma()
 {
     return gamma;
 }
 
-void CameraControls::setGamma(long value)
+void CameraControls::setGamma(double value)
 {
     gamma = value;
 }
@@ -143,6 +143,16 @@ void CameraControls::setResultingFrameRate(long value)
     resultingFrameRate = value;
 }
 
+bool CameraControls::getAcquisitionFrameRateEnable() const
+{
+    return acquisitionFrameRateEnable;
+}
+
+void CameraControls::setAcquisitionFrameRateEnable(bool value)
+{
+    acquisitionFrameRateEnable = value;
+}
+
 CameraControls::CameraControls()
 {
     CameraControlDefaults cameraControlsDefaults;
@@ -157,6 +167,7 @@ CameraControls::CameraControls()
     this->contrast =cameraControlsDefaults.CONTRAST;
     this->gamma =cameraControlsDefaults.GAMMA;
     this->acquisitionFrameRate =cameraControlsDefaults.ACQUISITIONFRAMERATE;
+    this->acquisitionFrameRateEnable =cameraControlsDefaults.ACQUISITIONFRAMERATEENABLE;
     this->resultingFrameRate =cameraControlsDefaults.RESULTINGFRAMERATE;
     this->monochrome =cameraControlsDefaults.MONOCHROME;
     this->rgb =cameraControlsDefaults.RGB;

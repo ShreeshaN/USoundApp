@@ -167,7 +167,6 @@ void ImageAcquisition::setupCameraControls()
         value = this->getValueForParam(HalconCameraParameterNames::AUTOEXPOSURE);
         QString::compare(value.SArr()[0],"Off") == 0?cameraControls.setAutoExposure(false):cameraControls.setAutoExposure(true);
 
-
         value = this->getValueForParam(HalconCameraParameterNames::EXPOSURETIME);
         cameraControls.setExposureTime(value.D());
 
@@ -177,6 +176,8 @@ void ImageAcquisition::setupCameraControls()
         value = this->getValueForParam(HalconCameraParameterNames::ACQUISITIONFRAMERATE);
         cameraControls.setAcquisitionFrameRate(value.D());
 
+        value = this->getValueForParam(HalconCameraParameterNames::ACQUISITIONFRAMERATEENABLE);
+        cameraControls.setAcquisitionFrameRateEnable(value.I()==0?false:true);
 
         value = this->getValueForParam(HalconCameraParameterNames::RESULTINGFRAMERATE);
         cameraControls.setResultingFrameRate(value.D());

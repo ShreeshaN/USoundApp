@@ -37,8 +37,8 @@ public:
     long getExposureTime();
     void setExposureTime(long value);
 
-    long getAnalogGain();
-    void setAnalogGain(long value);
+    double getAnalogGain();
+    void setAnalogGain(double value);
 
     float getExposureTarget();
     void setExposureTarget(float value);
@@ -58,8 +58,8 @@ public:
     float getContrast();
     void setContrast(float value);
 
-    long getGamma();
-    void setGamma(long value);
+    double getGamma();
+    void setGamma(double value);
 
     bool getMonochrome();
     void setMonochrome(bool value);
@@ -77,6 +77,9 @@ public:
     long getResultingFrameRate() const;
     void setResultingFrameRate(long value);
 
+    bool getAcquisitionFrameRateEnable() const;
+    void setAcquisitionFrameRateEnable(bool value);
+
 private:
     friend std::ostream& operator<<(std::ostream &strm, const CameraControls &a);
 
@@ -84,7 +87,7 @@ private:
 
     // exposure controls
     long exposureTime;
-    long analogGain;
+    double analogGain;
     float exposureTarget;  // not sure about this implementation
     bool autoExposure;
 
@@ -93,8 +96,9 @@ private:
     float saturation;
     float brightness;
     float contrast;
-    long gamma;
+    double gamma;
     long acquisitionFrameRate;
+    bool acquisitionFrameRateEnable;
     long resultingFrameRate;
     bool monochrome;  // not sure about this implementation
     bool rgb;  // not sure about this implementation

@@ -30,7 +30,7 @@ public:
     QTreeWidgetItem *exposureTime;
     QSpinBox *exposureTimeSpinBox;
     QTreeWidgetItem *analogGain;
-    QSpinBox *analogGainSpinBox;
+    QDoubleSpinBox *analogGainSpinBox;
     QTreeWidgetItem *autoExposure;
     QCheckBox *autoExposureCheckbox;
     QTreeWidgetItem *colorAppearance;
@@ -44,8 +44,11 @@ public:
     QTreeWidgetItem *contrast;
     QSpinBox *contrastSpinBox;
     QTreeWidgetItem *gamma;
+    QDoubleSpinBox *gammaSpinBox;
     QTreeWidgetItem *acquisitionFrameRate;
     QSpinBox *acquisitionFramerateSpinBox;
+    QTreeWidgetItem *acquisitionFrameRateEnable;
+    QCheckBox *acquisitionFrameRateEnableCheckbox;
     QTreeWidgetItem *monochrome;
     QCheckBox *monochromeCheckbox;
     QTreeWidgetItem *rgb;

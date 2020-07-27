@@ -19,6 +19,7 @@ struct CameraControlDefaults{
     float CONTRAST = 0.0;
     float GAMMA = 0.0;
     long ACQUISITIONFRAMERATE=0;
+    bool ACQUISITIONFRAMERATEENABLE=false;
     long RESULTINGFRAMERATE=0;
     bool MONOCHROME=true; // not sure about this implementation
     bool RGB=false; // not sure about this implementation
@@ -31,6 +32,7 @@ public:
     static const std::string AUTOEXPOSURE;
     static const std::string GAMMA;
     static const std::string ACQUISITIONFRAMERATE;
+    static const std::string ACQUISITIONFRAMERATEENABLE;
     static const std::string RESULTINGFRAMERATE;
     static const  std::string GAIN;
     static const  std::string HUE;

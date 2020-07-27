@@ -5,6 +5,7 @@ const std::string HalconCameraParameterNames::EXPOSURETIME = "ExposureTime";
 const std::string HalconCameraParameterNames::AUTOEXPOSURE = "ExposureAuto";
 const std::string HalconCameraParameterNames::GAMMA = "Gamma";
 const std::string HalconCameraParameterNames::ACQUISITIONFRAMERATE = "AcquisitionFrameRate";
+const std::string HalconCameraParameterNames::ACQUISITIONFRAMERATEENABLE = "AcquisitionFrameRateEnable";
 const std::string HalconCameraParameterNames::RESULTINGFRAMERATE = "ResultingFrameRate";
 const std::string HalconCameraParameterNames::GAIN = "Gain";
 

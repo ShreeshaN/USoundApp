@@ -56,7 +56,6 @@ HEADERS += \
 FORMS += \
     homescreen.ui
 
-include(C:\Qt\5.15.0\Src\qttools\src\shared\qtpropertybrowser\qtpropertybrowser.pri)
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
