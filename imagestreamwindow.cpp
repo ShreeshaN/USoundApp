@@ -412,7 +412,6 @@ void ImageStreamWindow::pauseVideoRecord(){
 }
 
 
-
 // Setters and Getters
 ImageAcquisition *ImageStreamWindow::getImageAcquisitionThread() const
 {

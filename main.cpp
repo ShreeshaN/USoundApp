@@ -8,8 +8,9 @@
 #include <QDir>
 #include <usoundutils.h>
 #include <QDateTime>
+#include <defaults.h>
 
-QString logFilePath = QDir::tempPath()+QString("/USoundApp-%1.log").arg(generateTimeStamp().c_str());
+const std::string logFilePath = Directories::LOGDIR+"/"+Directories::LOGFILENAME+generateTimeStamp()+"."+Directories::LOGFILEFORMAT;
 QString tempString = "";
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
@@ -42,8 +43,8 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
         break;
     }
 
-     //todo: Prathyush SP -> Set settings for log file path
-    QFile outFile(logFilePath);
+    //todo: Prathyush SP -> Set settings for log file path
+    QFile outFile(logFilePath.c_str());
     outFile.open(QIODevice::WriteOnly | QIODevice::Append);
     QTextStream ts(&outFile);
     ts << txt << endl;
@@ -63,9 +64,9 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
 int main(int argc, char *argv[])
 {
     try {
-        fprintf(stdout, "Logging to file: %s", (logFilePath.toStdString()+"\n").c_str());
+        fprintf(stdout, "Logging to file: %s", (logFilePath+"\n").c_str());
         qInstallMessageHandler(myMessageOutput); // Install the handler
-        qInfo() << QString("Logging to file: %1").arg(logFilePath);
+        qInfo() << ("Logging to file:" + logFilePath).c_str();
         QApplication a(argc, argv);
         // This is used as a workaround to display menubar in mac os - https://stackoverflow.com/questions/25261760/menubar-not-showing-for-simple-qmainwindow-code-qt-creator-mac-os
         QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
