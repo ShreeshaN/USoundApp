@@ -364,7 +364,7 @@ Save Image
         //todo: Prathyush SP -> Change from tempPath to user set path
         std::string filename=QDir::tempPath().toStdString()+"/"+imageAcquisitionThread->getDeviceName().toStdString();
         filename = filename+"-"+generateTimeStamp()+".jpeg";
-        qDebug() << ("Saving image at "+filename).c_str();
+        qInfo() << ("Saving image at "+filename).c_str();
         imageAcquisitionThread->currentImage.WriteImage("jpeg", 0,filename.c_str());
     } catch (HalconCpp::HException he) {
         qDebug() << he.ErrorMessage().Text();

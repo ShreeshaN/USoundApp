@@ -25,6 +25,7 @@
 #include<QPixmap>
 #include <QGraphicsView>
 #include <imagestreamwindow.h>
+#include<QtWidgets/QPlainTextEdit>
 
 
 QT_BEGIN_NAMESPACE
@@ -47,8 +48,7 @@ public:
     ImageAcquisition *imageAcquisitionThread;
     QLabel *imageLabel;
 
-
-
+    static QPlainTextEdit *globalMessageBox;
 
     // functions
     void onApplicationStartup();
@@ -72,4 +72,7 @@ private:
     Ui::Homescreen *ui;
 
 };
+
+
+
 #endif // HOMESCREEN_H

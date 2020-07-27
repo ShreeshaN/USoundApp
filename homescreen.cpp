@@ -33,14 +33,18 @@
 //#include "qtpropertymanager.h"
 //#include "qtvariantproperty.h"
 
+// Initialize Global Message Box
+QPlainTextEdit * Homescreen::globalMessageBox = 0;
+
 Homescreen::Homescreen(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::Homescreen)
 
 {
     ui->setupUi(this);
+    // Assign UI plainTextEdit to global Message Box
+    globalMessageBox =ui->plainTextEdit;
     onApplicationStartup();
-
 }
 
 
@@ -95,7 +99,7 @@ void Homescreen::detectAttachedDevices()
 {
 
     using namespace HalconCpp;
-    qDebug() << "Detecting attached devices";
+    qDebug() << "Detecting attached devices . . .";
     HalconCpp::HTuple *information = new HalconCpp::HTuple;
     HalconCpp::HTuple * valueList = new HalconCpp::HTuple;
     try {
@@ -109,10 +113,7 @@ void Homescreen::detectAttachedDevices()
             // " unique_name:2676016419A3_Basler_acA2040120um ",
             // " interface:Usan_VirtualIF ", " producer:Usan")
             auto device = QString(deviceList[i].Text()).split("|")[1].split(":")[1].trimmed();
-//            ui->plainTextEdit->appendPlainText("New camera detected : "+ device);
-//            emit pushToMessageBoxSignal("New camera detected : "+ device);
-//            connect(this, SIGNAL(pushToMessageBoxSignal(QString)),this,SLOT(pushToMessageBoxSlot(QString)));
-
+            qInfo() << "New camera detected"+device;
             devices.append(device);
         }
 
