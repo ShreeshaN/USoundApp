@@ -109,8 +109,8 @@ void ImageStreamWindow::setupCameraWindow()
         // will query the camera and update cameracontrols obj
         this->imageAcquisitionThread->getCameraControls().setAutoExposure(autoExposureCheckbox->isChecked());
         imageAcquisitionThread->setValueForParam(HalconCameraParameterNames::AUTOEXPOSURE,autoExposureCheckbox->isChecked()?"Once":"Off");
-        mssleep(500);
-//        std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Waiting for the hardware to update exposure time based on Autoexposure
+        Sleep(500);
+//        mssleep(500); // Waiting for the hardware to update exposure time based on Autoexposure
         updateCameraParametersAndDisplay();
 
 
