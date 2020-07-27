@@ -2,6 +2,7 @@
 #include "ui_homescreen.h"
 #include "cameracontrols.h"
 #include "imageacquisition.h"
+#include "defaults.h"
 
 #ifndef __APPLE__
 #  include "HalconCpp.h"
@@ -28,6 +29,7 @@
 #include <QException>
 #include <exception>
 #include<QDialog>
+#include <usoundutils.h>
 //#include "qteditorfactory.h"
 //#include "qttreepropertybrowser.h"
 //#include "qtpropertymanager.h"
@@ -113,7 +115,10 @@ void Homescreen::detectAttachedDevices()
             // " unique_name:2676016419A3_Basler_acA2040120um ",
             // " interface:Usan_VirtualIF ", " producer:Usan")
             auto device = QString(deviceList[i].Text()).split("|")[1].split(":")[1].trimmed();
-            qInfo() << "New camera detected"+device;
+            qInfo() << "New camera detected "+device;
+
+            initializeDirectoriesForDevice(device);
+
             devices.append(device);
         }
 
