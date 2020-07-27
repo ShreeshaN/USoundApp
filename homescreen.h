@@ -50,6 +50,7 @@ public:
 
     static QPlainTextEdit *globalMessageBox;
 
+
     // functions
     void onApplicationStartup();
     void setupDevicesUI();

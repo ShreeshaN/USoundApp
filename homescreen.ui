@@ -249,9 +249,72 @@
         <property name="title">
          <string>Messages</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <layout class="QVBoxLayout" name="verticalLayout_5">
          <item>
-          <widget class="QPlainTextEdit" name="plainTextEdit"/>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item>
+              <widget class="QLabel" name="logLevel">
+               <property name="text">
+                <string>Log Level </string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="logLevelText">
+               <property name="iconSize">
+                <size>
+                 <width>10</width>
+                 <height>10</height>
+                </size>
+               </property>
+               <item>
+                <property name="text">
+                 <string>INFO</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>DEBUG</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>WARN</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>CRITICAL</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>FATAL</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>668</width>
+                 <height>17</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QPlainTextEdit" name="plainTextEdit"/>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>

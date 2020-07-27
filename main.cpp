@@ -7,7 +7,6 @@
 #include <QFile>
 #include <QDir>
 #include <usoundutils.h>
-#include <logfilewatcherthread.h>
 #include <QDateTime>
 
 QString logFilePath = QDir::tempPath()+QString("/USoundApp-%1.log").arg(generateTimeStamp().c_str());
