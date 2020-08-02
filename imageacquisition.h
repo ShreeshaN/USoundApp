@@ -47,7 +47,7 @@ private:
     int counter=0;
     QString deviceName;
     CameraControls cameraControls;
-    bool recording;
+    bool recording=false;
 
 
 
