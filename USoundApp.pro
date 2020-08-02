@@ -49,6 +49,7 @@ HEADERS += \
     cameracontrols.h \
     cameracontrolsui.h \
     defaults.h \
+    doubleslider.h \
     homescreen.h \
     imageacquisition.h \
     imagestreamwindow.h \

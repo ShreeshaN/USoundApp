@@ -41,8 +41,12 @@ void ImageAcquisition::run()
     using namespace HalconCpp;
     while(!stopAcquisition)
     {
-//        long int before = GetTickCount();
+//        qDebug() << "streaming images"<<counter;
+        long int before = GetTickCount();
         currentImage = this->imageAcquisitionHandle.GrabImage();
+        long int after = GetTickCount();
+//        qDebug() << before << after<<(after-before)/1000.0;
+
 
         Hlong  width,height;
         currentImage.GetImageSize(&width,&height);
@@ -64,10 +68,8 @@ void ImageAcquisition::run()
         //        msleep(1000);
 
         emit renderImageSignal(qImage);
-//        long int after = GetTickCount();
 
         counter++;
-//        qDebug() << before << after<<(after-before)/1000.0;
 
 //        qDebug()<< "Frame rate :"<<this->getValueForParam(HalconCameraParameters::RESULTINGFRAMERATE).DArr()[0];
 
@@ -163,7 +165,7 @@ void ImageAcquisition::setupCameraControls()
     // If a wrong parameter name is entered the only watch to gracefully check it is using try catch
     try {
         value = this->getValueForParam(HalconCameraParameterNames::GAIN);
-        cameraControls.setAnalogGain(value.ToDArr()[0]);
+        cameraControls.setAnalogGain(value.D());
 
         value = this->getValueForParam(HalconCameraParameterNames::AUTOEXPOSURE);
         QString::compare(value.SArr()[0],"Off") == 0?cameraControls.setAutoExposure(false):cameraControls.setAutoExposure(true);
@@ -201,13 +203,13 @@ HalconCpp::HTuple ImageAcquisition::getValueForParam(std::string paramString)
 
 void ImageAcquisition::setValueForParam(std::string paramString, int paramValue)
 {
-    try {
+//    try {
         qDebug() << "in int set param"<< paramString.c_str() << paramValue;
         imageAcquisitionHandle.SetFramegrabberParam(paramString.c_str(), paramValue);
 
-    } catch (HalconCpp::HException &e) {
-        qDebug() << "Exception in setting param value:int message"<<e.ErrorMessage().Text() << e.ErrorCode();
-    }
+//    } catch (HalconCpp::HException &e) {
+//        qDebug() << "Exception in setting param value:int message"<<e.ErrorMessage().Text() << e.ErrorCode();
+//    }
 }
 
 void ImageAcquisition::setValueForParam(std::string paramString, double paramValue)

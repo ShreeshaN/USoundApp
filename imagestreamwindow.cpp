@@ -11,6 +11,7 @@
 #include<QDir>
 #include <QtGui>
 #include <usoundutils.h>
+#include "doubleslider.h"
 //#include<QToolTip>
 
 
@@ -84,6 +85,7 @@ void ImageStreamWindow::setupCameraWindow()
     exposureTimeSpinBox->setSingleStep(1);
     exposureTimeSpinBox->setValue( this->imageAcquisitionThread->getCameraControls().getExposureTime());
     connect(exposureTimeSpinBox, qOverloadInt(&QSpinBox::valueChanged), [=]{
+        qDebug() << "exposure time"<< exposureTimeSpinBox->value();
         this->imageAcquisitionThread->getCameraControls().setExposureTime(exposureTimeSpinBox->value());
         imageAcquisitionThread->setValueForParam(HalconCameraParameterNames::EXPOSURETIME,exposureTimeSpinBox->value());
         updateCameraParametersAndDisplay();
@@ -91,7 +93,7 @@ void ImageStreamWindow::setupCameraWindow()
 
     analogGain = new QTreeWidgetItem(QStringList() << "Analog Gain");
     analogGainSpinBox = new QDoubleSpinBox;
-    analogGainSpinBox->setRange(0, 36); // 8-bit; for 12-bit device max value is 24; Need a framework to define all parameters
+    analogGainSpinBox->setRange(0, 36); // TODO: SHreesha - 8-bit; for 12-bit device max value is 24; Need a framework to define all parameters
     analogGainSpinBox->setSingleStep(0.1);
     analogGainSpinBox->setValue( this->imageAcquisitionThread->getCameraControls().getAnalogGain());
     connect(analogGainSpinBox, qOverloadDouble(&QDoubleSpinBox::valueChanged), [=]{
@@ -104,7 +106,7 @@ void ImageStreamWindow::setupCameraWindow()
     autoExposureCheckbox = new QCheckBox();
     autoExposureCheckbox->setCheckState(this->imageAcquisitionThread->getCameraControls().getAutoExposure()?Qt::CheckState(2):Qt::CheckState(0));
     connect(autoExposureCheckbox, &QCheckBox::stateChanged, [=]{
-        // is this below assignment required here and for every other
+        // TODO: Shreesha - is this below assignment required here and for every other
         // widget? coz anyway updatecameraparameteranddisplay
         // will query the camera and update cameracontrols obj
         this->imageAcquisitionThread->getCameraControls().setAutoExposure(autoExposureCheckbox->isChecked());
@@ -189,6 +191,23 @@ void ImageStreamWindow::setupCameraWindow()
     gammaSpinBox->setRange(0, 4);
     gammaSpinBox->setSingleStep(0.1);
     gammaSpinBox->setValue( this->imageAcquisitionThread->getCameraControls().getGamma());
+
+    // SLider experiment
+//    DoubleSlider *slider = new DoubleSlider(Qt::Horizontal);
+//    slider->setFocusPolicy(Qt::StrongFocus);
+//    slider->setTickPosition(QSlider::TicksBothSides);
+//    slider->setTickInterval(0);
+//    slider->setSingleStep(1);
+//    slider->setRange(0,4);
+//    connect(slider, &DoubleSlider::doubleValueChanged,gammaSpinBox, &QDoubleSpinBox::setValue);
+//    connect(gammaSpinBox, qOverloadDouble(&QDoubleSpinBox::valueChanged),slider,&QSlider::setValue);
+    //    QHBoxLayout * hu = new QHBoxLayout(widget);
+    //    QWidget *gammaWidget = new QWidget;
+    //    gammaWidget->setLayout(hu);
+    //    hu->addWidget(gammaSpinBox);
+    //    hu->addWidget(slider);
+    //    ccTreeWidget->setItemWidget(gamma, 1, gammaWidget);
+
     colorAppearance->addChild(gamma);
     connect(gammaSpinBox, qOverloadDouble(&QDoubleSpinBox::valueChanged), [=]{
         this->imageAcquisitionThread->getCameraControls().setGamma(gammaSpinBox->value());
@@ -209,20 +228,11 @@ void ImageStreamWindow::setupCameraWindow()
     });
     ccTreeWidget->setItemWidget(acquisitionFrameRateEnable, 1, acquisitionFrameRateEnableCheckbox);
 
-    acquisitionFrameRate = new QTreeWidgetItem(QStringList() << " Acquition Frame Rate");
+    acquisitionFrameRate = new QTreeWidgetItem(QStringList() << " AcquitionFrameRate");
     acquisitionFramerateSpinBox = new QSpinBox;
     acquisitionFramerateSpinBox->setRange(0, 120);
     acquisitionFramerateSpinBox->setSingleStep(1);
     acquisitionFramerateSpinBox->setValue(this->imageAcquisitionThread->getCameraControls().getAcquisitionFrameRate());
-
-    // SLider experiment
-    QSlider *slider = new QSlider(Qt::Horizontal);
-    slider->setFocusPolicy(Qt::StrongFocus);
-    slider->setTickPosition(QSlider::TicksBothSides);
-    slider->setTickInterval(10);
-    slider->setSingleStep(1);
-
-
     colorAppearance->addChild(acquisitionFrameRate);
     connect(acquisitionFramerateSpinBox, qOverloadInt(&QSpinBox::valueChanged), [=]{
         this->imageAcquisitionThread->getCameraControls().setAcquisitionFrameRate(acquisitionFramerateSpinBox->value());
@@ -267,8 +277,12 @@ void ImageStreamWindow::setupCameraWindow()
 
 
     // resulting frame rate in status bar
-    qDebug() << "setting resulting frame rate";
     this->statusBar()->showMessage("Frame Rate: "+ QString::number(this->getImageAcquisitionThread()->getCameraControls().getResultingFrameRate()));
+
+    connect(this, &ImageStreamWindow::displayResultingFrameRate, [=]{
+       this->statusBar()->showMessage("Frame Rate: "+ QString::number(this->getImageAcquisitionThread()->getCameraControls().getResultingFrameRate()));
+
+    });
 
     hlayout->addWidget(ccTreeWidget);
     hlayout->addWidget(graphicsView);
@@ -301,6 +315,7 @@ void ImageStreamWindow::displayCameraParameters()
     acquisitionFrameRateEnableCheckbox->setCheckState(imageAcquisitionThread->getCameraControls().getAcquisitionFrameRateEnable()?Qt::CheckState(2):Qt::CheckState(0));
     monochromeCheckbox->setCheckState(imageAcquisitionThread->getCameraControls().getMonochrome()?Qt::CheckState(2):Qt::CheckState(0));
     rgbCheckbox->setCheckState(imageAcquisitionThread->getCameraControls().getRgb()?Qt::CheckState(2):Qt::CheckState(0));
+    emit displayResultingFrameRate();
 }
 
 void ImageStreamWindow::closeEvent(QCloseEvent *event)

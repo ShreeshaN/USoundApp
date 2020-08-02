@@ -76,7 +76,7 @@ public:
 
 
 signals:
-
+    void displayResultingFrameRate();
 
 public slots:
     void renderImage(QImage qImage);

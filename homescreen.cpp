@@ -146,7 +146,7 @@ void Homescreen::onApplicationStartup()
 void Homescreen::on_devicesRefresh_clicked()
 {
     try {
-        HalconCpp::HFramegrabber acq("usb3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "267601642BB5_Basler_acA2040120um", 0, -1);
+//        HalconCpp::HFramegrabber acq("usb3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "267601642BB5_Basler_acA2040120um", 0, -1);
 
     } catch (HalconCpp::HException &e) {
         qDebug() << e.ErrorMessage().Text();
@@ -163,14 +163,32 @@ void Homescreen::on_devicesRefresh_clicked()
 ////    }
 ////    qDebug() << h.ToString().Text() ;
 
-//    try {
-//         h = acq.GetFramegrabberParam("AcquisitionFrameRateEnable");
-//    } catch (HalconCpp::HException &e) {
-//        qDebug() << "Exception "<< e.ErrorMessage().Text();
-//    }
+    try {
+         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("ResultingFrameRate");
+    } catch (HalconCpp::HException &e) {
+        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    }
 //    qDebug() << "Here ";
 //    qDebug() << "Reading"<<h.ToString().Text();
-//    qDebug() << h.DArr()[0];
+    qDebug() <<"Resulting frame rate" <<h.D();
+
+    try {
+         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRate");
+    } catch (HalconCpp::HException &e) {
+        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    }
+//    qDebug() << "Here ";
+//    qDebug() << "Reading"<<h.ToString().Text();
+    qDebug() <<"Acquisition frame rate" <<h.D();
+
+    try {
+         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRateEnable");
+    } catch (HalconCpp::HException &e) {
+        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    }
+//    qDebug() << "Here ";
+//    qDebug() << "Reading"<<h.ToString().Text();
+    qDebug() <<"Acquisition frame rate enable" <<h.D();
 
 //    try {
 //         h = acq.GetFramegrabberParam("ExposureAuto");
@@ -182,22 +200,22 @@ void Homescreen::on_devicesRefresh_clicked()
 
 
 
-    using namespace HalconCpp;
-    HalconCpp::HTuple *information = new HalconCpp::HTuple;
-    HalconCpp::HTuple * valueList = new HalconCpp::HTuple;
-    QList<QString> list = { "bits_per_channel", "camera_type", "color_space", "defaults", "device", "external_trigger", "field", "general", "generic", "horizontal_resolution", "image_height", "image_width", "info_boards", "parameters", "parameters_readonly", "parameters_writeonly", "port", "revision", "start_column", "start_row", "vertical_resolution"};
-    for (auto param : list) {
-        qDebug()<< "************" << param << "*************";
-        HalconCpp::InfoFramegrabber("usb3vision",HTuple(HString::FromUtf8(param.toUtf8())),information, valueList);
-        qDebug () << "Information: "<< information->S().Text();
-        qDebug() << "Valuelist length: "<<valueList->Length();
-        auto deviceList = valueList->ToSArr();
-        for(int i=0;i<valueList->Length();i++)
-        {
-            qDebug() << QString(deviceList[i].Text());
-        }
+//    using namespace HalconCpp;
+//    HalconCpp::HTuple *information = new HalconCpp::HTuple;
+//    HalconCpp::HTuple * valueList = new HalconCpp::HTuple;
+//    QList<QString> list = { "bits_per_channel", "camera_type", "color_space", "defaults", "device", "external_trigger", "field", "general", "generic", "horizontal_resolution", "image_height", "image_width", "info_boards", "parameters", "parameters_readonly", "parameters_writeonly", "port", "revision", "start_column", "start_row", "vertical_resolution"};
+//    for (auto param : list) {
+//        qDebug()<< "************" << param << "*************";
+//        HalconCpp::InfoFramegrabber("usb3vision",HTuple(HString::FromUtf8(param.toUtf8())),information, valueList);
+//        qDebug () << "Information: "<< information->S().Text();
+//        qDebug() << "Valuelist length: "<<valueList->Length();
+//        auto deviceList = valueList->ToSArr();
+//        for(int i=0;i<valueList->Length();i++)
+//        {
+//            qDebug() << QString(deviceList[i].Text());
+//        }
 
-    }
+//    }
 //    HalconCpp::InfoFramegrabber("usb3vision","parameters",information, valueList);
 //    qDebug () << "Information: "<< information->S().Text();
 //    qDebug() << "Valuelist length: "<<valueList->Length();
