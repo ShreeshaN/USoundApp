@@ -28,7 +28,7 @@ const QString Directories::LOGFILEFORMAT = "log";
 
 // Data directories configuration
 const QString Directories::DATADIR = APPDIR+"/data";
-const QString Directories::IMAGEFORMAT = AvailableImageFormats::PNG;
+const QString Directories::IMAGEFORMAT = AvailableImageFormats::TIFF;
 const QString Directories::IMAGESAVEDIR = "/images";
 const QString Directories::VIDEOSAVEDIR = "/videos";
 

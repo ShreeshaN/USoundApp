@@ -78,7 +78,10 @@ int main(int argc, char *argv[])
         w.setWindowIcon(QIcon("://icons/wpi_logo.ico"));
         w.show();
         return a.exec();
-    } catch (std::exception &e) {
+    }catch (HalconCpp::HOperatorException &e) {
+        qDebug() << e.ErrorMessage().Text();
+    }
+    catch (std::exception &e) {
         qDebug() << e.what();
     }
 

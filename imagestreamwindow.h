@@ -14,6 +14,7 @@
 #include <QSpinBox>
 #include <QCheckBox>
 
+
 class ImageStreamWindow : public QMainWindow
 {
     Q_OBJECT
@@ -61,6 +62,8 @@ public:
     QGraphicsPixmapItem *graphicsPixmapItem;
 
     QList<QGraphicsPixmapItem *> graphicsPixmapItemList;
+
+
 
     // Actions
     QAction *imageSaveButton, *recordButton, *recordPauseButton, *recordStopButton;

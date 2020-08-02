@@ -51,6 +51,7 @@ public:
     static const inline QString BMP="bmp";
     static const inline QString JP2="jp2";
     static const inline QString JPEGXR = "jpegxr";
+    static const inline QString TIFF = "tiff";
     static const inline QString PNG="png";
     static const inline QString HOBJ = "hobj";
     static const inline QString IMA = "ima";

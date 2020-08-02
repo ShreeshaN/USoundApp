@@ -368,18 +368,20 @@ Save Image
 void ImageStreamWindow::startVideoRecord(){
     try {
         qDebug() << "Starting video record";
-
+        qDebug() << "Images in buffer "+ QString(std::to_string(imageAcquisitionThread->imageBuffer.length()).c_str());
         // Disable Record button and enable pause and stop button
+        imageAcquisitionThread->uid = QString(generateTimeStamp().c_str());
         imageAcquisitionThread->setRecording(true);
         this->recordButton->setDisabled(true);
-        this->recordPauseButton->setEnabled(true);
+//        this->recordPauseButton->setEnabled(true);
         this->recordStopButton->setEnabled(true);
 
+
         // Launch Thread
-        imageAcquisitionThread->setRecording(true);
         qDebug() << "Launching thread to record images . . .";
         VideoRecordingThread *thread = new VideoRecordingThread(imageAcquisitionThread);
         thread->start();
+//        thread->wait();
     } catch (std::exception &e) {
         qDebug() << e.what();
     }
@@ -391,7 +393,7 @@ void ImageStreamWindow::stopVideoRecord(){
         // Disable Record button and enable pause and stop button
         imageAcquisitionThread->setRecording(false);
         this->recordButton->setEnabled(true);
-        this->recordPauseButton->setDisabled(true);
+//        this->recordPauseButton->setDisabled(true);
         this->recordStopButton->setDisabled(true);
         //Todo: Prathyush SP -  Launch Thread to convert stream of images to a video
     } catch (std::exception &e) {

@@ -15,6 +15,8 @@ public:
     // Constructor
     VideoRecordingThread(ImageAcquisition *imageAcquisitionThread);
 
+    void encodeVideo();
+
 private:
     void run();
 };

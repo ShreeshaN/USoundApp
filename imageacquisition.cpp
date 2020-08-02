@@ -6,6 +6,7 @@
 #include <QCoreApplication>
 #include "defaults.h"
 #include <exception>
+#include <usoundutils.h>
 
 CameraControls ImageAcquisition::getCameraControls() const
 {
@@ -38,6 +39,7 @@ void ImageAcquisition::setup()
 void ImageAcquisition::run()
 {
     QImage qImage;
+
     using namespace HalconCpp;
     while(!stopAcquisition)
     {
@@ -65,6 +67,13 @@ void ImageAcquisition::run()
 
         emit renderImageSignal(qImage);
 //        long int after = GetTickCount();
+
+        if(getRecording()){
+
+            QString filename=getVideoSavePathForDevice(getDeviceName())+"/"+uid;+"/"+QString(std::to_string(counter).c_str())+"."+Directories::IMAGEFORMAT;
+            //            qDebug() << "Saving frame at "+filename;
+            imageBuffer.enqueue(RecordingBuffer(currentImage, filename));
+        }
 
         counter++;
 //        qDebug() << before << after<<(after-before)/1000.0;

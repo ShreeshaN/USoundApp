@@ -16,6 +16,25 @@
 #include "cameracontrols.h"
 #include "defaults.h"
 #include <QSignalMapper>
+#include <QQueue>
+
+class RecordingBuffer
+{
+    // Access specifier
+public:
+
+    // Data Members
+    HalconCpp::HImage image;
+    QString imageSavePath;
+
+    //Default Constructor
+    RecordingBuffer(HalconCpp::HImage image, QString imageSavePath)
+    {
+        this->image = image;
+        this->imageSavePath=imageSavePath;
+
+    }
+};
 
 
 
@@ -36,6 +55,9 @@ public:
     // Constructor
     ImageAcquisition(QString deviceName, QObject *parent=0);
     HalconCpp::HImage currentImage;
+    // Image Buffer
+    QQueue<RecordingBuffer> imageBuffer;
+    QString uid;
 
     // Member Functions
     void setup();
