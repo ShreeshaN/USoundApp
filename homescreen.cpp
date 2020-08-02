@@ -130,7 +130,7 @@ void Homescreen::detectAttachedDevices()
         qDebug() << except.ErrorMessage().Text();
         QMessageBox Msgbox;
         if (except.ErrorCode()==2042){
-            Msgbox.setText("Halcon license expired!");
+            Msgbox.critical(0,"Error", "Halcon license expired!");
             Msgbox.exec();
             abort();
         }
