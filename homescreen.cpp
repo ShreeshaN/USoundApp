@@ -3,6 +3,7 @@
 #include "cameracontrols.h"
 #include "imageacquisition.h"
 #include "defaults.h"
+#include <QMessageBox>
 
 #ifndef __APPLE__
 #  include "HalconCpp.h"
@@ -127,6 +128,12 @@ void Homescreen::detectAttachedDevices()
         qDebug() << "Device unavailable";
         qDebug() << except.ErrorCode();
         qDebug() << except.ErrorMessage().Text();
+        QMessageBox Msgbox;
+        if (except.ErrorCode()==2042){
+            Msgbox.setText("Halcon license expired!");
+            Msgbox.exec();
+            abort();
+        }
 
     }
 
@@ -156,34 +163,34 @@ void Homescreen::on_devicesRefresh_clicked()
     } catch (HalconCpp::HException &e) {
         qDebug() << e.ErrorMessage().Text();
     }
-//    acq.SetFramegrabberParam("ExposureAuto","Off");
+    //    acq.SetFramegrabberParam("ExposureAuto","Off");
 
     qDebug() <<"Params: ";
     HalconCpp::HTuple h;
-////    qDebug() <<"********************available_param_names******************************";
-////    try {
-////         h = acq.GetFramegrabberParam("available_param_names");
-////    } catch (HalconCpp::HException &e) {
-////        qDebug() << "Exception "<< e.ErrorMessage().Text();
-////    }
-////    qDebug() << h.ToString().Text() ;
+    ////    qDebug() <<"********************available_param_names******************************";
+    ////    try {
+    ////         h = acq.GetFramegrabberParam("available_param_names");
+    ////    } catch (HalconCpp::HException &e) {
+    ////        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    ////    }
+    ////    qDebug() << h.ToString().Text() ;
 
-//    try {
-//         h = acq.GetFramegrabberParam("AcquisitionFrameRateEnable");
-//    } catch (HalconCpp::HException &e) {
-//        qDebug() << "Exception "<< e.ErrorMessage().Text();
-//    }
-//    qDebug() << "Here ";
-//    qDebug() << "Reading"<<h.ToString().Text();
-//    qDebug() << h.DArr()[0];
+    //    try {
+    //         h = acq.GetFramegrabberParam("AcquisitionFrameRateEnable");
+    //    } catch (HalconCpp::HException &e) {
+    //        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    //    }
+    //    qDebug() << "Here ";
+    //    qDebug() << "Reading"<<h.ToString().Text();
+    //    qDebug() << h.DArr()[0];
 
-//    try {
-//         h = acq.GetFramegrabberParam("ExposureAuto");
-//    } catch (HalconCpp::HException &e) {
-//        qDebug() << "Exception "<< e.ErrorMessage().Text();
-//    }
-//    qDebug() << h.ToString().Text();
-//    qDebug() << h.DArr()[0];
+    //    try {
+    //         h = acq.GetFramegrabberParam("ExposureAuto");
+    //    } catch (HalconCpp::HException &e) {
+    //        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    //    }
+    //    qDebug() << h.ToString().Text();
+    //    qDebug() << h.DArr()[0];
 
 
 
@@ -203,31 +210,31 @@ void Homescreen::on_devicesRefresh_clicked()
         }
 
     }
-//    HalconCpp::InfoFramegrabber("usb3vision","parameters",information, valueList);
-//    qDebug () << "Information: "<< information->S().Text();
-//    qDebug() << "Valuelist length: "<<valueList->Length();
-//    auto deviceList = valueList->ToSArr();
-//    for(int i=0;i<valueList->Length();i++)
-//    {
-//        qDebug() << QString(deviceList[i].Text());
-//    }
+    //    HalconCpp::InfoFramegrabber("usb3vision","parameters",information, valueList);
+    //    qDebug () << "Information: "<< information->S().Text();
+    //    qDebug() << "Valuelist length: "<<valueList->Length();
+    //    auto deviceList = valueList->ToSArr();
+    //    for(int i=0;i<valueList->Length();i++)
+    //    {
+    //        qDebug() << QString(deviceList[i].Text());
+    //    }
 
 
 
-//    qDebug() << cameraControlsMap["267601642BB5_Basler_acA2040120um"].getGamma();
-//    qDebug() << cameraControlsMap["2676016419A3_Basler_acA2040120um"].getGamma();
+    //    qDebug() << cameraControlsMap["267601642BB5_Basler_acA2040120um"].getGamma();
+    //    qDebug() << cameraControlsMap["2676016419A3_Basler_acA2040120um"].getGamma();
 
 
 
 
     //    HalconCpp::HFramegrabber acq("USB3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "267601642BB5_Basler_acA2040120um", 0, -1);
-//    HalconCpp::HImage image = acq.GrabImage();
-//    Hlong  width,height;
-//      image.GetImageSize(&width,&height);
+    //    HalconCpp::HImage image = acq.GrabImage();
+    //    Hlong  width,height;
+    //      image.GetImageSize(&width,&height);
 
-//      qDebug() << "Image size "<< width << height;
-//      HalconCpp::WriteImage(image,"tiff",0,"C:/Users/daruizcadalso/Documents/QTApplications/USoundApp/sample.jpg");
-//      HalconCpp::CloseFramegrabber(acq);
+    //      qDebug() << "Image size "<< width << height;
+    //      HalconCpp::WriteImage(image,"tiff",0,"C:/Users/daruizcadalso/Documents/QTApplications/USoundApp/sample.jpg");
+    //      HalconCpp::CloseFramegrabber(acq);
 
 
 
@@ -273,14 +280,14 @@ void Homescreen::on_devicesTreeWidget_itemDoubleClicked(QTreeWidgetItem *item, i
 
 void Homescreen::onCameraWindowClose()
 {
-//    windowWidget->close();
+    //    windowWidget->close();
     qDebug() <<"In close";
 }
 
 void Homescreen::pushToMessageBoxSlot(QString message)
 {
     qDebug() << "Illige barthane ila bidu";
-//    ui->plainTextEdit->appendPlainText(message);
+    //    ui->plainTextEdit->appendPlainText(message);
 
 }
 
