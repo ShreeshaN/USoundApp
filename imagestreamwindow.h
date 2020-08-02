@@ -90,6 +90,7 @@ signals:
 
 public slots:
     void renderImage(QImage qImage);
+    void updateStatusBar(QString statusMsg);
     void saveImage();
     void startVideoRecord();
     void pauseVideoRecord();

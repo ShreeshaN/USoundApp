@@ -257,6 +257,7 @@ void Homescreen::connectToCamera(QString deviceName)
 
         // all signal/slots conections
         connect(imageAcquisitionThread,SIGNAL(renderImageSignal(QImage)),windowWidget,SLOT(renderImage(QImage)));
+        connect(imageAcquisitionThread,SIGNAL(updateStatusBar(QString)),windowWidget,SLOT(updateStatusBar(QString)));
 
 
     } catch (QException &e) {

@@ -344,7 +344,7 @@ void ImageStreamWindow::renderImage(QImage qImage)
     }
 
     // resulting frame rate in status bar
-    this->statusBar()->showMessage("Frame Rate: "+ QString::number(this->getImageAcquisitionThread()->getCameraControls().getResultingFrameRate()));
+//    this->statusBar()->showMessage("Frame Rate: "+ QString::number(this->getImageAcquisitionThread()->getCameraControls().getResultingFrameRate()));
 
 
 
@@ -396,6 +396,7 @@ void ImageStreamWindow::stopVideoRecord(){
         this->recordButton->setEnabled(true);
 //        this->recordPauseButton->setDisabled(true);
         this->recordStopButton->setDisabled(true);
+
         qDebug() << "Launching thread to record images . . .";
         VideoRecordingThread *thread = new VideoRecordingThread(imageAcquisitionThread);
         thread->start();
@@ -409,6 +410,14 @@ void ImageStreamWindow::pauseVideoRecord(){
     try {
         qDebug() << "Pausing video record";
         //todo: Prathyush SP - Implement pause functionality
+    } catch (std::exception &e) {
+        qDebug() << e.what();
+    }
+}
+
+void ImageStreamWindow::updateStatusBar(QString statusMsg){
+    try {
+        this->statusBar()->showMessage(statusMsg);
     } catch (std::exception &e) {
         qDebug() << e.what();
     }
