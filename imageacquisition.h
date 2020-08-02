@@ -50,6 +50,7 @@ private:
     bool recording;
 
 
+
 public:
     // Constructor
     ImageAcquisition(QString deviceName, QObject *parent=0);
@@ -87,6 +88,7 @@ public:
 
 signals:
     void renderImageSignal(QImage);
+    void updateStatusBar(QString);
 
 
 protected:
