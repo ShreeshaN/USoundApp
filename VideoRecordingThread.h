@@ -9,13 +9,10 @@ class VideoRecordingThread : public QThread
 {
     Q_OBJECT
     ImageAcquisition *imageAcquisitionThread;
-    QString uid;
 
 public:
     // Constructor
     VideoRecordingThread(ImageAcquisition *imageAcquisitionThread);
-
-    void encodeVideo();
 
 private:
     void run();

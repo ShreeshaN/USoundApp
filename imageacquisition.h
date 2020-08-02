@@ -18,6 +18,7 @@
 #include <QSignalMapper>
 #include <QQueue>
 
+// Custom class to store image and save path in a queue (Buffer for writing)
 class RecordingBuffer
 {
     // Access specifier
@@ -35,8 +36,6 @@ public:
 
     }
 };
-
-
 
 class ImageAcquisition : public QThread
 {
@@ -57,7 +56,9 @@ public:
     HalconCpp::HImage currentImage;
     // Image Buffer
     QQueue<RecordingBuffer> imageBuffer;
-    QString uid;
+//    QString uid;
+    QString currentRecordSaveDir;
+    int currentBufferImageCounter;
 
     // Member Functions
     void setup();

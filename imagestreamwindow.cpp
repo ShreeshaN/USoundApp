@@ -13,6 +13,7 @@
 #include <usoundutils.h>
 #include <VideoRecordingThread.h>
 #include<defaults.h>
+#include<QDir>
 //#include<QToolTip>
 
 
@@ -367,21 +368,21 @@ Save Image
 
 void ImageStreamWindow::startVideoRecord(){
     try {
+        QDir dir;
         qDebug() << "Starting video record";
-        qDebug() << "Images in buffer "+ QString(std::to_string(imageAcquisitionThread->imageBuffer.length()).c_str());
+//        qDebug() << "Images in buffer "+ QString(std::to_string(imageAcquisitionThread->imageBuffer.length()).c_str());
+
+        imageAcquisitionThread->currentBufferImageCounter=0;
+        imageAcquisitionThread->currentRecordSaveDir = getVideoSavePathForDevice(imageAcquisitionThread->getDeviceName())
+                + "/" + QString(generateTimeStamp().c_str()) + "/";
+        dir.mkpath(imageAcquisitionThread->currentRecordSaveDir);
         // Disable Record button and enable pause and stop button
-        imageAcquisitionThread->uid = QString(generateTimeStamp().c_str());
         imageAcquisitionThread->setRecording(true);
         this->recordButton->setDisabled(true);
 //        this->recordPauseButton->setEnabled(true);
         this->recordStopButton->setEnabled(true);
-
-
         // Launch Thread
-        qDebug() << "Launching thread to record images . . .";
-        VideoRecordingThread *thread = new VideoRecordingThread(imageAcquisitionThread);
-        thread->start();
-//        thread->wait();
+
     } catch (std::exception &e) {
         qDebug() << e.what();
     }
@@ -395,7 +396,9 @@ void ImageStreamWindow::stopVideoRecord(){
         this->recordButton->setEnabled(true);
 //        this->recordPauseButton->setDisabled(true);
         this->recordStopButton->setDisabled(true);
-        //Todo: Prathyush SP -  Launch Thread to convert stream of images to a video
+        qDebug() << "Launching thread to record images . . .";
+        VideoRecordingThread *thread = new VideoRecordingThread(imageAcquisitionThread);
+        thread->start();
     } catch (std::exception &e) {
         qDebug() << e.what();
     }

@@ -69,10 +69,8 @@ void ImageAcquisition::run()
 //        long int after = GetTickCount();
 
         if(getRecording()){
-
-            QString filename=getVideoSavePathForDevice(getDeviceName())+"/"+uid;+"/"+QString(std::to_string(counter).c_str())+"."+Directories::IMAGEFORMAT;
-            //            qDebug() << "Saving frame at "+filename;
-            imageBuffer.enqueue(RecordingBuffer(currentImage, filename));
+            imageBuffer.enqueue(RecordingBuffer(currentImage, currentRecordSaveDir+QString::number(currentBufferImageCounter)+"."+Directories::IMAGEFORMAT));
+            currentBufferImageCounter+=1;
         }
 
         counter++;
