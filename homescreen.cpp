@@ -263,7 +263,14 @@ void Homescreen::connectToCamera(QString deviceName)
     } catch (QException &e) {
         qDebug () <<"Exception while connecting to camera";
         qDebug() <<e.what();
-        throw e;
+        //        throw e;
+    }
+
+    catch (HalconCpp::HOperatorException &e) {
+        qDebug() << e.ErrorMessage().Text();
+    }
+    catch (std::exception &e) {
+        qDebug() << e.what();
     }
 
 }

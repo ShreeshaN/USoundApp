@@ -39,47 +39,60 @@ void ImageAcquisition::setup()
 void ImageAcquisition::run()
 {
     QImage qImage;
-
     using namespace HalconCpp;
-    while(!stopAcquisition)
-    {
-//        long int before = GetTickCount();
-        currentImage = this->imageAcquisitionHandle.GrabImage();
 
-        Hlong  width,height;
-        currentImage.GetImageSize(&width,&height);
-        // todo: Prathyush SP currentImage is saved to the disk. Check the importance of the resolution saved?
-        HImage zoomedImage = currentImage.ZoomImageSize(600,600,"constant");
+    try {
 
-        //        image.GetImageSize(&width,&height);
-        //        qDebug()<< "Image size halcon "<<width<<height;
-        //        HalconCpp::WriteImage(image,"tiff",0,"C:/Users/daruizcadalso/Documents/QTApplications/USoundApp/sample.jpg");
-        //        break;
-        auto conversionStatus = HImage2QImage(zoomedImage, qImage);
-
-
-        if (!conversionStatus)
+        while(!stopAcquisition)
         {
-            // failed to convert himage to qimage. Handle it here
-            QCoreApplication::quit();
+    //        long int before = GetTickCount();
+            currentImage = this->imageAcquisitionHandle.GrabImage();
+
+            Hlong  width,height;
+            currentImage.GetImageSize(&width,&height);
+            // todo: Prathyush SP currentImage is saved to the disk. Check the importance of the resolution saved?
+            HImage zoomedImage = currentImage.ZoomImageSize(600,600,"constant");
+
+            //        image.GetImageSize(&width,&height);
+            //        qDebug()<< "Image size halcon "<<width<<height;
+            //        HalconCpp::WriteImage(image,"tiff",0,"C:/Users/daruizcadalso/Documents/QTApplications/USoundApp/sample.jpg");
+            //        break;
+            auto conversionStatus = HImage2QImage(zoomedImage, qImage);
+
+
+            if (!conversionStatus)
+            {
+                // failed to convert himage to qimage. Handle it here
+                QCoreApplication::quit();
+            }
+            //        msleep(1000);
+
+            emit renderImageSignal(qImage);
+    //        long int after = GetTickCount();
+
+            if(getRecording()){
+                imageBuffer.enqueue(RecordingBuffer(currentImage, currentRecordSaveDir+QString::number(currentBufferImageCounter)+"."+Directories::IMAGEFORMAT));
+                emit updateStatusBar(QString("Images in buffer %1").arg(currentBufferImageCounter));
+                currentBufferImageCounter+=1;
+            }
+
+            counter++;
+    //        qDebug() << before << after<<(after-before)/1000.0;
+
+    //        qDebug()<< "Frame rate :"<<this->getValueForParam(HalconCameraParameters::RESULTINGFRAMERATE).DArr()[0];
+
         }
-        //        msleep(1000);
 
-        emit renderImageSignal(qImage);
-//        long int after = GetTickCount();
 
-        if(getRecording()){
-            imageBuffer.enqueue(RecordingBuffer(currentImage, currentRecordSaveDir+QString::number(currentBufferImageCounter)+"."+Directories::IMAGEFORMAT));
-            emit updateStatusBar(QString("Images in buffer %1").arg(currentBufferImageCounter));
-            currentBufferImageCounter+=1;            
-        }
 
-        counter++;
-//        qDebug() << before << after<<(after-before)/1000.0;
 
-//        qDebug()<< "Frame rate :"<<this->getValueForParam(HalconCameraParameters::RESULTINGFRAMERATE).DArr()[0];
-
+    } catch (HalconCpp::HOperatorException &e) {
+        qDebug() << e.ErrorMessage().Text();
     }
+    catch (std::exception &e) {
+        qDebug() << e.what();
+    }
+
 
 
 
