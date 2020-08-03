@@ -26,6 +26,7 @@
 #include <QGraphicsView>
 #include <imagestreamwindow.h>
 #include<QtWidgets/QPlainTextEdit>
+#include <QDir>
 
 
 QT_BEGIN_NAMESPACE
@@ -49,6 +50,8 @@ public:
     QLabel *imageLabel;
 
     static QPlainTextEdit *globalMessageBox;
+
+    QDir qDir;
 
 
     // functions

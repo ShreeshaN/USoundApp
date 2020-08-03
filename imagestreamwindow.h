@@ -14,6 +14,7 @@
 #include <QSpinBox>
 #include <QCheckBox>
 
+
 class ImageStreamWindow : public QMainWindow
 {
     Q_OBJECT
@@ -62,6 +63,13 @@ public:
 
     QList<QGraphicsPixmapItem *> graphicsPixmapItemList;
 
+
+
+    // Actions
+    QAction *imageSaveButton, *recordButton, *recordPauseButton, *recordStopButton;
+
+
+
     // member functions
     void setupCameraWindow();
     void updateCameraParametersAndDisplay();
@@ -75,12 +83,18 @@ public:
     void setImageAcquisitionThread(ImageAcquisition *value);
 
 
+
+
 signals:
     void displayResultingFrameRate();
 
 public slots:
     void renderImage(QImage qImage);
+    void updateStatusBar(QString statusMsg);
     void saveImage();
+    void startVideoRecord();
+    void pauseVideoRecord();
+    void stopVideoRecord();
 
 
 protected:

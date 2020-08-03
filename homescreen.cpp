@@ -2,6 +2,8 @@
 #include "ui_homescreen.h"
 #include "cameracontrols.h"
 #include "imageacquisition.h"
+#include "defaults.h"
+#include <QMessageBox>
 
 #ifndef __APPLE__
 #  include "HalconCpp.h"
@@ -28,6 +30,7 @@
 #include <QException>
 #include <exception>
 #include<QDialog>
+#include <usoundutils.h>
 //#include "qteditorfactory.h"
 //#include "qttreepropertybrowser.h"
 //#include "qtpropertymanager.h"
@@ -113,7 +116,10 @@ void Homescreen::detectAttachedDevices()
             // " unique_name:2676016419A3_Basler_acA2040120um ",
             // " interface:Usan_VirtualIF ", " producer:Usan")
             auto device = QString(deviceList[i].Text()).split("|")[1].split(":")[1].trimmed();
-            qInfo() << "New camera detected"+device;
+            qInfo() << "New camera detected "+device;
+
+            initializeDirectoriesForDevice(device);
+
             devices.append(device);
         }
 
@@ -122,6 +128,12 @@ void Homescreen::detectAttachedDevices()
         qDebug() << "Device unavailable";
         qDebug() << except.ErrorCode();
         qDebug() << except.ErrorMessage().Text();
+        QMessageBox Msgbox;
+        if (except.ErrorCode()==2042){
+            Msgbox.setText("Halcon license expired!");
+            Msgbox.exec();
+            abort();
+        }
 
     }
 
@@ -247,6 +259,7 @@ void Homescreen::on_devicesRefresh_clicked()
 }
 
 
+
 void Homescreen::connectToCamera(QString deviceName)
 {
     try {
@@ -263,6 +276,7 @@ void Homescreen::connectToCamera(QString deviceName)
 
         // all signal/slots conections
         connect(imageAcquisitionThread,SIGNAL(renderImageSignal(QImage)),windowWidget,SLOT(renderImage(QImage)));
+        connect(imageAcquisitionThread,SIGNAL(updateStatusBar(QString)),windowWidget,SLOT(updateStatusBar(QString)));
 
 
     } catch (QException &e) {
@@ -286,14 +300,14 @@ void Homescreen::on_devicesTreeWidget_itemDoubleClicked(QTreeWidgetItem *item, i
 
 void Homescreen::onCameraWindowClose()
 {
-//    windowWidget->close();
+    //    windowWidget->close();
     qDebug() <<"In close";
 }
 
 void Homescreen::pushToMessageBoxSlot(QString message)
 {
     qDebug() << "Illige barthane ila bidu";
-//    ui->plainTextEdit->appendPlainText(message);
+    //    ui->plainTextEdit->appendPlainText(message);
 
 }
 

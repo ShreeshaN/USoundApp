@@ -12,27 +12,10 @@
 #include <QtGui>
 #include <usoundutils.h>
 #include "doubleslider.h"
+#include <VideoRecordingThread.h>
+#include<defaults.h>
+#include<QDir>
 //#include<QToolTip>
-
-
-//class Menu : public QMenu
-//{
-//    Q_OBJECT
-//public:
-//    Menu(){}
-//    bool event (QEvent * e)
-//    {
-//        const QHelpEvent *helpEvent = static_cast <QHelpEvent *>(e);
-//         if (helpEvent->type() == QEvent::ToolTip && activeAction() != 0)
-//         {
-//              QToolTip::showText(helpEvent->globalPos(), activeAction()->toolTip());
-//         } else
-//         {
-//              QToolTip::hideText();
-//         }
-//         return QMenu::event(e);
-//    }
-//};
 
 
 ImageStreamWindow::ImageStreamWindow(QWidget *parent) : QMainWindow(parent)
@@ -41,13 +24,25 @@ ImageStreamWindow::ImageStreamWindow(QWidget *parent) : QMainWindow(parent)
 
 void ImageStreamWindow::setupCameraWindow()
 {
-    QAction *imageSaveButton = this->menuBar()->addAction(tr("ImageSaveButton"));
-    QPixmap pixmap("icons/icon-single-shot.png");
+    imageSaveButton = this->menuBar()->addAction(tr("ImageSaveButton"));
     imageSaveButton->setIcon(QIcon(":icons/icon-single-shot.png"));
     // todo: Prathyush SP -> Fix issue with tooltip display
     imageSaveButton->setToolTip("Save frame");
     connect(imageSaveButton, SIGNAL(triggered()), this, SLOT(saveImage()));
-    // Example ends
+
+    recordButton = this->menuBar()->addAction(tr("RecordButton"));
+    recordButton->setIcon(QIcon(":icons/icon-media-record.png"));
+    connect(recordButton, SIGNAL(triggered()), this, SLOT(startVideoRecord()));
+
+//    recordPauseButton = this->menuBar()->addAction(tr("RecordPauseButton"));
+//    recordPauseButton->setIcon(QIcon(":icons/icon-media-playback-pause.png"));
+//    recordPauseButton->setDisabled(true);
+//    connect(recordPauseButton, SIGNAL(triggered()), this, SLOT(pauseVideoRecord()));
+
+    recordStopButton = this->menuBar()->addAction(tr("RecordStopButton"));
+    recordStopButton->setIcon(QIcon(":icons/icon-media-playback-stop.png"));
+    recordStopButton->setDisabled(true);
+    connect(recordStopButton, SIGNAL(triggered()), this, SLOT(stopVideoRecord()));
 
 
     QOverload<int> qOverloadInt;
@@ -111,8 +106,9 @@ void ImageStreamWindow::setupCameraWindow()
         // will query the camera and update cameracontrols obj
         this->imageAcquisitionThread->getCameraControls().setAutoExposure(autoExposureCheckbox->isChecked());
         imageAcquisitionThread->setValueForParam(HalconCameraParameterNames::AUTOEXPOSURE,autoExposureCheckbox->isChecked()?"Once":"Off");
-        Sleep(500); // Waiting for the hardware to update exposure time based on Autoexposure
+        mssleep(500); // Waiting for the hardware to update exposure time based on Autoexposure
         updateCameraParametersAndDisplay();
+
 
     });
 
@@ -238,7 +234,7 @@ void ImageStreamWindow::setupCameraWindow()
         this->imageAcquisitionThread->getCameraControls().setAcquisitionFrameRate(acquisitionFramerateSpinBox->value());
         qDebug() << "value "<< acquisitionFramerateSpinBox->value();
         imageAcquisitionThread->setValueForParam(HalconCameraParameterNames::ACQUISITIONFRAMERATE,acquisitionFramerateSpinBox->value());
-//        Sleep(500); // Waiting for the hardware to update exposure time based on Autoexposure
+        //        Sleep(500); // Waiting for the hardware to update exposure time based on Autoexposure
         updateCameraParametersAndDisplay();
     });
     ccTreeWidget->setItemWidget(acquisitionFrameRate, 1, acquisitionFramerateSpinBox);
@@ -363,7 +359,7 @@ void ImageStreamWindow::renderImage(QImage qImage)
     }
 
     // resulting frame rate in status bar
-    this->statusBar()->showMessage("Frame Rate: "+ QString::number(this->getImageAcquisitionThread()->getCameraControls().getResultingFrameRate()));
+//    this->statusBar()->showMessage("Frame Rate: "+ QString::number(this->getImageAcquisitionThread()->getCameraControls().getResultingFrameRate()));
 
 
 
@@ -375,14 +371,70 @@ Save Image
 */
 {
     try {
-
         //todo: Prathyush SP -> Change from tempPath to user set path
-        std::string filename=QDir::tempPath().toStdString()+"/"+imageAcquisitionThread->getDeviceName().toStdString();
-        filename = filename+"-"+generateTimeStamp()+".jpeg";
-        qInfo() << ("Saving image at "+filename).c_str();
-        imageAcquisitionThread->currentImage.WriteImage("jpeg", 0,filename.c_str());
+        QString filename=getImageSavePathForDevice(imageAcquisitionThread->getDeviceName())+"/"+QString(generateTimeStamp().c_str())+"."+Directories::IMAGEFORMAT;
+        qInfo() << "Saving image at "+filename;
+        imageAcquisitionThread->currentImage.WriteImage(Directories::IMAGEFORMAT.toStdString().c_str(), 0, filename.toStdString().c_str());
     } catch (HalconCpp::HException he) {
         qDebug() << he.ErrorMessage().Text();
+    }
+}
+
+
+void ImageStreamWindow::startVideoRecord(){
+    try {
+        QDir dir;
+        qDebug() << "Starting video record";
+//        qDebug() << "Images in buffer "+ QString(std::to_string(imageAcquisitionThread->imageBuffer.length()).c_str());
+
+        imageAcquisitionThread->currentBufferImageCounter=0;
+        imageAcquisitionThread->currentRecordSaveDir = getVideoSavePathForDevice(imageAcquisitionThread->getDeviceName())
+                + "/" + QString(generateTimeStamp().c_str()) + "/";
+        dir.mkpath(imageAcquisitionThread->currentRecordSaveDir);
+        // Disable Record button and enable pause and stop button
+        imageAcquisitionThread->setRecording(true);
+        this->recordButton->setDisabled(true);
+//        this->recordPauseButton->setEnabled(true);
+        this->recordStopButton->setEnabled(true);
+        // Launch Thread
+
+    } catch (std::exception &e) {
+        qDebug() << e.what();
+    }
+}
+
+void ImageStreamWindow::stopVideoRecord(){
+    try {
+        qDebug() << "Stopping video record";
+        // Disable Record button and enable pause and stop button
+        imageAcquisitionThread->setRecording(false);
+        this->recordButton->setEnabled(true);
+//        this->recordPauseButton->setDisabled(true);
+        this->recordStopButton->setDisabled(true);
+
+        qDebug() << "Launching thread to record images . . .";
+        VideoRecordingThread *thread = new VideoRecordingThread(imageAcquisitionThread);
+        thread->start();
+    } catch (std::exception &e) {
+        qDebug() << e.what();
+    }
+}
+
+
+void ImageStreamWindow::pauseVideoRecord(){
+    try {
+        qDebug() << "Pausing video record";
+        //todo: Prathyush SP - Implement pause functionality
+    } catch (std::exception &e) {
+        qDebug() << e.what();
+    }
+}
+
+void ImageStreamWindow::updateStatusBar(QString statusMsg){
+    try {
+        this->statusBar()->showMessage(statusMsg);
+    } catch (std::exception &e) {
+        qDebug() << e.what();
     }
 }
 

@@ -16,8 +16,26 @@
 #include "cameracontrols.h"
 #include "defaults.h"
 #include <QSignalMapper>
+#include <QQueue>
 
+// Custom class to store image and save path in a queue (Buffer for writing)
+class RecordingBuffer
+{
+    // Access specifier
+public:
 
+    // Data Members
+    HalconCpp::HImage image;
+    QString imageSavePath;
+
+    //Default Constructor
+    RecordingBuffer(HalconCpp::HImage image, QString imageSavePath)
+    {
+        this->image = image;
+        this->imageSavePath=imageSavePath;
+
+    }
+};
 
 class ImageAcquisition : public QThread
 {
@@ -29,12 +47,19 @@ private:
     int counter=0;
     QString deviceName;
     CameraControls cameraControls;
+    bool recording;
+
 
 
 public:
     // Constructor
     ImageAcquisition(QString deviceName, QObject *parent=0);
     HalconCpp::HImage currentImage;
+    // Image Buffer
+    QQueue<RecordingBuffer> imageBuffer;
+//    QString uid;
+    QString currentRecordSaveDir;
+    int currentBufferImageCounter;
 
     // Member Functions
     void setup();
@@ -58,9 +83,12 @@ public:
     void setStopAcquisition(bool value);
     CameraControls getCameraControls() const;
     void setCameraControls(const CameraControls &value);
+    void setRecording(bool value){recording=value;}
+    bool getRecording(){return recording;}
 
 signals:
     void renderImageSignal(QImage);
+    void updateStatusBar(QString);
 
 
 protected:

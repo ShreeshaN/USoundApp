@@ -1,3 +1,8 @@
 *.autoosave
 *.user
+<<<<<<< HEAD
 *.PNG
+=======
+USoundApp.pro.qtds
+.DS_Store
+>>>>>>> cb368f54626ec52b80b549340d56d4c121e63201
