@@ -12,7 +12,7 @@
 #include <QtGui>
 #include <usoundutils.h>
 #include "doubleslider.h"
-#include <VideoRecordingThread.h>
+#include <queuewriter.h>
 #include<defaults.h>
 #include<QDir>
 //#include<QToolTip>
@@ -34,10 +34,14 @@ void ImageStreamWindow::setupCameraWindow()
     recordButton->setIcon(QIcon(":icons/icon-media-record.png"));
     connect(recordButton, SIGNAL(triggered()), this, SLOT(startVideoRecord()));
 
-//    recordPauseButton = this->menuBar()->addAction(tr("RecordPauseButton"));
-//    recordPauseButton->setIcon(QIcon(":icons/icon-media-playback-pause.png"));
-//    recordPauseButton->setDisabled(true);
-//    connect(recordPauseButton, SIGNAL(triggered()), this, SLOT(pauseVideoRecord()));
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(writeQueue()));
+    timer->start(1000);
+
+    //    recordPauseButton = this->menuBar()->addAction(tr("RecordPauseButton"));
+    //    recordPauseButton->setIcon(QIcon(":icons/icon-media-playback-pause.png"));
+    //    recordPauseButton->setDisabled(true);
+    //    connect(recordPauseButton, SIGNAL(triggered()), this, SLOT(pauseVideoRecord()));
 
     recordStopButton = this->menuBar()->addAction(tr("RecordStopButton"));
     recordStopButton->setIcon(QIcon(":icons/icon-media-playback-stop.png"));
@@ -316,22 +320,28 @@ void ImageStreamWindow::displayCameraParameters()
 
 void ImageStreamWindow::closeEvent(QCloseEvent *event)
 {
-    ImageAcquisition *imageAcquisitionThread = this->imageAcquisitionThread;
-    imageAcquisitionThread->setStopAcquisition(true);
-
-    try {
-        qDebug() << "Closing device "<< imageAcquisitionThread->getDeviceName()<< ". . . ";
-        imageAcquisitionThread->getImageAcquisitionHandle().CloseFramegrabber();
-    } catch (HalconCpp::HException &) {
-        //todo: add dialog box here
-        qDebug() << "Error: Could not close message box";
-        QMessageBox::critical(this, "Close Camera","Error. Could not close camera",QMessageBox::Ok);
+    qDebug() << "Checking for pending images in buffer";
+    if(!recordButton->isEnabled()){
+        QMessageBox::critical(this, "Close Camera","Image recording in progress",QMessageBox::Ok);
     }
-    imageAcquisitionThread->exit();
-    qDebug() << "Counter value: "<<imageAcquisitionThread->getCounter();
+    else if (!imageAcquisitionThread->imageBuffer.isEmpty()){
+        QMessageBox::critical(this, "Close Camera","Image save in progress",QMessageBox::Ok);
+    }
+    else{
+        ImageAcquisition *imageAcquisitionThread = this->imageAcquisitionThread;
+        imageAcquisitionThread->setStopAcquisition(true);
 
-
-
+        try {
+            qDebug() << "Closing device "<< imageAcquisitionThread->getDeviceName()<< ". . . ";
+            imageAcquisitionThread->getImageAcquisitionHandle().CloseFramegrabber();
+        } catch (HalconCpp::HException &) {
+            //todo: add dialog box here
+            qDebug() << "Error: Could not close message box";
+            QMessageBox::critical(this, "Close Camera","Error. Could not close camera",QMessageBox::Ok);
+        }
+        imageAcquisitionThread->exit();
+        qDebug() << "Counter value: "<<imageAcquisitionThread->getCounter();
+    }
 }
 
 void ImageStreamWindow::renderImage(QImage qImage)
@@ -359,7 +369,7 @@ void ImageStreamWindow::renderImage(QImage qImage)
     }
 
     // resulting frame rate in status bar
-//    this->statusBar()->showMessage("Frame Rate: "+ QString::number(this->getImageAcquisitionThread()->getCameraControls().getResultingFrameRate()));
+    //    this->statusBar()->showMessage("Frame Rate: "+ QString::number(this->getImageAcquisitionThread()->getCameraControls().getResultingFrameRate()));
 
 
 
@@ -385,8 +395,7 @@ void ImageStreamWindow::startVideoRecord(){
     try {
         QDir dir;
         qDebug() << "Starting video record";
-//        qDebug() << "Images in buffer "+ QString(std::to_string(imageAcquisitionThread->imageBuffer.length()).c_str());
-
+        //        qDebug() << "Images in buffer "+ QString(std::to_string(imageAcquisitionThread->imageBuffer.length()).c_str());
         imageAcquisitionThread->currentBufferImageCounter=0;
         imageAcquisitionThread->currentRecordSaveDir = getVideoSavePathForDevice(imageAcquisitionThread->getDeviceName())
                 + "/" + QString(generateTimeStamp().c_str()) + "/";
@@ -394,10 +403,8 @@ void ImageStreamWindow::startVideoRecord(){
         // Disable Record button and enable pause and stop button
         imageAcquisitionThread->setRecording(true);
         this->recordButton->setDisabled(true);
-//        this->recordPauseButton->setEnabled(true);
+        //        this->recordPauseButton->setEnabled(true);
         this->recordStopButton->setEnabled(true);
-        // Launch Thread
-
     } catch (std::exception &e) {
         qDebug() << e.what();
     }
@@ -409,12 +416,10 @@ void ImageStreamWindow::stopVideoRecord(){
         // Disable Record button and enable pause and stop button
         imageAcquisitionThread->setRecording(false);
         this->recordButton->setEnabled(true);
-//        this->recordPauseButton->setDisabled(true);
+        //        this->recordPauseButton->setDisabled(true);
         this->recordStopButton->setDisabled(true);
 
         qDebug() << "Launching thread to record images . . .";
-        VideoRecordingThread *thread = new VideoRecordingThread(imageAcquisitionThread);
-        thread->start();
     } catch (std::exception &e) {
         qDebug() << e.what();
     }
@@ -433,6 +438,17 @@ void ImageStreamWindow::pauseVideoRecord(){
 void ImageStreamWindow::updateStatusBar(QString statusMsg){
     try {
         this->statusBar()->showMessage(statusMsg);
+    } catch (std::exception &e) {
+        qDebug() << e.what();
+    }
+}
+
+void ImageStreamWindow::writeQueue(){
+    try {
+        if (!imageAcquisitionThread->imageBuffer.isEmpty() && !imageAcquisitionThread->writeInProgress){
+            QueueWriter *thread = new QueueWriter(imageAcquisitionThread);
+            thread->start();
+        }
     } catch (std::exception &e) {
         qDebug() << e.what();
     }

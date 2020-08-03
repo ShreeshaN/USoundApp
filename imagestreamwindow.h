@@ -95,6 +95,7 @@ public slots:
     void startVideoRecord();
     void pauseVideoRecord();
     void stopVideoRecord();
+    void writeQueue();
 
 
 protected:

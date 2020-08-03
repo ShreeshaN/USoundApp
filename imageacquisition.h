@@ -47,7 +47,7 @@ private:
     int counter=0;
     QString deviceName;
     CameraControls cameraControls;
-    bool recording;
+    bool recording=false;
 
 
 
@@ -60,6 +60,7 @@ public:
 //    QString uid;
     QString currentRecordSaveDir;
     int currentBufferImageCounter;
+    bool writeInProgress=false;
 
     // Member Functions
     void setup();
@@ -88,7 +89,7 @@ public:
 
 signals:
     void renderImageSignal(QImage);
-    void updateStatusBar(QString);
+    void updateStatusBarSignal(QString);
 
 
 protected:

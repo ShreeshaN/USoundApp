@@ -23,9 +23,9 @@ ImageAcquisition::ImageAcquisition(QString deviceName, QObject *parent): QThread
     HalconCpp::HFramegrabber imageAcquisitionHandle("USB3Vision",
                                                     0, 0, 0, 0, 0, 0,
                                                     "progressive", -1, "default",
-                                 -1, "false", "default",
-                                 HalconCpp::HString(
-                                     deviceName.toLocal8Bit().constData()).Text(), 0, -1);
+                                                    -1, "false", "default",
+                                                    HalconCpp::HString(
+                                                        deviceName.toLocal8Bit().constData()).Text(), 0, -1);
     this->imageAcquisitionHandle = imageAcquisitionHandle;
     this->deviceName = deviceName;
 }
@@ -39,49 +39,54 @@ void ImageAcquisition::setup()
 void ImageAcquisition::run()
 {
     QImage qImage;
-
     using namespace HalconCpp;
-    while(!stopAcquisition)
-    {
-//        qDebug() << "streaming images"<<counter;
-        long int before = GetTickCount();
-        currentImage = this->imageAcquisitionHandle.GrabImage();
-        long int after = GetTickCount();
-//        qDebug() << before << after<<(after-before)/1000.0;
+    try {
 
-
-        Hlong  width,height;
-        currentImage.GetImageSize(&width,&height);
-        // todo: Prathyush SP currentImage is saved to the disk. Check the importance of the resolution saved?
-        HImage zoomedImage = currentImage.ZoomImageSize(600,600,"constant");
-
-        //        image.GetImageSize(&width,&height);
-        //        qDebug()<< "Image size halcon "<<width<<height;
-        //        HalconCpp::WriteImage(image,"tiff",0,"C:/Users/daruizcadalso/Documents/QTApplications/USoundApp/sample.jpg");
-        //        break;
-        auto conversionStatus = HImage2QImage(zoomedImage, qImage);
-
-
-        if (!conversionStatus)
+        while(!stopAcquisition)
         {
-            // failed to convert himage to qimage. Handle it here
-            QCoreApplication::quit();
+            //        long int before = GetTickCount();
+            currentImage = this->imageAcquisitionHandle.GrabImage();
+
+            Hlong  width,height;
+            currentImage.GetImageSize(&width,&height);
+            // todo: Prathyush SP currentImage is saved to the disk. Check the importance of the resolution saved?
+            HImage zoomedImage = currentImage.ZoomImageSize(600,600,"constant");
+
+            //        image.GetImageSize(&width,&height);
+            //        qDebug()<< "Image size halcon "<<width<<height;
+            //        HalconCpp::WriteImage(image,"tiff",0,"C:/Users/daruizcadalso/Documents/QTApplications/USoundApp/sample.jpg");
+            //        break;
+            auto conversionStatus = HImage2QImage(zoomedImage, qImage);
+
+
+            if (!conversionStatus)
+            {
+                // failed to convert himage to qimage. Handle it here
+                QCoreApplication::quit();
+            }
+            //        msleep(1000);
+
+            emit renderImageSignal(qImage);
+            //        long int after = GetTickCount();
+
+            if(getRecording()){
+                imageBuffer.enqueue(RecordingBuffer(currentImage, currentRecordSaveDir+QString::number(currentBufferImageCounter)+"."+Directories::IMAGEFORMAT));
+                emit updateStatusBarSignal(QString("Images in buffer %1").arg(currentBufferImageCounter));
+                currentBufferImageCounter+=1;
+            }
+
+            counter++;
+            //        qDebug() << before << after<<(after-before)/1000.0;
+
         }
-        //        msleep(1000);
 
-        emit renderImageSignal(qImage);
-
-        if(getRecording()){
-            imageBuffer.enqueue(RecordingBuffer(currentImage, currentRecordSaveDir+QString::number(currentBufferImageCounter)+"."+Directories::IMAGEFORMAT));
-            emit updateStatusBar(QString("Images in buffer %1").arg(currentBufferImageCounter));
-            currentBufferImageCounter+=1;            
-        }
-
-        counter++;
-
-//        qDebug()<< "Frame rate :"<<this->getValueForParam(HalconCameraParameters::RESULTINGFRAMERATE).DArr()[0];
-
+    } catch (HalconCpp::HOperatorException &e) {
+        qDebug() << e.ErrorMessage().Text();
     }
+    catch (std::exception &e) {
+        qDebug() << e.what();
+    }
+
 
 
 
@@ -211,13 +216,13 @@ HalconCpp::HTuple ImageAcquisition::getValueForParam(std::string paramString)
 
 void ImageAcquisition::setValueForParam(std::string paramString, int paramValue)
 {
-//    try {
-        qDebug() << "in int set param"<< paramString.c_str() << paramValue;
-        imageAcquisitionHandle.SetFramegrabberParam(paramString.c_str(), paramValue);
+    //    try {
+    qDebug() << "in int set param"<< paramString.c_str() << paramValue;
+    imageAcquisitionHandle.SetFramegrabberParam(paramString.c_str(), paramValue);
 
-//    } catch (HalconCpp::HException &e) {
-//        qDebug() << "Exception in setting param value:int message"<<e.ErrorMessage().Text() << e.ErrorCode();
-//    }
+    //    } catch (HalconCpp::HException &e) {
+    //        qDebug() << "Exception in setting param value:int message"<<e.ErrorMessage().Text() << e.ErrorCode();
+    //    }
 }
 
 void ImageAcquisition::setValueForParam(std::string paramString, double paramValue)
@@ -245,8 +250,8 @@ void ImageAcquisition::setValueForParam(std::string paramString, long paramValue
 void ImageAcquisition::setValueForParam(std::string paramString, std::string paramValue)
 {
     try {
-//        qDebug() << "string set param"<< paramString.c_str() << paramValue.c_str();
-       imageAcquisitionHandle.SetFramegrabberParam(paramString.c_str(), paramValue.c_str());
+        //        qDebug() << "string set param"<< paramString.c_str() << paramValue.c_str();
+        imageAcquisitionHandle.SetFramegrabberParam(paramString.c_str(), paramValue.c_str());
 
     }  catch (HalconCpp::HException &e) {
         qDebug() << "Exception in setting param value:string message"<<e.ErrorMessage().Text() << e.ErrorCode();
