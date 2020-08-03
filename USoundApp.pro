@@ -37,23 +37,23 @@ else {
 }
 
 SOURCES += \
-    VideoRecordingThread.cpp \
     cameracontrols.cpp \
     cameracontrolsui.cpp \
     defaults.cpp \
     imageacquisition.cpp \
     imagestreamwindow.cpp \
     main.cpp \
-    homescreen.cpp
+    homescreen.cpp \
+    queuewriter.cpp
 
 HEADERS += \
-    VideoRecordingThread.h \
     cameracontrols.h \
     cameracontrolsui.h \
     defaults.h \
     homescreen.h \
     imageacquisition.h \
     imagestreamwindow.h \
+    queuewriter.h \
     usoundutils.h
 FORMS += \
     homescreen.ui

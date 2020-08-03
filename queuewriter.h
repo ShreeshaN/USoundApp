@@ -1,18 +1,18 @@
-#ifndef VIDEORECORDINGTHREAD_H
-#define VIDEORECORDINGTHREAD_H
+#ifndef QUEUEWRITER_H
+#define QUEUEWRITER_H
 #include<QThread>
 #include <imageacquisition.h>
 
 
 // hellothread/hellothread.h
-class VideoRecordingThread : public QThread
+class QueueWriter : public QThread
 {
     Q_OBJECT
     ImageAcquisition *imageAcquisitionThread;
 
 public:
     // Constructor
-    VideoRecordingThread(ImageAcquisition *imageAcquisitionThread);
+    QueueWriter(ImageAcquisition *imageAcquisitionThread);
 
 private:
     void run();
