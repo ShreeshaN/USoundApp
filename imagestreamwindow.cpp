@@ -306,7 +306,10 @@ void ImageStreamWindow::displayCameraParameters()
 void ImageStreamWindow::closeEvent(QCloseEvent *event)
 {
     qDebug() << "Checking for pending images in buffer";
-    if (!imageAcquisitionThread->imageBuffer.isEmpty()){
+    if(!recordButton->isEnabled()){
+        QMessageBox::critical(this, "Close Camera","Image recording in progress",QMessageBox::Ok);
+    }
+    else if (!imageAcquisitionThread->imageBuffer.isEmpty()){
         QMessageBox::critical(this, "Close Camera","Image save in progress",QMessageBox::Ok);
     }
     else{
@@ -324,9 +327,6 @@ void ImageStreamWindow::closeEvent(QCloseEvent *event)
         imageAcquisitionThread->exit();
         qDebug() << "Counter value: "<<imageAcquisitionThread->getCounter();
     }
-
-
-
 }
 
 void ImageStreamWindow::renderImage(QImage qImage)
