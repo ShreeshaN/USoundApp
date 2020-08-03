@@ -12,6 +12,7 @@
 
 const QString logFilePath = Directories::LOGDIR+"/"+Directories::LOGFILENAME+QString(generateTimeStamp().c_str())+"."+Directories::LOGFILEFORMAT;
 QString tempString = "";
+Homescreen *homeScreenPointer = 0;
 
 void customLoggingHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -51,9 +52,10 @@ void customLoggingHandler(QtMsgType type, const QMessageLogContext &context, con
     QTextStream ts(&outFile);
     ts << txt << endl;
 
-    // Push to Message Box
-    if(Homescreen::globalMessageBox != 0){
-        Homescreen::globalMessageBox->appendPlainText(tempString+txt);
+//     Push to Message Box
+    if(homeScreenPointer!=0 && Homescreen::globalMessageBox != 0){
+//        Homescreen::globalMessageBox->appendPlainText(tempString+txt);
+        emit homeScreenPointer->pushToMessageBoxSignal(tempString+txt);
         tempString="";
     }
     else{
@@ -75,6 +77,7 @@ int main(int argc, char *argv[])
         // This is used as a workaround to display menubar in mac os - https://stackoverflow.com/questions/25261760/menubar-not-showing-for-simple-qmainwindow-code-qt-creator-mac-os
         QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
         Homescreen w;
+        homeScreenPointer = &w;
         w.setWindowIcon(QIcon("://icons/wpi_logo.ico"));
         w.show();
         return a.exec();

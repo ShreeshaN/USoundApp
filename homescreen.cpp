@@ -128,10 +128,9 @@ void Homescreen::detectAttachedDevices()
         qDebug() << "Device unavailable";
         qDebug() << except.ErrorCode();
         qDebug() << except.ErrorMessage().Text();
-        QMessageBox Msgbox;
         if (except.ErrorCode()==2042){
+            QMessageBox Msgbox;
             Msgbox.critical(0,"Error", "Halcon license expired!");
-            Msgbox.exec();
             abort();
         }
 
@@ -257,7 +256,10 @@ void Homescreen::connectToCamera(QString deviceName)
 
         // all signal/slots conections
         connect(imageAcquisitionThread,SIGNAL(renderImageSignal(QImage)),windowWidget,SLOT(renderImage(QImage)));
-        connect(imageAcquisitionThread,SIGNAL(updateStatusBar(QString)),windowWidget,SLOT(updateStatusBar(QString)));
+        connect(imageAcquisitionThread,SIGNAL(updateStatusBarSignal(QString)),windowWidget,SLOT(updateStatusBar(QString)));
+        connect(imageAcquisitionThread,SIGNAL(updateStatusBarSignal(QString)),windowWidget,SLOT(updateStatusBar(QString)));
+        connect(this,SIGNAL(pushToMessageBoxSignal(QString)),this,SLOT(pushToMessageBoxSlot(QString)));
+
 
 
     } catch (QException &e) {
@@ -294,8 +296,8 @@ void Homescreen::onCameraWindowClose()
 
 void Homescreen::pushToMessageBoxSlot(QString message)
 {
-    qDebug() << "Illige barthane ila bidu";
-    //    ui->plainTextEdit->appendPlainText(message);
+    //    qDebug() << "Illige barthane ila bidu";
+    ui->plainTextEdit->appendPlainText(message);
 
 }
 
