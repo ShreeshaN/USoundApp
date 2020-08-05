@@ -10,16 +10,16 @@
 #include<QDateTime>
 #include<QDir>
 #include <QtGui>
-#include <usoundutils.h>
+#include "usoundutils.h"
 #include "doubleslider.h"
 #include <queuewriter.h>
 #include<defaults.h>
 #include<QDir>
-//#include<QToolTip>
 
 
 ImageStreamWindow::ImageStreamWindow(QWidget *parent) : QMainWindow(parent)
 {
+
 }
 
 void ImageStreamWindow::setupCameraWindow()
@@ -80,13 +80,13 @@ void ImageStreamWindow::setupCameraWindow()
     // child
     exposureTime = new QTreeWidgetItem(QStringList() << "Exposure Time");
     exposureTimeSpinBox = new QSpinBox;
-    exposureTimeSpinBox->setRange(0, 10000);
+    exposureTimeSpinBox->setRange(0, 10000000);
     exposureTimeSpinBox->setSingleStep(1);
     exposureTimeSpinBox->setValue( this->imageAcquisitionThread->getCameraControls().getExposureTime());
     connect(exposureTimeSpinBox, qOverloadInt(&QSpinBox::valueChanged), [=]{
         qDebug() << "exposure time"<< exposureTimeSpinBox->value();
         this->imageAcquisitionThread->getCameraControls().setExposureTime(exposureTimeSpinBox->value());
-        imageAcquisitionThread->setValueForParam(HalconCameraParameterNames::EXPOSURETIME,exposureTimeSpinBox->value());
+        imageAcquisitionThread->setValueForParam(BaslerCameraParameterNames::EXPOSURETIME,exposureTimeSpinBox->value());
         updateCameraParametersAndDisplay();
     });
 
@@ -97,20 +97,34 @@ void ImageStreamWindow::setupCameraWindow()
     analogGainSpinBox->setValue( this->imageAcquisitionThread->getCameraControls().getAnalogGain());
     connect(analogGainSpinBox, qOverloadDouble(&QDoubleSpinBox::valueChanged), [=]{
         this->imageAcquisitionThread->getCameraControls().setAnalogGain(analogGainSpinBox->value());
-        imageAcquisitionThread->setValueForParam(HalconCameraParameterNames::GAIN,analogGainSpinBox->value());
+        imageAcquisitionThread->setValueForParam(BaslerCameraParameterNames::GAIN,analogGainSpinBox->value());
         updateCameraParametersAndDisplay();
     });
+
+
+    autoGain = new QTreeWidgetItem(QStringList() << "Auto Gain");
+    autoGainCheckbox = new QCheckBox();
+    autoGainCheckbox->setCheckState(this->imageAcquisitionThread->getCameraControls().getAutoGain()?Qt::CheckState(2):Qt::CheckState(0));
+    connect(autoGainCheckbox, &QCheckBox::clicked, [=]{
+        this->imageAcquisitionThread->getCameraControls().setAutoGain(autoGainCheckbox->isChecked());
+        imageAcquisitionThread->setValueForParam(BaslerCameraParameterNames::AUTOGAIN,autoGainCheckbox->isChecked()?"Once":"Off");
+        mssleep(200); // Waiting for the hardware to update exposure time based on Autoexposure
+        updateCameraParametersAndDisplay();
+
+
+    });
+
 
     autoExposure = new QTreeWidgetItem(QStringList() << "Auto Exposure");
     autoExposureCheckbox = new QCheckBox();
     autoExposureCheckbox->setCheckState(this->imageAcquisitionThread->getCameraControls().getAutoExposure()?Qt::CheckState(2):Qt::CheckState(0));
-    connect(autoExposureCheckbox, &QCheckBox::stateChanged, [=]{
+    connect(autoExposureCheckbox, &QCheckBox::clicked, [=]{
         // TODO: Shreesha - is this below assignment required here and for every other
         // widget? coz anyway updatecameraparameteranddisplay
         // will query the camera and update cameracontrols obj
         this->imageAcquisitionThread->getCameraControls().setAutoExposure(autoExposureCheckbox->isChecked());
-        imageAcquisitionThread->setValueForParam(HalconCameraParameterNames::AUTOEXPOSURE,autoExposureCheckbox->isChecked()?"Once":"Off");
-        mssleep(500); // Waiting for the hardware to update exposure time based on Autoexposure
+        imageAcquisitionThread->setValueForParam(BaslerCameraParameterNames::AUTOEXPOSURE,autoExposureCheckbox->isChecked()?"Once":"Off");
+        mssleep(200); // Waiting for the hardware to update exposure time based on Autoexposure
         updateCameraParametersAndDisplay();
 
 
@@ -119,9 +133,11 @@ void ImageStreamWindow::setupCameraWindow()
     exposureControls->addChild(exposureTime);
     exposureControls->addChild(analogGain);
     exposureControls->addChild(autoExposure);
+    exposureControls->addChild(autoGain);
     ccTreeWidget->setItemWidget(exposureTime, 1, exposureTimeSpinBox);
     ccTreeWidget->setItemWidget(analogGain, 1, analogGainSpinBox);
     ccTreeWidget->setItemWidget(autoExposure, 1, autoExposureCheckbox);
+    ccTreeWidget->setItemWidget(autoGain, 1, autoGainCheckbox);
 
     // color appearance parameters
     // parent
@@ -134,10 +150,11 @@ void ImageStreamWindow::setupCameraWindow()
     // child
     hue = new QTreeWidgetItem(QStringList() << "Hue");
     hueSpinBox = new QSpinBox(this);
-    hueSpinBox->setRange(0, 100);
+    hueSpinBox->setRange(-180, 180);
     hueSpinBox->setSingleStep(1);
     hueSpinBox->setValue( this->imageAcquisitionThread->getCameraControls().getHue());
     colorAppearance->addChild(hue);
+    hueSpinBox->setDisabled(true);
     connect(hueSpinBox, qOverloadInt(&QSpinBox::valueChanged), [=]{
         this->imageAcquisitionThread->getCameraControls().setHue(hueSpinBox->value());
         // imageAcquisitionThread->setValueForParam(HalconCameraParameters::HUE,hueSpinBox->value());
@@ -154,7 +171,7 @@ void ImageStreamWindow::setupCameraWindow()
     colorAppearance->addChild(saturation);
     connect(saturationSpinBox, qOverloadInt(&QSpinBox::valueChanged), [=]{
         this->imageAcquisitionThread->getCameraControls().setSaturation(saturationSpinBox->value());
-        // imageAcquisitionThread->setValueForParam(HalconCameraParameters::SATURATION,saturationSpinBox->value());
+//         imageAcquisitionThread->setValueForParam(BaslerCameraParameterNames::SATURATION,saturationSpinBox->value());
         updateCameraParametersAndDisplay();
     });
     ccTreeWidget->setItemWidget(saturation, 1, saturationSpinBox);
@@ -193,14 +210,14 @@ void ImageStreamWindow::setupCameraWindow()
     gammaSpinBox->setValue( this->imageAcquisitionThread->getCameraControls().getGamma());
 
     // SLider experiment
-//    DoubleSlider *slider = new DoubleSlider(Qt::Horizontal);
-//    slider->setFocusPolicy(Qt::StrongFocus);
-//    slider->setTickPosition(QSlider::TicksBothSides);
-//    slider->setTickInterval(0);
-//    slider->setSingleStep(1);
-//    slider->setRange(0,4);
-//    connect(slider, &DoubleSlider::doubleValueChanged,gammaSpinBox, &QDoubleSpinBox::setValue);
-//    connect(gammaSpinBox, qOverloadDouble(&QDoubleSpinBox::valueChanged),slider,&QSlider::setValue);
+    //    DoubleSlider *slider = new DoubleSlider(Qt::Horizontal);
+    //    slider->setFocusPolicy(Qt::StrongFocus);
+    //    slider->setTickPosition(QSlider::TicksBothSides);
+    //    slider->setTickInterval(0);
+    //    slider->setSingleStep(1);
+    //    slider->setRange(0,4);
+    //    connect(slider, &DoubleSlider::doubleValueChanged,gammaSpinBox, &QDoubleSpinBox::setValue);
+    //    connect(gammaSpinBox, qOverloadDouble(&QDoubleSpinBox::valueChanged),slider,&QSlider::setValue);
     //    QHBoxLayout * hu = new QHBoxLayout(widget);
     //    QWidget *gammaWidget = new QWidget;
     //    gammaWidget->setLayout(hu);
@@ -211,7 +228,7 @@ void ImageStreamWindow::setupCameraWindow()
     colorAppearance->addChild(gamma);
     connect(gammaSpinBox, qOverloadDouble(&QDoubleSpinBox::valueChanged), [=]{
         this->imageAcquisitionThread->getCameraControls().setGamma(gammaSpinBox->value());
-        imageAcquisitionThread->setValueForParam(HalconCameraParameterNames::GAMMA,gammaSpinBox->value());
+        imageAcquisitionThread->setValueForParam(BaslerCameraParameterNames::GAMMA,gammaSpinBox->value());
         updateCameraParametersAndDisplay();
     });
     ccTreeWidget->setItemWidget(gamma, 1, gammaSpinBox);
@@ -223,7 +240,7 @@ void ImageStreamWindow::setupCameraWindow()
     colorAppearance->addChild(acquisitionFrameRateEnable);
     connect(acquisitionFrameRateEnableCheckbox, &QCheckBox::clicked, [=]{
         this->imageAcquisitionThread->getCameraControls().setAcquisitionFrameRateEnable(acquisitionFrameRateEnableCheckbox->isChecked());
-        imageAcquisitionThread->setValueForParam(HalconCameraParameterNames::ACQUISITIONFRAMERATEENABLE,acquisitionFrameRateEnableCheckbox->isChecked());
+        imageAcquisitionThread->setValueForParam(BaslerCameraParameterNames::ACQUISITIONFRAMERATEENABLE,acquisitionFrameRateEnableCheckbox->isChecked());
         updateCameraParametersAndDisplay();
     });
     ccTreeWidget->setItemWidget(acquisitionFrameRateEnable, 1, acquisitionFrameRateEnableCheckbox);
@@ -237,8 +254,8 @@ void ImageStreamWindow::setupCameraWindow()
     connect(acquisitionFramerateSpinBox, qOverloadInt(&QSpinBox::valueChanged), [=]{
         this->imageAcquisitionThread->getCameraControls().setAcquisitionFrameRate(acquisitionFramerateSpinBox->value());
         qDebug() << "value "<< acquisitionFramerateSpinBox->value();
-        imageAcquisitionThread->setValueForParam(HalconCameraParameterNames::ACQUISITIONFRAMERATE,acquisitionFramerateSpinBox->value());
-        //        Sleep(500); // Waiting for the hardware to update exposure time based on Autoexposure
+        imageAcquisitionThread->setValueForParam(BaslerCameraParameterNames::ACQUISITIONFRAMERATE,acquisitionFramerateSpinBox->value());
+//                mssleep(500); // Waiting for the hardware to update exposure time based on Autoexposure
         updateCameraParametersAndDisplay();
     });
     ccTreeWidget->setItemWidget(acquisitionFrameRate, 1, acquisitionFramerateSpinBox);
@@ -278,14 +295,8 @@ void ImageStreamWindow::setupCameraWindow()
 
     // resulting frame rate in status bar
     this->statusBar()->showMessage("Frame Rate: "+ QString::number(this->getImageAcquisitionThread()->getCameraControls().getResultingFrameRate()));
-
-    connect(this, &ImageStreamWindow::displayResultingFrameRate, [=]{
-       this->statusBar()->showMessage("Frame Rate: "+ QString::number(this->getImageAcquisitionThread()->getCameraControls().getResultingFrameRate()));
-
-    });
-
     hlayout->addWidget(ccTreeWidget);
-    hlayout->addWidget(graphicsView);
+    hlayout->addWidget(graphicsView);        
 
 }
 
@@ -296,6 +307,7 @@ void ImageStreamWindow::updateCameraParametersAndDisplay()
     // read all parameters from camera into cameracontrols object
     imageAcquisitionThread->setupCameraControls();
 
+//     mssleep(500);
     // update UI based on contents in cameracontrols object
     displayCameraParameters();
 
@@ -303,10 +315,11 @@ void ImageStreamWindow::updateCameraParametersAndDisplay()
 
 void ImageStreamWindow::displayCameraParameters()
 {
-    exposureTimeSpinBox->setValue(imageAcquisitionThread->getCameraControls().getExposureTime());
-    analogGainSpinBox->setValue(imageAcquisitionThread->getCameraControls().getAnalogGain());
-    autoExposureCheckbox->setCheckState(imageAcquisitionThread->getCameraControls().getAutoExposure()?Qt::CheckState(2):Qt::CheckState(0));
+    // TODO: Shreesha - Disable all signal and slot connections of checkboxes, spinboxes or any other UI element that is listening on a signal,
+    // only during the executing of this function. This is required only here due to all values are being updated
 
+    autoGainCheckbox->setCheckState(imageAcquisitionThread->getCameraControls().getAutoGain()?Qt::CheckState(2):Qt::CheckState(0));
+    autoExposureCheckbox->setCheckState(imageAcquisitionThread->getCameraControls().getAutoExposure()?Qt::CheckState(2):Qt::CheckState(0));
     hueSpinBox->setValue(imageAcquisitionThread->getCameraControls().getHue());
     saturationSpinBox->setValue(imageAcquisitionThread->getCameraControls().getSaturation());
     brightnessSpinBox->setValue(imageAcquisitionThread->getCameraControls().getBrightness());
@@ -315,7 +328,17 @@ void ImageStreamWindow::displayCameraParameters()
     acquisitionFrameRateEnableCheckbox->setCheckState(imageAcquisitionThread->getCameraControls().getAcquisitionFrameRateEnable()?Qt::CheckState(2):Qt::CheckState(0));
     monochromeCheckbox->setCheckState(imageAcquisitionThread->getCameraControls().getMonochrome()?Qt::CheckState(2):Qt::CheckState(0));
     rgbCheckbox->setCheckState(imageAcquisitionThread->getCameraControls().getRgb()?Qt::CheckState(2):Qt::CheckState(0));
-    emit displayResultingFrameRate();
+
+    // Todo: Shreesha - Temporary fix. Find a way to disable all the signals at one go.
+    exposureTimeSpinBox->blockSignals(true);
+    exposureTimeSpinBox->setValue(imageAcquisitionThread->getCameraControls().getExposureTime());
+    exposureTimeSpinBox->blockSignals(false);
+
+    analogGainSpinBox->blockSignals(true);
+    analogGainSpinBox->setValue(imageAcquisitionThread->getCameraControls().getAnalogGain());
+    analogGainSpinBox->blockSignals(false);
+
+    emit updateStatusBar("Frame Rate: "+ QString::number(this->getImageAcquisitionThread()->getCameraControls().getResultingFrameRate()));
 }
 
 void ImageStreamWindow::closeEvent(QCloseEvent *event)
@@ -332,7 +355,7 @@ void ImageStreamWindow::closeEvent(QCloseEvent *event)
         imageAcquisitionThread->setStopAcquisition(true);
 
         try {
-            qDebug() << "Closing device "<< imageAcquisitionThread->getDeviceName()<< ". . . ";
+            qDebug() << "Closing device " + imageAcquisitionThread->getDeviceName()<< ". . . ";
             imageAcquisitionThread->getImageAcquisitionHandle().CloseFramegrabber();
         } catch (HalconCpp::HException &) {
             //todo: add dialog box here

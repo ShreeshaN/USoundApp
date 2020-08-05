@@ -162,10 +162,9 @@ void Homescreen::on_devicesRefresh_clicked()
     } catch (HalconCpp::HException &e) {
         qDebug() << e.ErrorMessage().Text();
     }
-//    acq.SetFramegrabberParam("ExposureAuto","Off");
 
-    qDebug() <<"Params: ";
-    HalconCpp::HTuple h;
+
+//    qDebug() <<"Params: ";
 ////    qDebug() <<"********************available_param_names******************************";
 ////    try {
 ////         h = acq.GetFramegrabberParam("available_param_names");
@@ -175,31 +174,43 @@ void Homescreen::on_devicesRefresh_clicked()
 ////    qDebug() << h.ToString().Text() ;
 
     try {
-         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("ResultingFrameRate");
-    } catch (HalconCpp::HException &e) {
-        qDebug() << "Exception "<< e.ErrorMessage().Text();
-    }
-//    qDebug() << "Here ";
-//    qDebug() << "Reading"<<h.ToString().Text();
-    qDebug() <<"Resulting frame rate" <<h.D();
+         HalconCpp::HTuple h;
+         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("PixelFormat");
+         qDebug() <<"Pixel format" <<h.S().Text();
 
-    try {
-         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRate");
     } catch (HalconCpp::HException &e) {
         qDebug() << "Exception "<< e.ErrorMessage().Text();
     }
-//    qDebug() << "Here ";
-//    qDebug() << "Reading"<<h.ToString().Text();
-    qDebug() <<"Acquisition frame rate" <<h.D();
+    double d = 10000;
+    imageAcquisitionThread->getImageAcquisitionHandle().SetFramegrabberParam("ExposureTime",d);
+    try {
+         HalconCpp::HTuple h;
+         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("ExposureTime");
+         qDebug() <<"Exposture time double" <<h.D();
 
-    try {
-         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRateEnable");
     } catch (HalconCpp::HException &e) {
         qDebug() << "Exception "<< e.ErrorMessage().Text();
     }
 //    qDebug() << "Here ";
 //    qDebug() << "Reading"<<h.ToString().Text();
-    qDebug() <<"Acquisition frame rate enable" <<h.D();
+
+//    try {
+//         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRate");
+//    } catch (HalconCpp::HException &e) {
+//        qDebug() << "Exception "<< e.ErrorMessage().Text();
+//    }
+//    qDebug() << "Here ";
+//    qDebug() << "Reading"<<h.ToString().Text();
+//    qDebug() <<"Acquisition frame rate" <<h.D();
+
+//    try {
+//         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRateEnable");
+//    } catch (HalconCpp::HException &e) {
+//        qDebug() << "Exception "<< e.ErrorMessage().Text();
+//    }
+//    qDebug() << "Here ";
+//    qDebug() << "Reading"<<h.ToString().Text();
+//    qDebug() <<"Acquisition frame rate enable" <<h.D();
 
 //    try {
 //         h = acq.GetFramegrabberParam("ExposureAuto");
@@ -278,8 +289,6 @@ void Homescreen::connectToCamera(QString deviceName)
         connect(imageAcquisitionThread,SIGNAL(updateStatusBarSignal(QString)),windowWidget,SLOT(updateStatusBar(QString)));
         connect(imageAcquisitionThread,SIGNAL(updateStatusBarSignal(QString)),windowWidget,SLOT(updateStatusBar(QString)));
         connect(this,SIGNAL(pushToMessageBoxSignal(QString)),this,SLOT(pushToMessageBoxSlot(QString)));
-
-
 
     } catch (QException &e) {
         qDebug () <<"Exception while connecting to camera";

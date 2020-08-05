@@ -9,6 +9,7 @@ struct CameraControlDefaults{
     // exposure controls
     long EXPOSURETIME = 0;
     float ANALOGGAIN = 0.0;
+    bool AUTOGAIN = false;
     float EXPOSURETARGET = 0.0;  // not sure about this implementation
     bool AUTOEXPOSURE=false;
 
@@ -26,7 +27,7 @@ struct CameraControlDefaults{
 };
 
 
-class HalconCameraParameterNames{
+class BaslerCameraParameterNames{
 public:
     static const std::string EXPOSURETIME;
     static const std::string AUTOEXPOSURE;
@@ -35,6 +36,7 @@ public:
     static const std::string ACQUISITIONFRAMERATEENABLE;
     static const std::string RESULTINGFRAMERATE;
     static const  std::string GAIN;
+    static const  std::string AUTOGAIN;
     static const  std::string HUE;
     static const  std::string SATURATION;
     static const  std::string BRIGHTNESS;

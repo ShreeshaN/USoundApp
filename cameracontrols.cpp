@@ -3,12 +3,12 @@
 
 #include <QDebug>
 
-long CameraControls::getExposureTime()
+double CameraControls::getExposureTime()
 {
     return exposureTime;
 }
 
-void CameraControls::setExposureTime(long value)
+void CameraControls::setExposureTime(double value)
 {
     exposureTime = value;
 }
@@ -153,12 +153,23 @@ void CameraControls::setAcquisitionFrameRateEnable(bool value)
     acquisitionFrameRateEnable = value;
 }
 
+bool CameraControls::getAutoGain() const
+{
+    return autoGain;
+}
+
+void CameraControls::setAutoGain(bool value)
+{
+    autoGain = value;
+}
+
 CameraControls::CameraControls()
 {
     CameraControlDefaults cameraControlsDefaults;
     this->resolution = cameraControlsDefaults.RESOLUTION;
     this->exposureTime = cameraControlsDefaults.EXPOSURETIME;
     this->analogGain =cameraControlsDefaults.ANALOGGAIN;
+    this->autoGain =cameraControlsDefaults.AUTOGAIN;
     this->exposureTarget =cameraControlsDefaults.EXPOSURETARGET;
     this->autoExposure =cameraControlsDefaults.AUTOEXPOSURE;
     this->hue =cameraControlsDefaults.HUE;

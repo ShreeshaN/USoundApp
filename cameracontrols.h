@@ -34,8 +34,8 @@ public:
     void flipOnY();
 
 
-    long getExposureTime();
-    void setExposureTime(long value);
+    double getExposureTime();
+    void setExposureTime(double value);
 
     double getAnalogGain();
     void setAnalogGain(double value);
@@ -80,14 +80,18 @@ public:
     bool getAcquisitionFrameRateEnable() const;
     void setAcquisitionFrameRateEnable(bool value);
 
+    bool getAutoGain() const;
+    void setAutoGain(bool value);
+
 private:
     friend std::ostream& operator<<(std::ostream &strm, const CameraControls &a);
 
     std::string resolution;
 
     // exposure controls
-    long exposureTime;
+    double exposureTime;
     double analogGain;
+    bool autoGain;
     float exposureTarget;  // not sure about this implementation
     bool autoExposure;
 

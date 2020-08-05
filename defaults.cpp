@@ -2,18 +2,19 @@
 #include <QDir>
 
 
-const std::string HalconCameraParameterNames::EXPOSURETIME = "ExposureTime";
-const std::string HalconCameraParameterNames::AUTOEXPOSURE = "ExposureAuto";
-const std::string HalconCameraParameterNames::GAMMA = "Gamma";
-const std::string HalconCameraParameterNames::ACQUISITIONFRAMERATE = "AcquisitionFrameRate";
-const std::string HalconCameraParameterNames::ACQUISITIONFRAMERATEENABLE = "AcquisitionFrameRateEnable";
-const std::string HalconCameraParameterNames::RESULTINGFRAMERATE = "ResultingFrameRate";
-const std::string HalconCameraParameterNames::GAIN = "Gain";
+const std::string BaslerCameraParameterNames::EXPOSURETIME = "ExposureTime";
+const std::string BaslerCameraParameterNames::AUTOEXPOSURE = "ExposureAuto";
+const std::string BaslerCameraParameterNames::GAMMA = "Gamma";
+const std::string BaslerCameraParameterNames::ACQUISITIONFRAMERATE = "AcquisitionFrameRate";
+const std::string BaslerCameraParameterNames::ACQUISITIONFRAMERATEENABLE = "AcquisitionFrameRateEnable";
+const std::string BaslerCameraParameterNames::RESULTINGFRAMERATE = "ResultingFrameRate";
+const std::string BaslerCameraParameterNames::GAIN = "Gain";
+const std::string BaslerCameraParameterNames::AUTOGAIN = "GainAuto";
 
 // Although, I did not find these controls in acquisition handle's SetFramegrabberParam method
 // Initializing just to maintain equality
-const std::string SATURATION="saturation";
-const std::string HUE="hue";
+const std::string SATURATION="BslSaturation";
+const std::string HUE="BslHue";
 const std::string BRIGHTNESS="brightness";
 const std::string CONTRAST="constrast";
 const std::string MONOCHROME="monochrome";

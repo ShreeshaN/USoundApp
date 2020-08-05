@@ -67,10 +67,10 @@ public:
     bool HImage2QImage(HalconCpp::HImage &from, QImage &to);
     void setupCameraControls();
     HalconCpp::HTuple getValueForParam(std::string paramString);
-    void setValueForParam(std::string paramString, int paramValue);
+//    void setValueForParam(std::string paramString, int paramValue);
     void setValueForParam(std::string paramString, std::string paramValue);
     void setValueForParam(std::string paramString, double paramValue);
-    void setValueForParam(std::string paramString, long paramValue);
+//    void setValueForParam(std::string paramString, long paramValue);
     void startAquisition();
 
     // Setters and Getters

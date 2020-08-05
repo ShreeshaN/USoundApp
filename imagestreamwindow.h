@@ -32,6 +32,8 @@ public:
     QSpinBox *exposureTimeSpinBox;
     QTreeWidgetItem *analogGain;
     QDoubleSpinBox *analogGainSpinBox;
+    QTreeWidgetItem *autoGain;
+    QCheckBox *autoGainCheckbox;
     QTreeWidgetItem *autoExposure;
     QCheckBox *autoExposureCheckbox;
     QTreeWidgetItem *colorAppearance;

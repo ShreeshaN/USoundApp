@@ -41,10 +41,7 @@ public:
     ~Homescreen();
 
     // variables
-    QMap<QString, CameraControls> cameraControlsMap;
     QList<QString> devices;
-    QString cameraInSelection;
-
     ImageStreamWindow *windowWidget;
     ImageAcquisition *imageAcquisitionThread;
     QLabel *imageLabel;
