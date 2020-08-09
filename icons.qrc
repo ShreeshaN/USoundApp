@@ -4,5 +4,6 @@
         <file>icons/icon-media-playback-pause.png</file>
         <file>icons/icon-media-playback-stop.png</file>
         <file>icons/icon-media-record.png</file>
+        <file>icons/wpi_logo.ico</file>
     </qresource>
 </RCC>
