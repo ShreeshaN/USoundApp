@@ -18,6 +18,7 @@
 
 class CheckboxContainer: public QCheckBox, public ParameterContainer
 {
+    Q_OBJECT
 public:
     CheckboxContainer(bool defaultParameterState, std::string cameraParameterName, std::string uiDisplayName,  std::string checkedValue,  std::string uncheckedValue, ImageAcquisition* imageAcquisitionThread, QWidget *parent = nullptr);
 
@@ -27,7 +28,6 @@ public:
     void setValueInHardware(int) override;
     void setValueInHardware(std::string) override;
     void setValueInHardware(bool) override;
-    void emitUiElementChangedSignal() override;
 
     bool getParamState() const;
     void setParamState(bool value);
@@ -57,8 +57,6 @@ public:
     void setUncheckedValue(const std::string &value);
 
 
-//signals:
-//    void updateAllParametersSignal();
 private:
     bool paramState;
     std::string cameraParameterName, uiDisplayName;

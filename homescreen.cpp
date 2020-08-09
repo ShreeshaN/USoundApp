@@ -193,29 +193,30 @@ void Homescreen::on_devicesRefresh_clicked()
 //    }
 //    qDebug() << "Here ";
 //    qDebug() << "Reading"<<h.ToString().Text();
+//    imageAcquisitionThread->getImageAcquisitionHandle().SetFramegrabberParam("ExposureAuto","Once");
+//    Sleep(2000);
+
     HalconCpp::HTuple h;
     try {
-         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRateEnable");
+         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("ExposureTime");
     } catch (HalconCpp::HException &e) {
         qDebug() << "Exception "<< e.ErrorMessage().Text();
     }
     qDebug() << "Here ";
-    qDebug() << "Reading"<<h.ToString().Text();
-    qDebug() <<"Acquisition frame rate enable" <<h.D();
-    qDebug() << "Type "<<h.Type();
+    qDebug() << "Reading"<<h.D();
 
 
-    try {
-         imageAcquisitionThread->getImageAcquisitionHandle().SetFramegrabberParam("AcquisitionFrameRateEnable", true);
-         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRateEnable");
+//    try {
+//         imageAcquisitionThread->getImageAcquisitionHandle().SetFramegrabberParam("AcquisitionFrameRateEnable", true);
+//         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRateEnable");
 
-    } catch (HalconCpp::HException &e) {
-        qDebug() << "Exception "<< e.ErrorMessage().Text();
-    }
-    qDebug() << "Here ";
-    qDebug() << "Reading"<<h.ToString().Text();
-    qDebug() <<"Acquisition frame rate enable" <<h.D();
-    qDebug() << "Type "<<h.Type();
+//    } catch (HalconCpp::HException &e) {
+//        qDebug() << "Exception "<< e.ErrorMessage().Text();
+//    }
+//    qDebug() << "Here ";
+//    qDebug() << "Reading"<<h.ToString().Text();
+//    qDebug() <<"Acquisition frame rate enable" <<h.D();
+//    qDebug() << "Type "<<h.Type();
 
 //    try {
 //         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRateEnable");

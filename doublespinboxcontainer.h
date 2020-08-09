@@ -55,11 +55,6 @@ public:
     void setValueInHardware(double) override;
     void setValueInHardware(std::string) override;
     void setValueInHardware(bool) override;
-    void emitUiElementChangedSignal() override;
-
-
-//signals:
-//    void updateAllParametersSignal();
 
 
 private:

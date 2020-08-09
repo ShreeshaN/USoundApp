@@ -1,5 +1,6 @@
 #include "checkboxcontainer.h"
 #include <string.h>
+#include "usoundutils.h"
 
 CheckboxContainer::CheckboxContainer(bool defaultParameterState, std::string cameraParameterName, std::string uiDisplayName, std::string checkedValue, std::string uncheckedValue, ImageAcquisition* imageAcquisitionThread, QWidget *parent): QCheckBox(parent)
 {
@@ -12,11 +13,13 @@ CheckboxContainer::CheckboxContainer(bool defaultParameterState, std::string cam
     this->imageAcquisitionThread = imageAcquisitionThread;
     this->checkedValue = checkedValue;
     this->uncheckedValue = uncheckedValue;
+    updateParamValue();
     displayParamValue();
 
 
     // connect
-    connect(this->uiElement, &QCheckBox::clicked,[=]{
+    QObject::connect(this->uiElement, &QCheckBox::clicked,[=]{
+//        qDebug() << "recieved from UI" << uiElement->isChecked();
         if (checkedValue.compare("") == 0){
             // if the camera parameter takes bool directly instead of strings
             this->setValueInHardware(uiElement->isChecked());
@@ -25,6 +28,7 @@ CheckboxContainer::CheckboxContainer(bool defaultParameterState, std::string cam
             // if the camera parameter takes string names instead of bool, then take the bool value from UI and set appropriate string for the camera
             this->setValueInHardware(uiElement->isChecked()?checkedValue:uncheckedValue);
         }
+        mssleep(250);
         this->updateParamValue();
         this->displayParamValue();
 
@@ -35,21 +39,40 @@ CheckboxContainer::CheckboxContainer(bool defaultParameterState, std::string cam
 
 void CheckboxContainer::displayParamValue()
 {
+    this->uiElement->blockSignals(true);
     uiElement->setCheckState(paramState?Qt::CheckState(2):Qt::CheckState(0));
+    this->uiElement->blockSignals(false);
+//    qDebug() << "Displaying value of "<<cameraParameterName.c_str() << "param value"<< paramState;
+
 }
 
 void CheckboxContainer::updateParamValue()
 {
-    val = this->imageAcquisitionThread->getValueForParam(cameraParameterName);
-    if(checkedValue.compare("") == 0){
-        // this condition is satisfied if the camera parameter returns 0 or 1 (mimicking a bool) instead of string values
-        int(val.D()) == 0?setParamState(false):setParamState(true);
+    try {
+        val = this->imageAcquisitionThread->getValueForParam(cameraParameterName);
+        if(checkedValue.compare("") == 0){
+            // this condition is satisfied if the camera parameter returns 0 or 1 (mimicking a bool) instead of string values
+            int(val.D()) == 0?setParamState(false):setParamState(true);
+        }
+        else{
+            // this condition is satisfied if the camera parameter returns strings like "Off", "Once", "Continuous".
+            // In that case the return strings should be equal to checkedValue or uncheckedValue variables of this class.
+            QString::compare(val.S().Text(),uncheckedValue.c_str()) == 0?setParamState(false):setParamState(true);
+//            qDebug() << "recieved from hardware" << val.S().Text();
     }
-    else{
-        // this condition is satisfied if the camera parameter returns strings like "Off", "Once", "Continuous".
-        // In that case the return strings should be equal to checkedValue or uncheckedValue variables of this class.
-        QString::compare(val.S().Text(),uncheckedValue.c_str()) == 0?setParamState(false):setParamState(true);
-}
+//        qDebug() << "Updating param"<<cameraParameterName.c_str()<< "New state "<< paramState;
+
+    } catch (HalconCpp::HException &e) {
+        if (e.ErrorCode() == 5330)
+        {
+            this->uiElement->setDisabled(true);
+            qDebug() << "Either parameter name is incorrect or the camera make does not support it "<< cameraParameterName.c_str()<< "Currently, a default value is set";
+        }
+        else{
+            qDebug() << "Unknown error while setting value for "<<cameraParameterName.c_str();
+        }
+    }
+
 }
 
 void CheckboxContainer::setValueInHardware(double)
@@ -70,11 +93,6 @@ void CheckboxContainer::setValueInHardware(std::string val)
 void CheckboxContainer::setValueInHardware(bool)
 {
     this->imageAcquisitionThread->setValueForParam(cameraParameterName, uiElement->isChecked());
-}
-
-void CheckboxContainer::emitUiElementChangedSignal()
-{
-
 }
 
 //void CheckboxContainer::updateAllParametersSignal()

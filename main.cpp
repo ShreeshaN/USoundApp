@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
         // Setup directories
         createDirectories();
         fprintf(stdout, "Logging to file: %s", (logFilePath+"\n").toStdString().c_str());
-//        qInstallMessageHandler(customLoggingHandler); // Install the handler
+        qInstallMessageHandler(customLoggingHandler); // Install the handler
         qInfo() << "Logging to file:" + logFilePath;
         QApplication a(argc, argv);
         // This is used as a workaround to display menubar in mac os - https://stackoverflow.com/questions/25261760/menubar-not-showing-for-simple-qmainwindow-code-qt-creator-mac-os

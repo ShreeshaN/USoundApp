@@ -13,10 +13,11 @@ DoubleSpinboxContainer::DoubleSpinboxContainer(double defaultParameterValue, std
     uiElement->setRange(minVal, maxVal);
     uiElement->setSingleStep(step);
     this->imageAcquisitionThread = imageAcquisitionThread;
+    updateParamValue();
     displayParamValue();
 
     // connect
-    connect(this->uiElement, qOverloadDouble(&QDoubleSpinBox::valueChanged),[=]{
+    QObject::connect(this->uiElement, qOverloadDouble(&QDoubleSpinBox::valueChanged),[=]{
         this->setValueInHardware(uiElement->value());
         this->updateParamValue();
         this->displayParamValue();
@@ -27,13 +28,31 @@ DoubleSpinboxContainer::DoubleSpinboxContainer(double defaultParameterValue, std
 // Virtual method implementations
 void DoubleSpinboxContainer::updateParamValue()
 {
-    val = this->imageAcquisitionThread->getValueForParam(cameraParameterName);
-    this->paramValue = val.D();
+    try {
+        val = this->imageAcquisitionThread->getValueForParam(cameraParameterName);
+        this->paramValue = val.D();
+//        qDebug() << "Updating param"<<cameraParameterName.c_str() << "New value "<< paramValue;
+
+    } catch (HalconCpp::HException &e) {
+        if (e.ErrorCode() == 5330)
+        {
+            this->uiElement->setDisabled(true);
+            qDebug() << "Either parameter name is incorrect or the camera make does not support it "<< cameraParameterName.c_str()<< "Currently, a default value is set";
+        }
+        else{
+            qDebug() << "Unknown error while setting value for "<<cameraParameterName.c_str();
+        }
+    }
+
 }
 
 void DoubleSpinboxContainer::displayParamValue()
 {
+    this->uiElement->blockSignals(true);
     this->uiElement->setValue(paramValue);
+    this->uiElement->blockSignals(false);
+//    qDebug() << "Displaying value of "<<cameraParameterName.c_str() << "param value"<< paramValue;
+
 }
 
 void DoubleSpinboxContainer::setValueInHardware(double paramValue)
@@ -45,16 +64,6 @@ void DoubleSpinboxContainer::setValueInHardware(bool)
 {
 
 }
-
-void DoubleSpinboxContainer::emitUiElementChangedSignal()
-{
-
-}
-
-//void DoubleSpinboxContainer::updateAllParametersSignal()
-//{
-//    emit this->valueChanged(0);
-//}
 void DoubleSpinboxContainer::setValueInHardware(std::string)
 {
 

@@ -4,8 +4,6 @@
 #include <QTreeWidgetItem>
 #include "parametercontainer.h"
 #include "imageacquisition.h"
-#include "imagestreamwindow.h"
-
 #ifndef __APPLE__
 #  include "HalconCpp.h"
 #  include "Halcon.h"
@@ -55,10 +53,6 @@ public:
     void setValueInHardware(double) override;
     void setValueInHardware(std::string) override;
     void setValueInHardware(bool) override;
-    void emitUiElementChangedSignal() override;
-
-//signals:
-//    void updateAllParametersSignal(); // overrides
 
 private:
     double paramValue;

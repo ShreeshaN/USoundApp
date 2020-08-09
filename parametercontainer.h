@@ -3,7 +3,7 @@
 #include<QString>
 #include <QtCore>
 
-class ParameterContainer
+class ParameterContainer: public QObject
 {
 public:    
     ParameterContainer();
@@ -14,12 +14,11 @@ public:
     virtual void setValueInHardware(double)=0;
     virtual void setValueInHardware(std::string)=0;
     virtual void setValueInHardware(bool)=0;
-    virtual void emitUiElementChangedSignal()=0;
 
 
 
 //signals:
-//    virtual void updateAllParametersSignal()=0;
+//    void updateAllParametersSignal();
 };
 
 #endif // CONTAINER_H
