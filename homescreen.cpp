@@ -70,7 +70,7 @@ Homescreen::Homescreen(QWidget *parent)
 void Homescreen::loadSettings()
 {
     qDebug() << "Successfully loaded settings";
-    qDebug() << "Looking here " +  m_sSettingsFile;
+    qDebug() << "Looking here " +  QApplication::applicationDirPath();
     QSettings settings(m_sSettingsFile, QSettings::IniFormat);
     qDebug() << settings.allKeys();
 }

@@ -18,10 +18,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # Adding c++17 support
 CONFIG += c++17
 
+TARGETDIR = ''
+
 macx {
   QMAKE_CXXFLAGS += -F/Library/Frameworks
   QMAKE_LFLAGS   += -F/Library/Frameworks
   LIBS           += -framework HALCONCpp
+  TARGETDIR      += "$$(OUT_PWD)/USoundApp.app/Contents/MacOS/"
 }
 else {
   #defines
@@ -37,7 +40,10 @@ else {
   unix:LIBS     += -lhalconcpp -lhalcon -lXext -lX11 -ldl -lpthread
   win32:LIBS    += "$$(HALCONROOT)/lib/$$(HALCONARCH)/halconcpp.lib" \
                    "$$(HALCONROOT)/lib/$$(HALCONARCH)/halcon.lib"
+
+  TARGETDIR      += "$$(OUT_PWD)"
 }
+
 
 SOURCES += \
     cameracontrols.cpp \
@@ -67,6 +73,7 @@ HEADERS += \
     parametercontainer.h \
     queuewriter.h \
     usoundutils.h
+
 FORMS += \
     about.ui \
     homescreen.ui
@@ -77,9 +84,20 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+
+
+copydata.commands = $(COPY_DIR) $$PWD/USoundSettings.ini TARGETDIR
+first.depends = $(first) copydata
+export(first.depends)
+export(copydata.commands)
+QMAKE_EXTRA_TARGETS += first copydata
+
+
 RESOURCES += \
     icons.qrc \
-    images.qrc
+    images.qrc \
+    USoundSettings.ini
+
 
 #win32:CONFIG(release, debug|release): LIBS += -L$$PWD/'../../../../../Program Files/MVTec/HALCON-19.11-Progress/lib/x64-win64/' -lhalconcpp
 #else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/'../../../../../Program Files/MVTec/HALCON-19.11-Progress/lib/x64-win64/' -lhalconcppd
