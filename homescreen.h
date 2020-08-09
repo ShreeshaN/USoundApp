@@ -60,13 +60,16 @@ public:
     void setupDevicesUI();
     void detectAttachedDevices();
 
-
+private:
+    QString m_sSettingsFile;
+    void loadSettings();
+    void saveSettings();
 
 public slots:
     void on_devicesRefresh_clicked();
     void connectToCamera(QString deviceName);
     void on_devicesTreeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column);
-//    void renderImage(QImage qImage, int widgetIndex);
+    //    void renderImage(QImage qImage, int widgetIndex);
     void onCameraWindowClose();
     void pushToMessageBoxSlot(QString message);
     void updateLogLevel(QString level);
@@ -77,7 +80,6 @@ signals:
 
 private slots:
     void on_actionAbout_triggered();
-
     void on_actionExit_triggered();
 
 private:

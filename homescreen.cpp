@@ -4,6 +4,7 @@
 #include "imageacquisition.h"
 #include "defaults.h"
 #include <QMessageBox>
+#include <QSettings>
 
 #ifndef __APPLE__
 #  include "HalconCpp.h"
@@ -48,6 +49,10 @@ Homescreen::Homescreen(QWidget *parent)
 {
     ui->setupUi(this);
 
+    // Load settings
+    m_sSettingsFile = "USoundSettings.ini";
+    loadSettings();
+
     //    about = new Ui_About();
     // Assign UI plainTextEdit to global Message Box
     globalMessageBox =ui->plainTextEdit;
@@ -60,6 +65,14 @@ Homescreen::Homescreen(QWidget *parent)
     onApplicationStartup();
 
 
+}
+
+void Homescreen::loadSettings()
+{
+    qDebug() << "Successfully loaded settings";
+    qDebug() << "Looking here " +  m_sSettingsFile;
+    QSettings settings(m_sSettingsFile, QSettings::IniFormat);
+    qDebug() << settings.allKeys();
 }
 
 

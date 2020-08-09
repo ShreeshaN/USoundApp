@@ -84,3 +84,6 @@ RESOURCES += \
 # /Library/Frameworks by default, the preprocessor/compiler/linker will not
 # and need to be told explicitly.
 
+DISTFILES += \
+    USoundSettings.ini
+
