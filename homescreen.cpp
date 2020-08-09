@@ -35,6 +35,7 @@
 //#include "qttreepropertybrowser.h"
 //#include "qtpropertymanager.h"
 //#include "qtvariantproperty.h"
+#include <QComboBox>
 
 // Initialize Global Message Box
 QPlainTextEdit * Homescreen::globalMessageBox = 0;
@@ -48,6 +49,11 @@ Homescreen::Homescreen(QWidget *parent)
     // Assign UI plainTextEdit to global Message Box
     globalMessageBox =ui->plainTextEdit;
     onApplicationStartup();
+
+    QComboBox *logLevelChoice = ui->logLevelText;
+
+    // Connect slot to update log level on change in UI
+    connect(logLevelChoice,SIGNAL(activated(QString)),this,SLOT(updateLogLevel(QString)));
 }
 
 
@@ -326,5 +332,25 @@ void Homescreen::onCameraWindowClose()
 void Homescreen::pushToMessageBoxSlot(QString message)
 {
     ui->plainTextEdit->appendPlainText(message);
+}
+
+void Homescreen::updateLogLevel(QString message)
+{
+    qDebug() << "Log Level changed to: "+ message;
+    if(message=="DEBUG"){
+        logLevel = QtDebugMsg;
+    }
+    else if(message == "INFO"){
+        logLevel = QtInfoMsg;
+    }
+    else if(message == "CRITICAL"){
+        logLevel = QtCriticalMsg;
+    }
+    else if(message == "WARN"){
+        logLevel = QtWarningMsg;
+    }
+    else if(message == "FATAL"){
+        logLevel = QtFatalMsg;
+    }
 }
 

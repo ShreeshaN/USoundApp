@@ -53,7 +53,7 @@ void customLoggingHandler(QtMsgType type, const QMessageLogContext &context, con
     ts << txt << endl;
 
 //     Push to Message Box
-    if(homeScreenPointer!=0 && Homescreen::globalMessageBox != 0){
+    if(homeScreenPointer!=0 && Homescreen::globalMessageBox != 0 && Homescreen::logLevel == type){
 //        Homescreen::globalMessageBox->appendPlainText(tempString+txt);
         emit homeScreenPointer->pushToMessageBoxSignal(tempString+txt);
         tempString="";

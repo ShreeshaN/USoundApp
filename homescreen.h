@@ -45,6 +45,7 @@ public:
     ImageStreamWindow *windowWidget;
     ImageAcquisition *imageAcquisitionThread;
     QLabel *imageLabel;
+    static inline QtMsgType logLevel = QtInfoMsg;
 
     static QPlainTextEdit *globalMessageBox;
 
@@ -65,6 +66,7 @@ public slots:
 //    void renderImage(QImage qImage, int widgetIndex);
     void onCameraWindowClose();
     void pushToMessageBoxSlot(QString message);
+    void updateLogLevel(QString level);
 
 signals:
     void pushToMessageBoxSignal(QString message);
