@@ -65,9 +65,9 @@ HEADERS += \
     imagestreamwindow.h \
     parametercontainer.h \
     queuewriter.h \
-    spinboxcontainer.h \
     usoundutils.h
 FORMS += \
+    about.ui \
     homescreen.ui
 
 

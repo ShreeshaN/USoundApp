@@ -35,6 +35,9 @@
 //#include "qttreepropertybrowser.h"
 //#include "qtpropertymanager.h"
 //#include "qtvariantproperty.h"
+#include <QComboBox>
+#include <ui_about.h>
+#include <ui_about.h>
 
 // Initialize Global Message Box
 QPlainTextEdit * Homescreen::globalMessageBox = 0;
@@ -42,12 +45,21 @@ QPlainTextEdit * Homescreen::globalMessageBox = 0;
 Homescreen::Homescreen(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::Homescreen)
-
 {
     ui->setupUi(this);
+
+    //    about = new Ui_About();
     // Assign UI plainTextEdit to global Message Box
     globalMessageBox =ui->plainTextEdit;
+
+    // Connect slot to update log level on change in UI
+    connect(ui->logLevelSelector,SIGNAL(activated(QString)),this,SLOT(updateLogLevel(QString)));
+    // Connect slot to clear logs
+    connect(ui->clearLogs,SIGNAL(clicked()),this,SLOT(clearLogs()));
+
     onApplicationStartup();
+
+
 }
 
 
@@ -96,6 +108,7 @@ void Homescreen::setupDevicesUI()
         }
 
     });
+
 }
 
 void Homescreen::detectAttachedDevices()
@@ -157,30 +170,27 @@ void Homescreen::onApplicationStartup()
 void Homescreen::on_devicesRefresh_clicked()
 {
     try {
-//        HalconCpp::HFramegrabber acq("usb3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "267601642BB5_Basler_acA2040120um", 0, -1);
+        //        HalconCpp::HFramegrabber acq("usb3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "267601642BB5_Basler_acA2040120um", 0, -1);
 
     } catch (HalconCpp::HException &e) {
         qDebug() << e.ErrorMessage().Text();
     }
 
 
-//    qDebug() <<"Params: ";
-////    qDebug() <<"********************available_param_names******************************";
-////    try {
-////         h = acq.GetFramegrabberParam("available_param_names");
-////    } catch (HalconCpp::HException &e) {
-////        qDebug() << "Exception "<< e.ErrorMessage().Text();
-////    }
-////    qDebug() << h.ToString().Text() ;
+    //    qDebug() <<"Params: ";
+    ////    qDebug() <<"********************available_param_names******************************";
+    ////    try {
+    ////         h = acq.GetFramegrabberParam("available_param_names");
+    ////    } catch (HalconCpp::HException &e) {
+    ////        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    ////    }
+    ////    qDebug() << h.ToString().Text() ;
 
 //    try {
 //         HalconCpp::HTuple h;
 //         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("PixelFormat");
 //         qDebug() <<"Pixel format" <<h.S().Text();
 
-//    } catch (HalconCpp::HException &e) {
-//        qDebug() << "Exception "<< e.ErrorMessage().Text();
-//    }
 //    double d = 10000;
 //    imageAcquisitionThread->getImageAcquisitionHandle().SetFramegrabberParam("ExposureTime",d);
 //    try {
@@ -195,16 +205,6 @@ void Homescreen::on_devicesRefresh_clicked()
 //    qDebug() << "Reading"<<h.ToString().Text();
 //    imageAcquisitionThread->getImageAcquisitionHandle().SetFramegrabberParam("ExposureAuto","Once");
 //    Sleep(2000);
-
-    HalconCpp::HTuple h;
-    try {
-         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("ExposureTime");
-    } catch (HalconCpp::HException &e) {
-        qDebug() << "Exception "<< e.ErrorMessage().Text();
-    }
-    qDebug() << "Here ";
-    qDebug() << "Reading"<<h.D();
-
 
 //    try {
 //         imageAcquisitionThread->getImageAcquisitionHandle().SetFramegrabberParam("AcquisitionFrameRateEnable", true);
@@ -266,23 +266,81 @@ void Homescreen::on_devicesRefresh_clicked()
 
 //    qDebug() << cameraControlsMap["267601642BB5_Basler_acA2040120um"].getGamma();
 //    qDebug() << cameraControlsMap["2676016419A3_Basler_acA2040120um"].getGamma();
+    //    qDebug() << "Here ";
+    //    qDebug() << "Reading"<<h.ToString().Text();
+
+    //    try {
+    //         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRate");
+    //    } catch (HalconCpp::HException &e) {
+    //        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    //    }
+    //    qDebug() << "Here ";
+    //    qDebug() << "Reading"<<h.ToString().Text();
+    //    qDebug() <<"Acquisition frame rate" <<h.D();
+
+    //    try {
+    //         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRateEnable");
+    //    } catch (HalconCpp::HException &e) {
+    //        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    //    }
+    //    qDebug() << "Here ";
+    //    qDebug() << "Reading"<<h.ToString().Text();
+    //    qDebug() <<"Acquisition frame rate enable" <<h.D();
+
+    //    try {
+    //         h = acq.GetFramegrabberParam("ExposureAuto");
+    //    } catch (HalconCpp::HException &e) {
+    //        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    //    }
+    //    qDebug() << h.ToString().Text();
+    //    qDebug() << h.DArr()[0];
+
+
+
+    //    using namespace HalconCpp;
+    //    HalconCpp::HTuple *information = new HalconCpp::HTuple;
+    //    HalconCpp::HTuple * valueList = new HalconCpp::HTuple;
+    //    QList<QString> list = { "bits_per_channel", "camera_type", "color_space", "defaults", "device", "external_trigger", "field", "general", "generic", "horizontal_resolution", "image_height", "image_width", "info_boards", "parameters", "parameters_readonly", "parameters_writeonly", "port", "revision", "start_column", "start_row", "vertical_resolution"};
+    //    for (auto param : list) {
+    //        qDebug()<< "************" << param << "*************";
+    //        HalconCpp::InfoFramegrabber("usb3vision",HTuple(HString::FromUtf8(param.toUtf8())),information, valueList);
+    //        qDebug () << "Information: "<< information->S().Text();
+    //        qDebug() << "Valuelist length: "<<valueList->Length();
+    //        auto deviceList = valueList->ToSArr();
+    //        for(int i=0;i<valueList->Length();i++)
+    //        {
+    //            qDebug() << QString(deviceList[i].Text());
+    //        }
+
+    //    }
+    //    HalconCpp::InfoFramegrabber("usb3vision","parameters",information, valueList);
+    //    qDebug () << "Information: "<< information->S().Text();
+    //    qDebug() << "Valuelist length: "<<valueList->Length();
+    //    auto deviceList = valueList->ToSArr();
+    //    for(int i=0;i<valueList->Length();i++)
+    //    {
+    //        qDebug() << QString(deviceList[i].Text());
+    //    }
+
+
+
+    //    qDebug() << cameraControlsMap["267601642BB5_Basler_acA2040120um"].getGamma();
+    //    qDebug() << cameraControlsMap["2676016419A3_Basler_acA2040120um"].getGamma();
 
 
 
 
     //    HalconCpp::HFramegrabber acq("USB3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "267601642BB5_Basler_acA2040120um", 0, -1);
-//    HalconCpp::HImage image = acq.GrabImage();
-//    Hlong  width,height;
-//      image.GetImageSize(&width,&height);
+    //    HalconCpp::HImage image = acq.GrabImage();
+    //    Hlong  width,height;
+    //      image.GetImageSize(&width,&height);
 
-//      qDebug() << "Image size "<< width << height;
-//      HalconCpp::WriteImage(image,"tiff",0,"C:/Users/daruizcadalso/Documents/QTApplications/USoundApp/sample.jpg");
-//      HalconCpp::CloseFramegrabber(acq);
-
+    //      qDebug() << "Image size "<< width << height;
+    //      HalconCpp::WriteImage(image,"tiff",0,"C:/Users/daruizcadalso/Documents/QTApplications/USoundApp/sample.jpg");
+    //      HalconCpp::CloseFramegrabber(acq);
 
 
 }
-
 
 
 void Homescreen::connectToCamera(QString deviceName)
@@ -342,3 +400,36 @@ void Homescreen::pushToMessageBoxSlot(QString message)
     ui->plainTextEdit->appendPlainText(message);
 }
 
+void Homescreen::updateLogLevel(QString message)
+{
+    qDebug() << "Log Level changed to: "+ message;
+    if(message=="DEBUG"){
+        logLevel = QtDebugMsg;
+    }
+    else if(message == "INFO"){
+        logLevel = QtInfoMsg;
+    }
+    else if(message == "CRITICAL"){
+        logLevel = QtCriticalMsg;
+    }
+    else if(message == "WARN"){
+        logLevel = QtWarningMsg;
+    }
+    else if(message == "FATAL"){
+        logLevel = QtFatalMsg;
+    }
+}
+
+void Homescreen::clearLogs()
+{
+    ui->plainTextEdit->clear();
+}
+
+
+
+void Homescreen::on_actionAbout_triggered()
+{
+    auto aboutDialog = new QDialog(0,0);
+    about->setupUi(aboutDialog);
+    aboutDialog->exec();
+}
