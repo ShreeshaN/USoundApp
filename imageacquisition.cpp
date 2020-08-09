@@ -50,7 +50,7 @@ void ImageAcquisition::run()
             Hlong  width,height;
             currentImage.GetImageSize(&width,&height);
             // todo: Prathyush SP currentImage is saved to the disk. Check the importance of the resolution saved?
-            HImage zoomedImage = currentImage.ZoomImageSize(600,600,"constant");
+            HImage zoomedImage = currentImage;//.ZoomImageSize(600,600,"constant");
 
             //        image.GetImageSize(&width,&height);
             //        qDebug()<< "Image size halcon "<<width<<height;

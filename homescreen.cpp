@@ -71,7 +71,7 @@ void Homescreen::setupDevicesUI()
         // child
         auto * usbCamera = new QTreeWidgetItem(QStringList() << devicesIterator.next());
         usbCamera->setToolTip(0,usbCamera->text(0));
-        usb3->addChild(usbCamera);
+        usb3->addChild(usbCamera);        
     }
 
     ui->devicesTreeWidget->addTopLevelItems(topLevelItems);
@@ -96,6 +96,7 @@ void Homescreen::setupDevicesUI()
         }
 
     });
+
 }
 
 void Homescreen::detectAttachedDevices()

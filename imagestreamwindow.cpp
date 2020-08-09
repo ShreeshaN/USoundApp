@@ -15,6 +15,7 @@
 #include <queuewriter.h>
 #include<defaults.h>
 #include<QDir>
+#include <QScrollBar>
 
 
 ImageStreamWindow::ImageStreamWindow(QWidget *parent) : QMainWindow(parent)
@@ -24,6 +25,8 @@ ImageStreamWindow::ImageStreamWindow(QWidget *parent) : QMainWindow(parent)
 
 void ImageStreamWindow::setupCameraWindow()
 {
+
+//    this->;
     imageSaveButton = this->menuBar()->addAction(tr("ImageSaveButton"));
     imageSaveButton->setIcon(QIcon(":icons/icon-single-shot.png"));
     // todo: Prathyush SP -> Fix issue with tooltip display
@@ -58,16 +61,27 @@ void ImageStreamWindow::setupCameraWindow()
     this->setCentralWidget(widget);
     // Setting up graphics view
     graphicsView = new QGraphicsView();
+    connect(graphicsView, SIGNAL(QGraphicsView::resizeEvent()), this, SLOT(saveImage()));
+
+//    connect(graphicsView, SIGNAL(triggered()), this, SLOT(stopVideoRecord()));
+//    graphicsView->setVerticalScrollBar(new QScrollBar());
+
     //        this->setCentralWidget(graphicsView);
     graphicsScene = new QGraphicsScene();
+
     graphicsView->setScene(graphicsScene);
     graphicsPixmapItem = new QGraphicsPixmapItem();
+
     graphicsView->scene()->addItem(graphicsPixmapItem);
     graphicsPixmapItemList.append(graphicsPixmapItem);
 
     QTreeWidget *ccTreeWidget = new QTreeWidget;
     ccTreeWidget->setColumnCount(2);
     ccTreeWidget->setHeaderLabels(QStringList() <<"Feature"<<"Value");
+
+    // Set column width for ccTree (Dynamic resize only for image)
+    ccTreeWidget->setFixedWidth(350);
+    ccTreeWidget->setColumnWidth(0, 250);
 
     QList<QTreeWidgetItem *> topLevelItems;
 
@@ -302,6 +316,8 @@ void ImageStreamWindow::setupCameraWindow()
 
 
 
+
+
 void ImageStreamWindow::updateCameraParametersAndDisplay()
 {
     // read all parameters from camera into cameracontrols object
@@ -386,7 +402,7 @@ void ImageStreamWindow::renderImage(QImage qImage)
     // QGRAPHICSVIEW WAY OF STREAMING
     if(!imageAcquisitionThread->getStopAcquisition())
     {
-        //        int height=this->height(); int width = this->width();
+        qImage = qImage.scaled(graphicsView->width(), graphicsView->height(), Qt::IgnoreAspectRatio);
         graphicsPixmapItem->setPixmap(QPixmap::fromImage(qImage));
         this->show();
     }
