@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>icons/wpi_logo.ico</file>
         <file>icons/icon-single-shot.png</file>
         <file>icons/icon-media-playback-pause.png</file>
         <file>icons/icon-media-playback-stop.png</file>

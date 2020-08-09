@@ -60,6 +60,7 @@ HEADERS += \
     queuewriter.h \
     usoundutils.h
 FORMS += \
+    about.ui \
     homescreen.ui
 
 

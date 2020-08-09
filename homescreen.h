@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QLabel>
+#include <ui_about.h>
+
 #ifndef __APPLE__
 #  include "HalconCpp.h"
 #  include "Halcon.h"
@@ -46,6 +48,7 @@ public:
     ImageAcquisition *imageAcquisitionThread;
     QLabel *imageLabel;
     static inline QtMsgType logLevel = QtInfoMsg;
+    Ui_About *about = new Ui_About;
 
     static QPlainTextEdit *globalMessageBox;
 
@@ -71,6 +74,9 @@ public slots:
 
 signals:
     void pushToMessageBoxSignal(QString message);
+
+private slots:
+    void on_actionAbout_triggered();
 
 private:
     Ui::Homescreen *ui;
