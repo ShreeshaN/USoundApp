@@ -60,6 +60,7 @@ HEADERS += \
     defaults.h \
     doubleslider.h \
     doublespinboxcontainer.h \
+    spinboxcontainer.h \
     homescreen.h \
     imageacquisition.h \
     imagestreamwindow.h \
