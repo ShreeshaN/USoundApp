@@ -24,7 +24,7 @@ macx {
   QMAKE_CXXFLAGS += -F/Library/Frameworks
   QMAKE_LFLAGS   += -F/Library/Frameworks
   LIBS           += -framework HALCONCpp
-  TARGETDIR      += "$$(OUT_PWD)/USoundApp.app/Contents/MacOS/"
+  TARGETDIR      += $$OUT_PWD/USoundApp.app/Contents/MacOS/
 }
 else {
   #defines
@@ -41,7 +41,7 @@ else {
   win32:LIBS    += "$$(HALCONROOT)/lib/$$(HALCONARCH)/halconcpp.lib" \
                    "$$(HALCONROOT)/lib/$$(HALCONARCH)/halcon.lib"
 
-  TARGETDIR      += "$$(OUT_PWD)"
+  TARGETDIR      += $$OUT_PWD
 }
 
 
@@ -85,14 +85,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 
-
-copydata.commands = $(COPY_DIR) $$PWD/USoundSettings.ini TARGETDIR
-first.depends = $(first) copydata
-export(first.depends)
-export(copydata.commands)
-QMAKE_EXTRA_TARGETS += first copydata
-
-
 RESOURCES += \
     icons.qrc \
     images.qrc \
@@ -113,3 +105,12 @@ RESOURCES += \
 DISTFILES += \
     USoundSettings.ini
 
+
+
+mkdata.commands = $(MKDIR) $${TARGETDIR}
+copydata.commands = $(COPY_FILE) $$PWD/USoundSettings.ini $${TARGETDIR}
+first.depends = $(first) mkdata copydata
+export(first.depends)
+export(mkdata.commands)
+export(copydata.commands)
+QMAKE_EXTRA_TARGETS += first mkdata copydata
