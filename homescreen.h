@@ -78,6 +78,8 @@ signals:
 private slots:
     void on_actionAbout_triggered();
 
+    void on_actionExit_triggered();
+
 private:
     Ui::Homescreen *ui;
 
