@@ -3,11 +3,11 @@
 #include <QDoubleSpinBox>
 #include <QTreeWidgetItem>
 #include "parametercontainer.h"
+#include "imageacquisition.h"
 #ifndef __APPLE__
 #  include "HalconCpp.h"
 #  include "Halcon.h"
 #  include "HFramegrabber.h"
-#include "imageacquisition.h"
 #else
 #  ifndef HC_LARGE_IMAGES
 #    include <HALCONCpp/HalconCpp.h>
