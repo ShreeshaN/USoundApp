@@ -373,3 +373,8 @@ void Homescreen::on_actionAbout_triggered()
     about->setupUi(aboutDialog);
     aboutDialog->exec();
 }
+
+void Homescreen::on_actionExit_triggered()
+{
+    abort();
+}
