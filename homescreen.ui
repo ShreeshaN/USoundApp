@@ -101,42 +101,6 @@
          </item>
         </layout>
        </widget>
-       <widget class="QGroupBox" name="cameraControlsGroupBox">
-        <property name="title">
-         <string>Camera Controls</string>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <item>
-          <widget class="QTreeWidget" name="cameraControlsTreeWidget">
-           <property name="autoScroll">
-            <bool>true</bool>
-           </property>
-           <column>
-            <property name="text">
-             <string>Feature</string>
-            </property>
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Value</string>
-            </property>
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-           </column>
-          </widget>
-         </item>
-        </layout>
-       </widget>
       </widget>
       <widget class="QSplitter" name="footageDisplaySplitter">
        <property name="orientation">

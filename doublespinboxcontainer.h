@@ -1,15 +1,13 @@
-#ifndef SPINBOXCONTAINER_H
-#define SPINBOXCONTAINER_H
-#include <QSpinBox>
+#ifndef DOUBLESPINBOXCONTAINER_H
+#define DOUBLESPINBOXCONTAINER_H
+#include <QDoubleSpinBox>
 #include <QTreeWidgetItem>
 #include "parametercontainer.h"
-#include "imageacquisition.h"
-#include "imagestreamwindow.h"
-
 #ifndef __APPLE__
 #  include "HalconCpp.h"
 #  include "Halcon.h"
 #  include "HFramegrabber.h"
+#include "imageacquisition.h"
 #else
 #  ifndef HC_LARGE_IMAGES
 #    include <HALCONCpp/HalconCpp.h>
@@ -19,26 +17,16 @@
 #endif
 
 
-class SpinboxContainer: public QSpinBox, public ParameterContainer
+class DoubleSpinboxContainer : public QDoubleSpinBox, public ParameterContainer
 {
     Q_OBJECT
 public:
-    SpinboxContainer(double defaultParameterValue, std::string cameraParameterName, std::string uiDisplayName, int minVal, int maxVal, int step, ImageAcquisition* imageAcquisitionThread, QWidget *parent = nullptr);
-
+    DoubleSpinboxContainer(double defaultParameterValue, std::string cameraParameterName, std::string uiDisplayName, double minVal, double maxVal, double step ,ImageAcquisition* imageAcquisitionThread, QWidget *parent = nullptr);
     ImageAcquisition *getImageAcquisitionThread() const;
     void setImageAcquisitionThread(ImageAcquisition *value);
 
-    QSpinBox *getUiElement() const;
-    void setUiElement(QSpinBox *value);
-
     QTreeWidgetItem *getQTreeWidgetItem() const;
     void setQTreeWidgetItem(QTreeWidgetItem *value);
-
-    int getMinVal() const;
-    void setMinVal(int value);
-
-    int getMaxVal() const;
-    void setMaxVal(int value);
 
     std::string getCameraParameterName() const;
     void setCameraParameterName(const std::string &value);
@@ -49,6 +37,18 @@ public:
     double getParamValue() const;
     void setParamValue(double value);
 
+    QDoubleSpinBox *getUiElement() const;
+    void setUiElement(QDoubleSpinBox *value);
+
+    double getMinVal() const;
+    void setMinVal(double value);
+
+    double getMaxVal() const;
+    void setMaxVal(double value);
+
+    double getStep() const;
+    void setStep(double value);
+
     void updateParamValue() override;
     void displayParamValue() override;
     void setValueInHardware(int) override;
@@ -57,20 +57,21 @@ public:
     void setValueInHardware(bool) override;
     void emitUiElementChangedSignal() override;
 
+
 //signals:
-//    void updateAllParametersSignal(); // overrides
+//    void updateAllParametersSignal();
+
 
 private:
     double paramValue;
     std::string cameraParameterName, uiDisplayName;
     ImageAcquisition *imageAcquisitionThread;
-    QSpinBox *uiElement;
+    QDoubleSpinBox *uiElement;
     QTreeWidgetItem *qTreeWidgetItem;
-    int maxVal, minVal;
-    QOverload<int> qOverloadInt;
+    double maxVal, minVal, step;
+    QOverload<double> qOverloadDouble;
     HalconCpp::HTuple val;
-
 
 };
 
-#endif // SPINBOXCONTAINER_H
+#endif // DOUBLESPINBOXCONTAINER_H

@@ -1,39 +1,80 @@
 #include "spinboxcontainer.h"
+#include <QDebug>
+#include "usoundutils.h"
 
-SpinboxContainer::SpinboxContainer(int defaultParameterValue, QString cameraParameterName, int minVal, int maxVal, ImageAcquisition *imageAcquisitionThread, QWidget *parent): QSpinBox(parent)
+SpinboxContainer::SpinboxContainer(double defaultParameterValue, std::string cameraParameterName, std::string uiDisplayName, int minVal, int maxVal, int step, ImageAcquisition *imageAcquisitionThread, QWidget *parent): QSpinBox(parent)
 {
- this->defaultParameterValue = defaultParameterValue;
- this->uiDisplayName = cameraParameterName;
+ this->paramValue = defaultParameterValue;
+ this->uiDisplayName = uiDisplayName;
  this->cameraParameterName = cameraParameterName;
  this->minVal = minVal;
  this->maxVal = maxVal;
- qTreeWidgetItem = new QTreeWidgetItem(QStringList() << cameraParameterName);
+ qTreeWidgetItem = new QTreeWidgetItem(QStringList() << uiDisplayName.c_str());
  uiElement = new QSpinBox;
  uiElement->setRange(minVal, maxVal);
+ uiElement->setSingleStep(step);
  this->imageAcquisitionThread = imageAcquisitionThread;
- display();
+ displayParamValue();
+
+ // connect
+ connect(this->uiElement, qOverloadInt(&QSpinBox::valueChanged),[=]{
+     this->setValueInHardware((double)uiElement->value());
+     mssleep(150);
+     this->updateParamValue();
+     this->displayParamValue();
+//     emit updateAllParametersSignal();
+});
 }
 
-QString SpinboxContainer::getCameraParameterName() const
+//void SpinboxContainer::setme(ImageStreamWindow *ww)
+//{
+//   this->w = ww;
+//}
+
+// Virtual method implementations
+
+void SpinboxContainer::updateParamValue()
 {
-    return cameraParameterName;
+    val = this->imageAcquisitionThread->getValueForParam(cameraParameterName);
+    this->paramValue = val.D();
 }
 
-void SpinboxContainer::setCameraParameterName(const QString &value)
+void SpinboxContainer::displayParamValue()
 {
-    cameraParameterName = value;
+    this->uiElement->setValue(paramValue);
 }
 
-QString SpinboxContainer::getUiDisplayName() const
+void SpinboxContainer::setValueInHardware(int paramValue)
 {
-    return uiDisplayName;
+//    this->imageAcquisitionThread->setValueForParam(cameraParameterName,paramValue);
 }
 
-void SpinboxContainer::setUiDisplayName(const QString &value)
+void SpinboxContainer::setValueInHardware(double paramValue)
 {
-    uiDisplayName = value;
+    this->imageAcquisitionThread->setValueForParam(cameraParameterName,paramValue);
 }
 
+void SpinboxContainer::setValueInHardware(bool)
+{
+
+}
+
+void SpinboxContainer::emitUiElementChangedSignal()
+{
+    emit this->valueChanged(0);
+}
+
+//void SpinboxContainer::updateAllParametersSignal()
+//{
+//    emit this->valueChanged(0);
+//}
+
+void SpinboxContainer::setValueInHardware(std::string)
+{
+
+}
+
+// Setters and Getters
 QSpinBox *SpinboxContainer::getUiElement() const
 {
     return uiElement;
@@ -75,14 +116,24 @@ void SpinboxContainer::setMaxVal(int value)
 }
 
 
-int SpinboxContainer::getDefaultParameterValue() const
+std::string SpinboxContainer::getCameraParameterName() const
 {
-    return defaultParameterValue;
+    return cameraParameterName;
 }
 
-void SpinboxContainer::setDefaultParameterValue(int value)
+void SpinboxContainer::setCameraParameterName(const std::string &value)
 {
-    defaultParameterValue = value;
+    cameraParameterName = value;
+}
+
+std::string SpinboxContainer::getUiDisplayName() const
+{
+    return uiDisplayName;
+}
+
+void SpinboxContainer::setUiDisplayName(const std::string &value)
+{
+    uiDisplayName = value;
 }
 
 ImageAcquisition *SpinboxContainer::getImageAcquisitionThread() const
@@ -95,28 +146,12 @@ void SpinboxContainer::setImageAcquisitionThread(ImageAcquisition *value)
     imageAcquisitionThread = value;
 }
 
-void SpinboxContainer::update()
+double SpinboxContainer::getParamValue() const
 {
-    val = this->imageAcquisitionThread->getValueForParam(cameraParameterName.toUtf8().constData());
-    this->imageAcquisitionThread->getCameraControls().setExposureTime(val.D());
+    return paramValue;
 }
 
-void SpinboxContainer::display()
+void SpinboxContainer::setParamValue(double value)
 {
-    this->uiElement->setValue(defaultParameterValue);
-}
-
-void SpinboxContainer::setValueInHardware(int paramValue)
-{
-    this->imageAcquisitionThread->setValueForParam(cameraParameterName.toUtf8().constData(),paramValue);
-}
-
-void SpinboxContainer::customConnect()
-{
-    connect(uiElement, qOverloadInt(&QSpinBox::valueChanged),[=]{
-        this->imageAcquisitionThread->getCameraControls().setExposureTime(uiElement->value());
-        setValueInHardware(uiElement->value());
-        update();
-        display();
-    });
+    paramValue = value;
 }

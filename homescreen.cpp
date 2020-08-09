@@ -173,35 +173,49 @@ void Homescreen::on_devicesRefresh_clicked()
 ////    }
 ////    qDebug() << h.ToString().Text() ;
 
-    try {
-         HalconCpp::HTuple h;
-         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("PixelFormat");
-         qDebug() <<"Pixel format" <<h.S().Text();
-
-    } catch (HalconCpp::HException &e) {
-        qDebug() << "Exception "<< e.ErrorMessage().Text();
-    }
-    double d = 10000;
-    imageAcquisitionThread->getImageAcquisitionHandle().SetFramegrabberParam("ExposureTime",d);
-    try {
-         HalconCpp::HTuple h;
-         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("ExposureTime");
-         qDebug() <<"Exposture time double" <<h.D();
-
-    } catch (HalconCpp::HException &e) {
-        qDebug() << "Exception "<< e.ErrorMessage().Text();
-    }
-//    qDebug() << "Here ";
-//    qDebug() << "Reading"<<h.ToString().Text();
-
 //    try {
-//         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRate");
+//         HalconCpp::HTuple h;
+//         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("PixelFormat");
+//         qDebug() <<"Pixel format" <<h.S().Text();
+
+//    } catch (HalconCpp::HException &e) {
+//        qDebug() << "Exception "<< e.ErrorMessage().Text();
+//    }
+//    double d = 10000;
+//    imageAcquisitionThread->getImageAcquisitionHandle().SetFramegrabberParam("ExposureTime",d);
+//    try {
+//         HalconCpp::HTuple h;
+//         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("ExposureTime");
+//         qDebug() <<"Exposture time double" <<h.D();
+
 //    } catch (HalconCpp::HException &e) {
 //        qDebug() << "Exception "<< e.ErrorMessage().Text();
 //    }
 //    qDebug() << "Here ";
 //    qDebug() << "Reading"<<h.ToString().Text();
-//    qDebug() <<"Acquisition frame rate" <<h.D();
+    HalconCpp::HTuple h;
+    try {
+         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRateEnable");
+    } catch (HalconCpp::HException &e) {
+        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    }
+    qDebug() << "Here ";
+    qDebug() << "Reading"<<h.ToString().Text();
+    qDebug() <<"Acquisition frame rate enable" <<h.D();
+    qDebug() << "Type "<<h.Type();
+
+
+    try {
+         imageAcquisitionThread->getImageAcquisitionHandle().SetFramegrabberParam("AcquisitionFrameRateEnable", true);
+         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRateEnable");
+
+    } catch (HalconCpp::HException &e) {
+        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    }
+    qDebug() << "Here ";
+    qDebug() << "Reading"<<h.ToString().Text();
+    qDebug() <<"Acquisition frame rate enable" <<h.D();
+    qDebug() << "Type "<<h.Type();
 
 //    try {
 //         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRateEnable");
