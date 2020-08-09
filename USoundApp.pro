@@ -47,8 +47,7 @@ SOURCES += \
     imagestreamwindow.cpp \
     main.cpp \
     homescreen.cpp \
-    queuewriter.cpp \
-    spinboxcontainer.cpp
+    queuewriter.cpp
 
 HEADERS += \
     cameracontrols.h \
@@ -59,7 +58,6 @@ HEADERS += \
     imageacquisition.h \
     imagestreamwindow.h \
     queuewriter.h \
-    spinboxcontainer.h \
     usoundutils.h
 FORMS += \
     homescreen.ui
