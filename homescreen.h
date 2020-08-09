@@ -67,6 +67,7 @@ public slots:
     void onCameraWindowClose();
     void pushToMessageBoxSlot(QString message);
     void updateLogLevel(QString level);
+    void clearLogs();
 
 signals:
     void pushToMessageBoxSignal(QString message);

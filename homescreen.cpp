@@ -48,12 +48,14 @@ Homescreen::Homescreen(QWidget *parent)
     ui->setupUi(this);
     // Assign UI plainTextEdit to global Message Box
     globalMessageBox =ui->plainTextEdit;
+    // Connect slot to update log level on change in UI
+    connect(ui->logLevelSelector,SIGNAL(activated(QString)),this,SLOT(updateLogLevel(QString)));
+    // Connect slot to clear logs
+    connect(ui->clearLogs,SIGNAL(clicked()),this,SLOT(clearLogs()));
+
     onApplicationStartup();
 
-    QComboBox *logLevelChoice = ui->logLevelText;
 
-    // Connect slot to update log level on change in UI
-    connect(logLevelChoice,SIGNAL(activated(QString)),this,SLOT(updateLogLevel(QString)));
 }
 
 
@@ -353,4 +355,10 @@ void Homescreen::updateLogLevel(QString message)
         logLevel = QtFatalMsg;
     }
 }
+
+void Homescreen::clearLogs()
+{
+    ui->plainTextEdit->clear();
+}
+
 

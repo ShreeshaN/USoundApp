@@ -270,14 +270,14 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_4">
              <item>
-              <widget class="QLabel" name="logLevel">
+              <widget class="QLabel" name="logLevelLabel">
                <property name="text">
                 <string>Log Level </string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QComboBox" name="logLevelText">
+              <widget class="QComboBox" name="logLevelSelector">
                <property name="iconSize">
                 <size>
                  <width>10</width>
@@ -309,6 +309,13 @@
                  <string>FATAL</string>
                 </property>
                </item>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="clearLogs">
+               <property name="text">
+                <string>Clear</string>
+               </property>
               </widget>
              </item>
              <item>
