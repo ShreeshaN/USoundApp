@@ -42,21 +42,29 @@ else {
 SOURCES += \
     cameracontrols.cpp \
     cameracontrolsui.cpp \
+    checkboxcontainer.cpp \
     defaults.cpp \
+    doublespinboxcontainer.cpp \
     imageacquisition.cpp \
     imagestreamwindow.cpp \
     main.cpp \
     homescreen.cpp \
-    queuewriter.cpp
+    parametercontainer.cpp \
+    queuewriter.cpp \
+    spinboxcontainer.cpp
 
 HEADERS += \
     cameracontrols.h \
     cameracontrolsui.h \
+    checkboxcontainer.h \
     defaults.h \
     doubleslider.h \
+    doublespinboxcontainer.h \
+    spinboxcontainer.h \
     homescreen.h \
     imageacquisition.h \
     imagestreamwindow.h \
+    parametercontainer.h \
     queuewriter.h \
     usoundutils.h
 FORMS += \

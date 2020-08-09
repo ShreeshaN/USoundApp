@@ -13,12 +13,12 @@ const std::string BaslerCameraParameterNames::AUTOGAIN = "GainAuto";
 
 // Although, I did not find these controls in acquisition handle's SetFramegrabberParam method
 // Initializing just to maintain equality
-const std::string SATURATION="BslSaturation";
-const std::string HUE="BslHue";
-const std::string BRIGHTNESS="brightness";
-const std::string CONTRAST="constrast";
-const std::string MONOCHROME="monochrome";
-const std::string RGB="rgb";
+const std::string BaslerCameraParameterNames::SATURATION="BslSaturation";
+const std::string BaslerCameraParameterNames::HUE="BslHue";
+const std::string BaslerCameraParameterNames::BRIGHTNESS="brightness";
+const std::string BaslerCameraParameterNames::CONTRAST="constrast";
+const std::string BaslerCameraParameterNames::MONOCHROME="monochrome";
+const std::string BaslerCameraParameterNames::RGB="rgb";
 
 //Set App Directory
 const QString Directories::APPDIR = QDir::tempPath() +"/USoundApp";

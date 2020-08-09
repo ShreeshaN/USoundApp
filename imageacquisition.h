@@ -46,7 +46,7 @@ private:
     bool stopAcquisition=false;
     int counter=0;
     QString deviceName;
-    CameraControls cameraControls;
+//    CameraControls cameraControls;
     bool recording=false;
 
 
@@ -70,6 +70,7 @@ public:
 //    void setValueForParam(std::string paramString, int paramValue);
     void setValueForParam(std::string paramString, std::string paramValue);
     void setValueForParam(std::string paramString, double paramValue);
+    void setValueForParam(std::string paramString, bool paramState);
 //    void setValueForParam(std::string paramString, long paramValue);
     void startAquisition();
 
@@ -82,8 +83,8 @@ public:
     void setImageAcquisitionHandle(const HalconCpp::HFramegrabber &value);
     bool getStopAcquisition() const;
     void setStopAcquisition(bool value);
-    CameraControls getCameraControls() const;
-    void setCameraControls(const CameraControls &value);
+//    CameraControls getCameraControls() const;
+//    void setCameraControls(const CameraControls &value);
     void setRecording(bool value){recording=value;}
     bool getRecording(){return recording;}
 

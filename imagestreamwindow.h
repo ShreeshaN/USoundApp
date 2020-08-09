@@ -13,6 +13,8 @@
 #include <QGraphicsView>
 #include <QSpinBox>
 #include <QCheckBox>
+#include "spinboxcontainer.h"
+#include "parametercontainer.h"
 
 
 class ImageStreamWindow : public QMainWindow
@@ -64,7 +66,7 @@ public:
     QGraphicsPixmapItem *graphicsPixmapItem;
 
     QList<QGraphicsPixmapItem *> graphicsPixmapItemList;
-
+    QList<ParameterContainer *> containers;
 
 
     // Actions
@@ -85,11 +87,6 @@ public:
     void setImageAcquisitionThread(ImageAcquisition *value);
 
 
-
-
-signals:
-    void displayResultingFrameRate();
-
 public slots:
     void renderImage(QImage qImage);
     void updateStatusBar(QString statusMsg);
@@ -98,6 +95,7 @@ public slots:
     void pauseVideoRecord();
     void stopVideoRecord();
     void writeQueue();
+    void updateAllParameters();
 
 
 protected:
