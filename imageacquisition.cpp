@@ -57,8 +57,6 @@ void ImageAcquisition::run()
             //        HalconCpp::WriteImage(image,"tiff",0,"C:/Users/daruizcadalso/Documents/QTApplications/USoundApp/sample.jpg");
             //        break;
             auto conversionStatus = HImage2QImage(zoomedImage, qImage);
-
-
             if (!conversionStatus)
             {
                 // failed to convert himage to qimage. Handle it here
@@ -76,6 +74,7 @@ void ImageAcquisition::run()
             }
 
             counter++;
+            qDebug() << counter;
             //        qDebug() << before << after<<(after-before)/1000.0;
 
         }

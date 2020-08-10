@@ -28,10 +28,9 @@ CheckboxContainer::CheckboxContainer(bool defaultParameterState, std::string cam
             // if the camera parameter takes string names instead of bool, then take the bool value from UI and set appropriate string for the camera
             this->setValueInHardware(uiElement->isChecked()?checkedValue:uncheckedValue);
         }
-        mssleep(250);
+//        mssleep(250);
         this->updateParamValue();
         this->displayParamValue();
-
     });
 
 
@@ -94,11 +93,6 @@ void CheckboxContainer::setValueInHardware(bool)
 {
     this->imageAcquisitionThread->setValueForParam(cameraParameterName, uiElement->isChecked());
 }
-
-//void CheckboxContainer::updateAllParametersSignal()
-//{
-//    emit this->stateChanged(0);
-//}
 
 bool CheckboxContainer::getParamState() const
 {

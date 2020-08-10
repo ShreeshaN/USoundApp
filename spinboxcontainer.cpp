@@ -20,7 +20,7 @@ SpinboxContainer::SpinboxContainer(double defaultParameterValue, std::string cam
  // connect
  QObject::connect(this->uiElement, qOverloadInt(&QSpinBox::valueChanged),[=]{
      this->setValueInHardware((double)uiElement->value());
-     mssleep(150);
+//     mssleep(150);
      this->updateParamValue();
      this->displayParamValue();
 });
