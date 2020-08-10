@@ -3,7 +3,7 @@
 #include<QString>
 #include <QtCore>
 
-class ParameterContainer: public QObject
+class ParameterContainer
 {
 public:    
     ParameterContainer();
