@@ -49,9 +49,9 @@ void ImageAcquisition::run()
 
         while(!stopAcquisition)
         {
-            long int before = GetTickCount();
+//            long int before = GetTickCount();
             currentImage = this->imageAcquisitionHandle.GrabImage();
-            long int after = GetTickCount();
+//            long int after = GetTickCount();
 //            qDebug() << before << after<<(after-before)/1000.0;
 
             currentImage.GetImageSize(&width,&height);

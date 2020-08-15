@@ -51,18 +51,14 @@ void customLoggingHandler(QtMsgType type, const QMessageLogContext &context, con
     outFile.open(QIODevice::WriteOnly | QIODevice::Append);
     QTextStream ts(&outFile);
     ts << txt << endl;
-
 //     Push to Message Box
     if(homeScreenPointer!=0 && Homescreen::globalMessageBox != 0 && Homescreen::logLevel == type){
-//        Homescreen::globalMessageBox->appendPlainText(tempString+txt);
         emit homeScreenPointer->pushToMessageBoxSignal(tempString+txt);
         tempString="";
     }
-    else{
+    else if (Homescreen::logLevel == type){
         tempString+=txt+'\n';
     }
-
-
 }
 
 int main(int argc, char *argv[])
@@ -70,8 +66,7 @@ int main(int argc, char *argv[])
     try {
         qRegisterMetaType<QList<long> >("QList<long>");
         // Setup directories
-        createDirectories();
-        fprintf(stdout, "Logging to file: %s", (logFilePath+"\n").toStdString().c_str());
+        createDirectories();        
         qInstallMessageHandler(customLoggingHandler); // Install the handler
         qInfo() << "Logging to file:" + logFilePath;
         QApplication a(argc, argv);
@@ -79,8 +74,9 @@ int main(int argc, char *argv[])
         QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
         Homescreen w;
         homeScreenPointer = &w;
-        w.setWindowIcon(QIcon("://icons/wpi_logo.ico"));
+        w.setWindowIcon(QIcon("://icons/wpi_logo.ico"));        
         w.show();
+        qInfo() << "Application initialized successfully";
         return a.exec();
     }catch (HalconCpp::HOperatorException &e) {
         qDebug() << e.ErrorMessage().Text();

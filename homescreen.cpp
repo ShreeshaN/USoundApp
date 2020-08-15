@@ -48,23 +48,21 @@ Homescreen::Homescreen(QWidget *parent)
     , ui(new Ui::Homescreen)
 {
     ui->setupUi(this);
-
-    // Load settings
-    m_sSettingsFile = "USoundSettings.ini";
-    loadSettings();
-
-    //    about = new Ui_About();
     // Assign UI plainTextEdit to global Message Box
     globalMessageBox =ui->plainTextEdit;
 
+    // Connect message log box to pushToMessageBoxSlot
+    connect(this,SIGNAL(pushToMessageBoxSignal(QString)),this,SLOT(pushToMessageBoxSlot(QString)));
     // Connect slot to update log level on change in UI
     connect(ui->logLevelSelector,SIGNAL(activated(QString)),this,SLOT(updateLogLevel(QString)));
     // Connect slot to clear logs
     connect(ui->clearLogs,SIGNAL(clicked()),this,SLOT(clearLogs()));
 
+    // Load settings
+    m_sSettingsFile = "USoundSettings.ini";
+    loadSettings();
+
     onApplicationStartup();
-
-
 }
 
 void Homescreen::loadSettings()
@@ -171,7 +169,6 @@ Homescreen::~Homescreen()
 }
 
 
-
 void Homescreen::onApplicationStartup()
 {
     detectAttachedDevices();
@@ -182,12 +179,12 @@ void Homescreen::onApplicationStartup()
 //2676016419A3_Basler_acA2040120um
 void Homescreen::on_devicesRefresh_clicked()
 {
-//    try {
-//        //        HalconCpp::HFramegrabber acq("usb3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "267601642BB5_Basler_acA2040120um", 0, -1);
+    //    try {
+    //        //        HalconCpp::HFramegrabber acq("usb3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "267601642BB5_Basler_acA2040120um", 0, -1);
 
-//    } catch (HalconCpp::HException &e) {
-//        qDebug() << e.ErrorMessage().Text();
-//    }
+    //    } catch (HalconCpp::HException &e) {
+    //        qDebug() << e.ErrorMessage().Text();
+    //    }
 
 
     //    qDebug() <<"Params: ";
@@ -199,99 +196,99 @@ void Homescreen::on_devicesRefresh_clicked()
     ////    }
     ////    qDebug() << h.ToString().Text() ;
 
-//    try {
-//         HalconCpp::HTuple h;
-//         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("PixelFormat");
-//         qDebug() <<"Pixel format" <<h.S().Text();
+    //    try {
+    //         HalconCpp::HTuple h;
+    //         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("PixelFormat");
+    //         qDebug() <<"Pixel format" <<h.S().Text();
 
-//    double d = 10000;
-//    imageAcquisitionThread->getImageAcquisitionHandle().SetFramegrabberParam("ExposureTime",d);
-//    try {
-//         HalconCpp::HTuple h;
-//         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("ExposureTime");
-//         qDebug() <<"Exposture time double" <<h.D();
+    //    double d = 10000;
+    //    imageAcquisitionThread->getImageAcquisitionHandle().SetFramegrabberParam("ExposureTime",d);
+    //    try {
+    //         HalconCpp::HTuple h;
+    //         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("ExposureTime");
+    //         qDebug() <<"Exposture time double" <<h.D();
 
-//    } catch (HalconCpp::HException &e) {
-//        qDebug() << "Exception "<< e.ErrorMessage().Text();
-//    }
-//    qDebug() << "Here ";
-//    qDebug() << "Reading"<<h.ToString().Text();
-//    imageAcquisitionThread->getImageAcquisitionHandle().SetFramegrabberParam("ExposureAuto","Once");
-//    Sleep(2000);
+    //    } catch (HalconCpp::HException &e) {
+    //        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    //    }
+    //    qDebug() << "Here ";
+    //    qDebug() << "Reading"<<h.ToString().Text();
+    //    imageAcquisitionThread->getImageAcquisitionHandle().SetFramegrabberParam("ExposureAuto","Once");
+    //    Sleep(2000);
 
-//    try {
-//         imageAcquisitionThread->getImageAcquisitionHandle().SetFramegrabberParam("AcquisitionFrameRateEnable", true);
-//         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRateEnable");
+    //    try {
+    //         imageAcquisitionThread->getImageAcquisitionHandle().SetFramegrabberParam("AcquisitionFrameRateEnable", true);
+    //         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRateEnable");
 
-//    } catch (HalconCpp::HException &e) {
-//        qDebug() << "Exception "<< e.ErrorMessage().Text();
-//    }
-//    qDebug() << "Here ";
-//    qDebug() << "Reading"<<h.ToString().Text();
-//    qDebug() <<"Acquisition frame rate enable" <<h.D();
-//    qDebug() << "Type "<<h.Type();
+    //    } catch (HalconCpp::HException &e) {
+    //        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    //    }
+    //    qDebug() << "Here ";
+    //    qDebug() << "Reading"<<h.ToString().Text();
+    //    qDebug() <<"Acquisition frame rate enable" <<h.D();
+    //    qDebug() << "Type "<<h.Type();
 
-//    try {
-//         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRateEnable");
-//    } catch (HalconCpp::HException &e) {
-//        qDebug() << "Exception "<< e.ErrorMessage().Text();
-//    }
-//    qDebug() << "Here ";
-//    qDebug() << "Reading"<<h.ToString().Text();
-//    qDebug() <<"Acquisition frame rate enable" <<h.D();
-//    HalconCpp::HTuple h;
-//    try {
-//         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("ResultingFrameRate");
-//    } catch (HalconCpp::HException &e) {
-//        qDebug() << "Exception "<< e.ErrorMessage().Text();
-//    }
-//    qDebug() << "Resulting frame rate" <<h.DArr()[0];
-//    try {
-//        h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("TriggerSource");
-//        qDebug() << "Source" <<h.S().Text();
-//        h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("TriggerMode");
-//        qDebug() << "Mode" <<h.S().Text();
-//        h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("TriggerDelay");
-//        qDebug() << "Delay" <<h.D();
-//        h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("TriggerSelector");
-//        qDebug() << "Select" <<h.S().Text();
-
-
-//    } catch (HalconCpp::HException &e) {
-//        qDebug() << "Exception "<< e.ErrorMessage().Text();
-//    }
+    //    try {
+    //         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRateEnable");
+    //    } catch (HalconCpp::HException &e) {
+    //        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    //    }
+    //    qDebug() << "Here ";
+    //    qDebug() << "Reading"<<h.ToString().Text();
+    //    qDebug() <<"Acquisition frame rate enable" <<h.D();
+    //    HalconCpp::HTuple h;
+    //    try {
+    //         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("ResultingFrameRate");
+    //    } catch (HalconCpp::HException &e) {
+    //        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    //    }
+    //    qDebug() << "Resulting frame rate" <<h.DArr()[0];
+    //    try {
+    //        h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("TriggerSource");
+    //        qDebug() << "Source" <<h.S().Text();
+    //        h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("TriggerMode");
+    //        qDebug() << "Mode" <<h.S().Text();
+    //        h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("TriggerDelay");
+    //        qDebug() << "Delay" <<h.D();
+    //        h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("TriggerSelector");
+    //        qDebug() << "Select" <<h.S().Text();
 
 
-
-//    using namespace HalconCpp;
-//    HalconCpp::HTuple *information = new HalconCpp::HTuple;
-//    HalconCpp::HTuple * valueList = new HalconCpp::HTuple;
-//    QList<QString> list = { "bits_per_channel", "camera_type", "color_space", "defaults", "device", "external_trigger", "field", "general", "generic", "horizontal_resolution", "image_height", "image_width", "info_boards", "parameters", "parameters_readonly", "parameters_writeonly", "port", "revision", "start_column", "start_row", "vertical_resolution"};
-//    for (auto param : list) {
-//        qDebug()<< "************" << param << "*************";
-//        HalconCpp::InfoFramegrabber("usb3vision",HTuple(HString::FromUtf8(param.toUtf8())),information, valueList);
-//        qDebug () << "Information: "<< information->S().Text();
-//        qDebug() << "Valuelist length: "<<valueList->Length();
-//        auto deviceList = valueList->ToSArr();
-//        for(int i=0;i<valueList->Length();i++)
-//        {
-//            qDebug() << QString(deviceList[i].Text());
-//        }
-
-//    }
-//    HalconCpp::InfoFramegrabber("usb3vision","parameters",information, valueList);
-//    qDebug () << "Information: "<< information->S().Text();
-//    qDebug() << "Valuelist length: "<<valueList->Length();
-//    auto deviceList = valueList->ToSArr();
-//    for(int i=0;i<valueList->Length();i++)
-//    {
-//        qDebug() << QString(deviceList[i].Text());
-//    }
+    //    } catch (HalconCpp::HException &e) {
+    //        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    //    }
 
 
 
-//    qDebug() << cameraControlsMap["267601642BB5_Basler_acA2040120um"].getGamma();
-//    qDebug() << cameraControlsMap["2676016419A3_Basler_acA2040120um"].getGamma();
+    //    using namespace HalconCpp;
+    //    HalconCpp::HTuple *information = new HalconCpp::HTuple;
+    //    HalconCpp::HTuple * valueList = new HalconCpp::HTuple;
+    //    QList<QString> list = { "bits_per_channel", "camera_type", "color_space", "defaults", "device", "external_trigger", "field", "general", "generic", "horizontal_resolution", "image_height", "image_width", "info_boards", "parameters", "parameters_readonly", "parameters_writeonly", "port", "revision", "start_column", "start_row", "vertical_resolution"};
+    //    for (auto param : list) {
+    //        qDebug()<< "************" << param << "*************";
+    //        HalconCpp::InfoFramegrabber("usb3vision",HTuple(HString::FromUtf8(param.toUtf8())),information, valueList);
+    //        qDebug () << "Information: "<< information->S().Text();
+    //        qDebug() << "Valuelist length: "<<valueList->Length();
+    //        auto deviceList = valueList->ToSArr();
+    //        for(int i=0;i<valueList->Length();i++)
+    //        {
+    //            qDebug() << QString(deviceList[i].Text());
+    //        }
+
+    //    }
+    //    HalconCpp::InfoFramegrabber("usb3vision","parameters",information, valueList);
+    //    qDebug () << "Information: "<< information->S().Text();
+    //    qDebug() << "Valuelist length: "<<valueList->Length();
+    //    auto deviceList = valueList->ToSArr();
+    //    for(int i=0;i<valueList->Length();i++)
+    //    {
+    //        qDebug() << QString(deviceList[i].Text());
+    //    }
+
+
+
+    //    qDebug() << cameraControlsMap["267601642BB5_Basler_acA2040120um"].getGamma();
+    //    qDebug() << cameraControlsMap["2676016419A3_Basler_acA2040120um"].getGamma();
     //    qDebug() << "Here ";
     //    qDebug() << "Reading"<<h.ToString().Text();
 
@@ -387,8 +384,6 @@ void Homescreen::connectToCamera(QString deviceName)
         connect(imageAcquisitionThread,SIGNAL(renderImageSignal(QImage)),windowWidget,SLOT(renderImage(QImage)));
         connect(imageAcquisitionThread,SIGNAL(updateStatusBarSignal(QString)),windowWidget,SLOT(updateStatusBar(QString)));
         connect(imageAcquisitionThread,SIGNAL(updateStatusBarSignal(QString)),windowWidget,SLOT(updateStatusBar(QString)));
-        connect(this,SIGNAL(pushToMessageBoxSignal(QString)),this,SLOT(pushToMessageBoxSlot(QString)));
-
     } catch (QException &e) {
         qDebug () <<"Exception while connecting to camera";
         qDebug() <<e.what();
@@ -424,6 +419,7 @@ void Homescreen::onCameraWindowClose()
 void Homescreen::pushToMessageBoxSlot(QString message)
 {
     ui->plainTextEdit->appendPlainText(message);
+    fprintf(stderr, message.toLatin1().data());
 }
 
 void Homescreen::updateLogLevel(QString message)
