@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>462</width>
+    <width>726</width>
     <height>410</height>
    </rect>
   </property>
@@ -110,16 +110,16 @@
     </rect>
    </property>
    <property name="text">
-    <string>x84 Mac OSX</string>
+    <string>Windows</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_16">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>230</y>
-     <width>221</width>
-     <height>16</height>
+     <y>225</y>
+     <width>381</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
@@ -148,7 +148,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Research was sponsored by the Army Research Laboratory and was accomplished under Cooperative Agreement Number W911NF-19-2-0112. </string>
+    <string>Developed at Center for Holographic Studies and Laser micro-mechaTronics(CHSLT) under the supervision of Professor Cosme Furlong, Director at CHSLT</string>
    </property>
    <property name="textFormat">
     <enum>Qt::PlainText</enum>
@@ -183,7 +183,7 @@
     <enum>Qt::Horizontal</enum>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -222,12 +222,12 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>240</x>
      <y>260</y>
-     <width>164</width>
+     <width>171</width>
      <height>66</height>
     </rect>
    </property>
@@ -261,13 +261,13 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>230</x>
      <y>40</y>
-     <width>206</width>
-     <height>62</height>
+     <width>365</width>
+     <height>99</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">

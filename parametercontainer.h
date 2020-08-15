@@ -15,10 +15,16 @@ public:
     virtual void setValueInHardware(std::string)=0;
     virtual void setValueInHardware(bool)=0;
 
+    bool getParameterAvailable() const;
+    void setParameterAvailable(bool value);
+
+private:
+    bool parameterAvailable=true;
 
 
-//signals:
-//    void updateAllParametersSignal();
+
+    //signals:
+    //    void updateAllParametersSignal();
 };
 
 #endif // CONTAINER_H

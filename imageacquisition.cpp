@@ -8,15 +8,15 @@
 #include <exception>
 #include <usoundutils.h>
 
-//CameraControls ImageAcquisition::getCameraControls() const
-//{
-//    return cameraControls;
-//}
+bool ImageAcquisition::getSupplyHistogramData() const
+{
+    return supplyHistogramData;
+}
 
-//void ImageAcquisition::setCameraControls(const CameraControls &value)
-//{
-//    cameraControls = value;
-//}
+void ImageAcquisition::setSupplyHistogramData(bool value)
+{
+    supplyHistogramData = value;
+}
 
 ImageAcquisition::ImageAcquisition(QString deviceName, QObject *parent): QThread(parent)
 {
@@ -40,23 +40,25 @@ void ImageAcquisition::run()
 {
     QImage qImage;
     using namespace HalconCpp;
+    HTuple relativeHisto, absoluteHisto;
+    Hlong  width,height;
+    QList<long> absoluteHistFrequencies;
+
+
     try {
 
         while(!stopAcquisition)
         {
-            //        long int before = GetTickCount();
+            long int before = GetTickCount();
             currentImage = this->imageAcquisitionHandle.GrabImage();
+            long int after = GetTickCount();
+//            qDebug() << before << after<<(after-before)/1000.0;
 
-            Hlong  width,height;
             currentImage.GetImageSize(&width,&height);
             // todo: Prathyush SP currentImage is saved to the disk. Check the importance of the resolution saved?
-            HImage zoomedImage = currentImage;//.ZoomImageSize(600,600,"constant");
+            //            HImage zoomedImage = currentImage;//.ZoomImageSize(600,600,"constant");
 
-            //        image.GetImageSize(&width,&height);
-            //        qDebug()<< "Image size halcon "<<width<<height;
-            //        HalconCpp::WriteImage(image,"tiff",0,"C:/Users/daruizcadalso/Documents/QTApplications/USoundApp/sample.jpg");
-            //        break;
-            auto conversionStatus = HImage2QImage(zoomedImage, qImage);
+            auto conversionStatus = HImage2QImage(currentImage, qImage);
             if (!conversionStatus)
             {
                 // failed to convert himage to qimage. Handle it here
@@ -65,18 +67,27 @@ void ImageAcquisition::run()
             //        msleep(1000);
 
             emit renderImageSignal(qImage);
-            //        long int after = GetTickCount();
 
             if(getRecording()){
                 imageBuffer.enqueue(RecordingBuffer(currentImage, currentRecordSaveDir+QString::number(currentBufferImageCounter)+"."+Directories::IMAGEFORMAT));
                 emit updateStatusBarSignal(QString("Images in buffer %1").arg(currentBufferImageCounter));
                 currentBufferImageCounter+=1;
             }
+            if(getSupplyHistogramData()){
+                int max=0;
+                HalconCpp::GrayHisto(HalconCpp::HRegion(0.0,0.0,double(width-1), double(height-1)), currentImage, &absoluteHisto,&relativeHisto);
+                for(int l=0; l<absoluteHisto.Length()-1;l++)
+                {
+                    long currentVal = absoluteHisto[l].L();
+                    if(max<currentVal)
+                        max = currentVal;
+                    absoluteHistFrequencies.append(currentVal);
+                }
+                emit renderHistogramSignal(absoluteHistFrequencies, max);
+                absoluteHistFrequencies.clear();
+            }
 
             counter++;
-            qDebug() << counter;
-            //        qDebug() << before << after<<(after-before)/1000.0;
-
         }
 
     } catch (HalconCpp::HOperatorException &e) {
@@ -176,30 +187,30 @@ void ImageAcquisition::setupCameraControls()
     // The above parameters need to be set too, but Basler does not have a keyword matching these params
     // If a wrong parameter name is entered the only watch to gracefully check it is using try catch
     try {
-//        value = this->getValueForParam(BaslerCameraParameterNames::GAIN);
-//        cameraControls.setAnalogGain(value.D());
+        //        value = this->getValueForParam(BaslerCameraParameterNames::GAIN);
+        //        cameraControls.setAnalogGain(value.D());
 
-//        value = this->getValueForParam(BaslerCameraParameterNames::AUTOEXPOSURE);
-//        QString::compare(value.S().Text(),"Off") == 0?cameraControls.setAutoExposure(false):cameraControls.setAutoExposure(true);
+        //        value = this->getValueForParam(BaslerCameraParameterNames::AUTOEXPOSURE);
+        //        QString::compare(value.S().Text(),"Off") == 0?cameraControls.setAutoExposure(false):cameraControls.setAutoExposure(true);
 
 
-//        value = this->getValueForParam(BaslerCameraParameterNames::AUTOGAIN);
-//        QString::compare(value.S().Text(),"Off") == 0?cameraControls.setAutoGain(false):cameraControls.setAutoGain(true);
+        //        value = this->getValueForParam(BaslerCameraParameterNames::AUTOGAIN);
+        //        QString::compare(value.S().Text(),"Off") == 0?cameraControls.setAutoGain(false):cameraControls.setAutoGain(true);
 
-////        value = this->getValueForParam(BaslerCameraParameterNames::EXPOSURETIME);
-////        cameraControls.setExposureTime(value.D());
+        ////        value = this->getValueForParam(BaslerCameraParameterNames::EXPOSURETIME);
+        ////        cameraControls.setExposureTime(value.D());
 
-//        value = this->getValueForParam(BaslerCameraParameterNames::GAMMA);
-//        cameraControls.setGamma(value.D());
+        //        value = this->getValueForParam(BaslerCameraParameterNames::GAMMA);
+        //        cameraControls.setGamma(value.D());
 
-//        value = this->getValueForParam(BaslerCameraParameterNames::ACQUISITIONFRAMERATE);
-//        cameraControls.setAcquisitionFrameRate(value.D());
+        //        value = this->getValueForParam(BaslerCameraParameterNames::ACQUISITIONFRAMERATE);
+        //        cameraControls.setAcquisitionFrameRate(value.D());
 
-//        value = this->getValueForParam(BaslerCameraParameterNames::ACQUISITIONFRAMERATEENABLE);
-//        cameraControls.setAcquisitionFrameRateEnable(value.I()==0?false:true);
+        //        value = this->getValueForParam(BaslerCameraParameterNames::ACQUISITIONFRAMERATEENABLE);
+        //        cameraControls.setAcquisitionFrameRateEnable(value.I()==0?false:true);
 
-//        value = this->getValueForParam(BaslerCameraParameterNames::RESULTINGFRAMERATE);
-//        cameraControls.setResultingFrameRate(value.D());
+        //        value = this->getValueForParam(BaslerCameraParameterNames::RESULTINGFRAMERATE);
+        //        cameraControls.setResultingFrameRate(value.D());
 
     } catch (HalconCpp::HException &e) {
         qDebug() << "Exception occured while accessing camera parameter "<<e.ErrorMessage().Text() << e.ErrorCode();

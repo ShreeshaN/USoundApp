@@ -38,33 +38,40 @@ CheckboxContainer::CheckboxContainer(bool defaultParameterState, std::string cam
 
 void CheckboxContainer::displayParamValue()
 {
-    this->uiElement->blockSignals(true);
-    uiElement->setCheckState(paramState?Qt::CheckState(2):Qt::CheckState(0));
-    this->uiElement->blockSignals(false);
-//    qDebug() << "Displaying value of "<<cameraParameterName.c_str() << "param value"<< paramState;
+    if(this->getParameterAvailable())
+    {
+        this->uiElement->blockSignals(true);
+        uiElement->setCheckState(paramState?Qt::CheckState(2):Qt::CheckState(0));
+        this->uiElement->blockSignals(false);
+    //    qDebug() << "Displaying value of "<<cameraParameterName.c_str() << "param value"<< paramState;
+    }
 
 }
 
 void CheckboxContainer::updateParamValue()
 {
     try {
-        val = this->imageAcquisitionThread->getValueForParam(cameraParameterName);
-        if(checkedValue.compare("") == 0){
-            // this condition is satisfied if the camera parameter returns 0 or 1 (mimicking a bool) instead of string values
-            int(val.D()) == 0?setParamState(false):setParamState(true);
+        if(this->getParameterAvailable())
+        {
+            val = this->imageAcquisitionThread->getValueForParam(cameraParameterName);
+            if(checkedValue.compare("") == 0){
+                // this condition is satisfied if the camera parameter returns 0 or 1 (mimicking a bool) instead of string values
+                int(val.D()) == 0?setParamState(false):setParamState(true);
+            }
+            else{
+                // this condition is satisfied if the camera parameter returns strings like "Off", "Once", "Continuous".
+                // In that case the return strings should be equal to checkedValue or uncheckedValue variables of this class.
+                QString::compare(val.S().Text(),uncheckedValue.c_str()) == 0?setParamState(false):setParamState(true);
+    //            qDebug() << "recieved from hardware" << val.S().Text();
         }
-        else{
-            // this condition is satisfied if the camera parameter returns strings like "Off", "Once", "Continuous".
-            // In that case the return strings should be equal to checkedValue or uncheckedValue variables of this class.
-            QString::compare(val.S().Text(),uncheckedValue.c_str()) == 0?setParamState(false):setParamState(true);
-//            qDebug() << "recieved from hardware" << val.S().Text();
-    }
-//        qDebug() << "Updating param"<<cameraParameterName.c_str()<< "New state "<< paramState;
+    //        qDebug() << "Updating param"<<cameraParameterName.c_str()<< "New state "<< paramState;
+        }
 
     } catch (HalconCpp::HException &e) {
         if (e.ErrorCode() == 5330)
         {
             this->uiElement->setDisabled(true);
+            this->setParameterAvailable(false);
             qDebug() << "Either parameter name is incorrect or the camera make does not support it "<< cameraParameterName.c_str()<< "Currently, a default value is set";
         }
         else{

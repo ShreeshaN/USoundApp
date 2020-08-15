@@ -182,12 +182,12 @@ void Homescreen::onApplicationStartup()
 //2676016419A3_Basler_acA2040120um
 void Homescreen::on_devicesRefresh_clicked()
 {
-    try {
-        //        HalconCpp::HFramegrabber acq("usb3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "267601642BB5_Basler_acA2040120um", 0, -1);
+//    try {
+//        //        HalconCpp::HFramegrabber acq("usb3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "267601642BB5_Basler_acA2040120um", 0, -1);
 
-    } catch (HalconCpp::HException &e) {
-        qDebug() << e.ErrorMessage().Text();
-    }
+//    } catch (HalconCpp::HException &e) {
+//        qDebug() << e.ErrorMessage().Text();
+//    }
 
 
     //    qDebug() <<"Params: ";
@@ -239,14 +239,27 @@ void Homescreen::on_devicesRefresh_clicked()
 //    qDebug() << "Here ";
 //    qDebug() << "Reading"<<h.ToString().Text();
 //    qDebug() <<"Acquisition frame rate enable" <<h.D();
-
+//    HalconCpp::HTuple h;
 //    try {
-//         h = acq.GetFramegrabberParam("ExposureAuto");
+//         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("ResultingFrameRate");
 //    } catch (HalconCpp::HException &e) {
 //        qDebug() << "Exception "<< e.ErrorMessage().Text();
 //    }
-//    qDebug() << h.ToString().Text();
-//    qDebug() << h.DArr()[0];
+//    qDebug() << "Resulting frame rate" <<h.DArr()[0];
+//    try {
+//        h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("TriggerSource");
+//        qDebug() << "Source" <<h.S().Text();
+//        h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("TriggerMode");
+//        qDebug() << "Mode" <<h.S().Text();
+//        h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("TriggerDelay");
+//        qDebug() << "Delay" <<h.D();
+//        h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("TriggerSelector");
+//        qDebug() << "Select" <<h.S().Text();
+
+
+//    } catch (HalconCpp::HException &e) {
+//        qDebug() << "Exception "<< e.ErrorMessage().Text();
+//    }
 
 
 

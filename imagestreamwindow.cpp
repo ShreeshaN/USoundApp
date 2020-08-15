@@ -21,6 +21,7 @@
 #include "checkboxcontainer.h"
 #include <QScrollBar>
 
+
 ImageStreamWindow::ImageStreamWindow(QWidget *parent) : QMainWindow(parent)
 {
 
@@ -29,7 +30,7 @@ ImageStreamWindow::ImageStreamWindow(QWidget *parent) : QMainWindow(parent)
 void ImageStreamWindow::setupCameraWindow()
 {
 
-//    this->;
+    //    this->;
     imageSaveButton = this->menuBar()->addAction(tr("ImageSaveButton"));
     imageSaveButton->setIcon(QIcon(":icons/icon-single-shot.png"));
     // todo: Prathyush SP -> Fix issue with tooltip display
@@ -54,6 +55,11 @@ void ImageStreamWindow::setupCameraWindow()
     recordStopButton->setDisabled(true);
     connect(recordStopButton, SIGNAL(triggered()), this, SLOT(stopVideoRecord()));
 
+    // Histogram
+    grayHistogramButton = this->menuBar()->addAction(tr("GrayHistogramButton"));
+    grayHistogramButton->setIcon(QIcon(":icons/icon-histogram.png"));
+    connect(grayHistogramButton, SIGNAL(triggered()), this, SLOT(createHistogramWindow()));
+
 
     //    QOverload<int> qOverloadInt;
     //    QOverload<double> qOverloadDouble;
@@ -66,8 +72,8 @@ void ImageStreamWindow::setupCameraWindow()
     graphicsView = new QGraphicsView();
     connect(graphicsView, SIGNAL(QGraphicsView::resizeEvent()), this, SLOT(saveImage()));
 
-//    connect(graphicsView, SIGNAL(triggered()), this, SLOT(stopVideoRecord()));
-//    graphicsView->setVerticalScrollBar(new QScrollBar());
+    //    connect(graphicsView, SIGNAL(triggered()), this, SLOT(stopVideoRecord()));
+    //    graphicsView->setVerticalScrollBar(new QScrollBar());
 
     //        this->setCentralWidget(graphicsView);
     graphicsScene = new QGraphicsScene();
@@ -95,7 +101,7 @@ void ImageStreamWindow::setupCameraWindow()
     topLevelItems.append(exposureControls);
 
     // child
-    SpinboxContainer *exposureContainer = new SpinboxContainer(3000,BaslerCameraParameterNames::EXPOSURETIME,BaslerCameraParameterNames::EXPOSURETIME,0,1000000,1,imageAcquisitionThread);
+    SpinboxContainer *exposureContainer = new SpinboxContainer(3000,BaslerCameraParameterNames::EXPOSURETIME,BaslerCameraParameterNames::EXPOSURETIME,0,1000000,50,imageAcquisitionThread);
     containers.append(exposureContainer);
     exposureControls->addChild(exposureContainer->getQTreeWidgetItem());
     ccTreeWidget->setItemWidget(exposureContainer->getQTreeWidgetItem(), 1, exposureContainer->getUiElement());
@@ -110,35 +116,10 @@ void ImageStreamWindow::setupCameraWindow()
     exposureControls->addChild(autoGainContainer->getQTreeWidgetItem());
     ccTreeWidget->setItemWidget(autoGainContainer->getQTreeWidgetItem(), 1, autoGainContainer->getUiElement());
 
-    //    autoGain = new QTreeWidgetItem(QStringList() << "Auto Gain");
-    //    autoGainCheckbox = new QCheckBox();
-    //    autoGainCheckbox->setCheckState(this->imageAcquisitionThread->getCameraControls().getAutoGain()?Qt::CheckState(2):Qt::CheckState(0));
-    //    connect(autoGainCheckbox, &QCheckBox::clicked, [=]{
-    //        this->imageAcquisitionThread->getCameraControls().setAutoGain(autoGainCheckbox->isChecked());
-    //        imageAcquisitionThread->setValueForParam(BaslerCameraParameterNames::AUTOGAIN,autoGainCheckbox->isChecked()?"Once":"Off");
-    //        mssleep(200); // Waiting for the hardware to update exposure time based on Autoexposure
-    //        updateCameraParametersAndDisplay();
-    //    });
-
     CheckboxContainer *autoExposureContainer = new CheckboxContainer(false,BaslerCameraParameterNames::AUTOEXPOSURE,BaslerCameraParameterNames::AUTOEXPOSURE,"Once","Off",imageAcquisitionThread);
     containers.append(autoExposureContainer);
     exposureControls->addChild(autoExposureContainer->getQTreeWidgetItem());
     ccTreeWidget->setItemWidget(autoExposureContainer->getQTreeWidgetItem(), 1, autoExposureContainer->getUiElement());
-
-
-    //    autoExposure = new QTreeWidgetItem(QStringList() << "Auto Exposure");
-    //    autoExposureCheckbox = new QCheckBox();
-    //    autoExposureCheckbox->setCheckState(this->imageAcquisitionThread->getCameraControls().getAutoExposure()?Qt::CheckState(2):Qt::CheckState(0));
-    //    connect(autoExposureCheckbox, &QCheckBox::clicked, [=]{
-    //        // TODO: Shreesha - is this below assignment required here and for every other
-    //        // widget? coz anyway updatecameraparameteranddisplay
-    //        // will query the camera and update cameracontrols obj
-    //        this->imageAcquisitionThread->getCameraControls().setAutoExposure(autoExposureCheckbox->isChecked());
-    //        imageAcquisitionThread->setValueForParam(BaslerCameraParameterNames::AUTOEXPOSURE,autoExposureCheckbox->isChecked()?"Once":"Off");
-    //        mssleep(200); // Waiting for the hardware to update exposure time based on Autoexposure
-    //        updateCameraParametersAndDisplay();
-    //    });
-
 
     // color appearance parameters
     // parent
@@ -168,12 +149,6 @@ void ImageStreamWindow::setupCameraWindow()
     //    containers.append(contrastContainer);
     colorAppearance->addChild(contrastContainer->getQTreeWidgetItem());
     ccTreeWidget->setItemWidget(contrastContainer->getQTreeWidgetItem(), 1, contrastContainer->getUiElement());
-
-    //    gamma = new QTreeWidgetItem(QStringList() << "Gamma");
-    //    gammaSpinBox = new QDoubleSpinBox;
-    //    gammaSpinBox->setRange(0, 4);
-    //    gammaSpinBox->setSingleStep(0.1);
-    //    gammaSpinBox->setValue( this->imageAcquisitionThread->getCameraControls().getGamma());
 
     // SLider experiment
     //    DoubleSlider *slider = new DoubleSlider(Qt::Horizontal);
@@ -210,7 +185,7 @@ void ImageStreamWindow::setupCameraWindow()
     ccTreeWidget->setItemWidget(acquisitionFrameRateEnableContainer->getQTreeWidgetItem(), 1, acquisitionFrameRateEnableContainer->getUiElement());
 
 
-    SpinboxContainer *acquisitionFrameRateContainer = new SpinboxContainer(0,BaslerCameraParameterNames::ACQUISITIONFRAMERATE,BaslerCameraParameterNames::ACQUISITIONFRAMERATE,0,120,1, imageAcquisitionThread);
+    SpinboxContainer *acquisitionFrameRateContainer = new SpinboxContainer(5,BaslerCameraParameterNames::ACQUISITIONFRAMERATE,BaslerCameraParameterNames::ACQUISITIONFRAMERATE,5,120,1, imageAcquisitionThread);
     containers.append(acquisitionFrameRateContainer);
     colorAppearance->addChild(acquisitionFrameRateContainer->getQTreeWidgetItem());
     ccTreeWidget->setItemWidget(acquisitionFrameRateContainer->getQTreeWidgetItem(), 1, acquisitionFrameRateContainer->getUiElement());
@@ -218,14 +193,14 @@ void ImageStreamWindow::setupCameraWindow()
 
     CheckboxContainer *monochromeContainer = new CheckboxContainer(false,BaslerCameraParameterNames::MONOCHROME,
                                                                    BaslerCameraParameterNames::MONOCHROME,"","",imageAcquisitionThread);
-    //    containers.append(monochromeContainer);
+    containers.append(monochromeContainer);
     colorAppearance->addChild(monochromeContainer->getQTreeWidgetItem());
     ccTreeWidget->setItemWidget(monochromeContainer->getQTreeWidgetItem(), 1, monochromeContainer->getUiElement());
 
 
     CheckboxContainer *rgbContainer = new CheckboxContainer(false,BaslerCameraParameterNames::RGB,
                                                             BaslerCameraParameterNames::RGB,"","",imageAcquisitionThread);
-    //    containers.append(rgbContainer);
+    containers.append(rgbContainer);
     colorAppearance->addChild(rgbContainer->getQTreeWidgetItem());
     ccTreeWidget->setItemWidget(rgbContainer->getQTreeWidgetItem(), 1, rgbContainer->getUiElement());
     ccTreeWidget->addTopLevelItems(topLevelItems);
@@ -452,20 +427,53 @@ void ImageStreamWindow::writeQueue(){
 void ImageStreamWindow::updateAllParameters()
 {
     // query for all the parameters from hardware
-    for(int i=0;i<containers.size();i++)
-    {
-        containers.at(i)->updateParamValue();
-    }
-
     // display all the updated parameters to UI
     for(int i=0;i<containers.size();i++)
     {
+        containers.at(i)->updateParamValue();
         containers.at(i)->displayParamValue();
     }
 
     emit updateStatusBar("Frame Rate: "+ QString::number(this->getImageAcquisitionThread()->getValueForParam(BaslerCameraParameterNames::RESULTINGFRAMERATE).D()));
 
 
+}
+
+void ImageStreamWindow::createHistogramWindow()
+{
+    histogramWindow = new HistogramWindow(grayHistogramButton, this);
+    histogramWindow->setImageAcquisitionThread(imageAcquisitionThread);
+    QChart *chart = new QChart();
+    QtCharts::QLineSeries *series = new QtCharts::QLineSeries();
+    chart->addSeries(series);
+    chart->setTitle("Gray Histogram");
+    chart->createDefaultAxes();
+    chart->axes(Qt::Vertical).first()->setRange(0, 10);
+    chart->axes(Qt::Horizontal).first()->setRange(0, 255);
+
+    chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+    histogramWindow->setCentralWidget(chartView);
+    histogramWindow->resize(500, 400);
+    histogramWindow->setWindowTitle(this->imageAcquisitionThread->getDeviceName());
+    this->imageAcquisitionThread->setSupplyHistogramData(true);
+    connect(imageAcquisitionThread, SIGNAL(renderHistogramSignal(QList<long>, int)), this, SLOT(renderHistogramSlot(QList<long>, int)));
+}
+
+void ImageStreamWindow::renderHistogramSlot(QList<long> frequencies, int max)
+{
+
+    chartView->chart()->removeAllSeries();
+    QLineSeries *series = new QLineSeries();
+    for(int i=0;i<frequencies.size();i++)
+    {
+        series->append(i, frequencies[i]);
+    }
+    chartView->chart()->addSeries(series);
+    chartView->chart()->axes(Qt::Vertical).first()->setRange(0, QVariant(max));
+    chartView->chart()->legend()->markers(series)[0]->setVisible(false);
+    grayHistogramButton->setDisabled(true);
+    histogramWindow->show();
 }
 
 

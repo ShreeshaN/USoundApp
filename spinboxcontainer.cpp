@@ -4,26 +4,26 @@
 
 SpinboxContainer::SpinboxContainer(double defaultParameterValue, std::string cameraParameterName, std::string uiDisplayName, int minVal, int maxVal, int step, ImageAcquisition *imageAcquisitionThread, QWidget *parent): QSpinBox(parent)
 {
- this->paramValue = defaultParameterValue;
- this->uiDisplayName = uiDisplayName;
- this->cameraParameterName = cameraParameterName;
- this->minVal = minVal;
- this->maxVal = maxVal;
- qTreeWidgetItem = new QTreeWidgetItem(QStringList() << uiDisplayName.c_str());
- uiElement = new QSpinBox;
- uiElement->setRange(minVal, maxVal);
- uiElement->setSingleStep(step);
- this->imageAcquisitionThread = imageAcquisitionThread;
- updateParamValue();
- displayParamValue();
+    this->paramValue = defaultParameterValue;
+    this->uiDisplayName = uiDisplayName;
+    this->cameraParameterName = cameraParameterName;
+    this->minVal = minVal;
+    this->maxVal = maxVal;
+    qTreeWidgetItem = new QTreeWidgetItem(QStringList() << uiDisplayName.c_str());
+    uiElement = new QSpinBox;
+    uiElement->setRange(minVal, maxVal);
+    uiElement->setSingleStep(step);
+    this->imageAcquisitionThread = imageAcquisitionThread;
+    updateParamValue();
+    displayParamValue();
 
- // connect
- QObject::connect(this->uiElement, qOverloadInt(&QSpinBox::valueChanged),[=]{
-     this->setValueInHardware((double)uiElement->value());
-//     mssleep(150);
-     this->updateParamValue();
-     this->displayParamValue();
-});
+    // connect
+    QObject::connect(this->uiElement, qOverloadInt(&QSpinBox::valueChanged),[=]{
+        this->setValueInHardware((double)uiElement->value());
+        //     mssleep(150);
+        this->updateParamValue();
+        this->displayParamValue();
+    });
 }
 
 // Virtual method implementations
@@ -31,14 +31,19 @@ SpinboxContainer::SpinboxContainer(double defaultParameterValue, std::string cam
 void SpinboxContainer::updateParamValue()
 {
     try {
-        val = this->imageAcquisitionThread->getValueForParam(cameraParameterName);
-        this->paramValue = val.D();
-//        qDebug() << "Updating param"<<cameraParameterName.c_str() << "New value "<< paramValue;
+        if(this->getParameterAvailable())
+        {
+            val = this->imageAcquisitionThread->getValueForParam(cameraParameterName);
+            this->paramValue = val.D();
+            //        qDebug() << "Updating param"<<cameraParameterName.c_str() << "New value "<< paramValue;
+
+        }
 
     } catch (HalconCpp::HException &e) {
         if (e.ErrorCode() == 5330)
         {
             this->uiElement->setDisabled(true);
+            this->setParameterAvailable(false);
             qDebug() << "Either parameter name is incorrect or the camera make does not support it "<< cameraParameterName.c_str()<< "Currently, a default value is set";
         }
         else{
@@ -49,15 +54,18 @@ void SpinboxContainer::updateParamValue()
 
 void SpinboxContainer::displayParamValue()
 {
-//    qDebug() << "Displaying value of "<<cameraParameterName.c_str() << "param value"<< paramValue;
-    this->uiElement->blockSignals(true);
-    this->uiElement->setValue(paramValue);
-    this->uiElement->blockSignals(false);
+    if(this->getParameterAvailable())
+    {
+        //    qDebug() << "Displaying value of "<<cameraParameterName.c_str() << "param value"<< paramValue;
+        this->uiElement->blockSignals(true);
+        this->uiElement->setValue(paramValue);
+        this->uiElement->blockSignals(false);
+    }
 }
 
 void SpinboxContainer::setValueInHardware(int paramValue)
 {
-//    this->imageAcquisitionThread->setValueForParam(cameraParameterName,paramValue);
+    //    this->imageAcquisitionThread->setValueForParam(cameraParameterName,paramValue);
 }
 
 void SpinboxContainer::setValueInHardware(double paramValue)

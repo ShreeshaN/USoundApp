@@ -29,14 +29,19 @@ DoubleSpinboxContainer::DoubleSpinboxContainer(double defaultParameterValue, std
 void DoubleSpinboxContainer::updateParamValue()
 {
     try {
-        val = this->imageAcquisitionThread->getValueForParam(cameraParameterName);
-        this->paramValue = val.D();
-//        qDebug() << "Updating param"<<cameraParameterName.c_str() << "New value "<< paramValue;
+        if(this->getParameterAvailable())
+        {
+            val = this->imageAcquisitionThread->getValueForParam(cameraParameterName);
+            this->paramValue = val.D();
+            //        qDebug() << "Updating param"<<cameraParameterName.c_str() << "New value "<< paramValue;
+
+        }
 
     } catch (HalconCpp::HException &e) {
         if (e.ErrorCode() == 5330)
         {
             this->uiElement->setDisabled(true);
+            this->setParameterAvailable(false);
             qDebug() << "Either parameter name is incorrect or the camera make does not support it "<< cameraParameterName.c_str()<< "Currently, a default value is set";
         }
         else{
@@ -48,10 +53,13 @@ void DoubleSpinboxContainer::updateParamValue()
 
 void DoubleSpinboxContainer::displayParamValue()
 {
-    this->uiElement->blockSignals(true);
-    this->uiElement->setValue(paramValue);
-    this->uiElement->blockSignals(false);
-//    qDebug() << "Displaying value of "<<cameraParameterName.c_str() << "param value"<< paramValue;
+    if(this->getParameterAvailable())
+    {
+        this->uiElement->blockSignals(true);
+        this->uiElement->setValue(paramValue);
+        this->uiElement->blockSignals(false);
+        // qDebug() << "Displaying value of "<<cameraParameterName.c_str() << "param value"<< paramValue;
+    }
 
 }
 

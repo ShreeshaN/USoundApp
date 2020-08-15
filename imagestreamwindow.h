@@ -15,6 +15,11 @@
 #include <QCheckBox>
 #include "spinboxcontainer.h"
 #include "parametercontainer.h"
+#include "histogramwindow.h"
+#include <QtCharts>
+using namespace QtCharts;
+
+
 
 
 class ImageStreamWindow : public QMainWindow
@@ -70,13 +75,17 @@ public:
 
 
     // Actions
-    QAction *imageSaveButton, *recordButton, *recordPauseButton, *recordStopButton;
+    QAction *imageSaveButton, *recordButton, *recordPauseButton, *recordStopButton, *grayHistogramButton;
+
+    // Chart window
+    HistogramWindow *histogramWindow;
+    QChartView *chartView;
 
 
 
-    // member functions
-    void setupCameraWindow();
-    void updateCameraParametersAndDisplay();
+     // member functions
+     void setupCameraWindow();
+     void updateCameraParametersAndDisplay();
     void displayCameraParameters();
 
 
@@ -96,6 +105,10 @@ public slots:
     void stopVideoRecord();
     void writeQueue();
     void updateAllParameters();
+    void createHistogramWindow();
+    void renderHistogramSlot(QList<long>, int);
+
+signals:
 
 
 protected:

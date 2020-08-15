@@ -17,6 +17,7 @@
 #include "defaults.h"
 #include <QSignalMapper>
 #include <QQueue>
+#include<QtCharts/QLineSeries>
 
 // Custom class to store image and save path in a queue (Buffer for writing)
 class RecordingBuffer
@@ -48,6 +49,7 @@ private:
     QString deviceName;
 //    CameraControls cameraControls;
     bool recording=false;
+    bool supplyHistogramData=false;
 
 
 
@@ -83,14 +85,16 @@ public:
     void setImageAcquisitionHandle(const HalconCpp::HFramegrabber &value);
     bool getStopAcquisition() const;
     void setStopAcquisition(bool value);
-//    CameraControls getCameraControls() const;
-//    void setCameraControls(const CameraControls &value);
     void setRecording(bool value){recording=value;}
     bool getRecording(){return recording;}
+    bool getSupplyHistogramData() const;
+    void setSupplyHistogramData(bool value);
+
 
 signals:
     void renderImageSignal(QImage);
     void updateStatusBarSignal(QString);
+    void renderHistogramSignal(QList<long>, int);
 
 
 protected:
