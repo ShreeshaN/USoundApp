@@ -88,9 +88,10 @@ void ImageStreamWindow::setupCameraWindow()
     ccTreeWidget->setColumnCount(2);
     ccTreeWidget->setHeaderLabels(QStringList() <<"Feature"<<"Value");
 
-    // Set column width for ccTree (Dynamic resize only for image)
-    ccTreeWidget->setFixedWidth(250);
+    // Set column width for ccTree (Dynamic resize only for image)    
+    ccTreeWidget->setFixedWidth(350);
     ccTreeWidget->setColumnWidth(0, 250);
+
 
     QList<QTreeWidgetItem *> topLevelItems;
 
