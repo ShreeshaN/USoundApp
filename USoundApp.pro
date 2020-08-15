@@ -110,10 +110,10 @@ QT += charts
 
 
 
-#mkdata.commands = $(MKDIR) $${TARGETDIR}
-#copydata.commands = $(COPY_FILE) $$PWD/USoundSettings.ini $${TARGETDIR}
-#first.depends = $(first) mkdata copydata
-#export(first.depends)
-#export(mkdata.commands)
-#export(copydata.commands)
-#QMAKE_EXTRA_TARGETS += first mkdata copydata
+mkdata.commands = $(MKDIR) $${TARGETDIR}
+copydata.commands = $(COPY_FILE) $$PWD/USoundSettings.ini $${TARGETDIR}
+first.depends = $(first) mkdata copydata
+export(first.depends)
+export(mkdata.commands)
+export(copydata.commands)
+QMAKE_EXTRA_TARGETS += first mkdata copydata

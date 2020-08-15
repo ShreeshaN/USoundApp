@@ -48,6 +48,11 @@ Homescreen::Homescreen(QWidget *parent)
     , ui(new Ui::Homescreen)
 {
     ui->setupUi(this);
+
+    // Load settings
+    m_sSettingsFile = "USoundSettings.ini";
+    loadSettings();
+
     // Assign UI plainTextEdit to global Message Box
     globalMessageBox =ui->plainTextEdit;
 
@@ -58,9 +63,7 @@ Homescreen::Homescreen(QWidget *parent)
     // Connect slot to clear logs
     connect(ui->clearLogs,SIGNAL(clicked()),this,SLOT(clearLogs()));
 
-    // Load settings
-    m_sSettingsFile = "USoundSettings.ini";
-    loadSettings();
+
 
     onApplicationStartup();
 }
@@ -71,6 +74,27 @@ void Homescreen::loadSettings()
     qDebug() << "Looking here " +  QApplication::applicationDirPath();
     QSettings settings(m_sSettingsFile, QSettings::IniFormat);
     qDebug() << settings.allKeys();
+
+    // Set loglevel
+    auto logLevel = settings.value("LOGGING/LOGLEVEL").toString();
+    qDebug() << logLevel;
+    int logLevelIndex = 0;
+    if (logLevel=="DEBUG"){
+        logLevelIndex=0;
+    }
+    else if(logLevel == "INFO"){
+        logLevelIndex=1;
+    }
+    else if(logLevel == "WARN"){
+        logLevelIndex=2;
+    }
+    else if(logLevel == "CRITICAL"){
+        logLevelIndex=3;
+    }
+    else if(logLevel == "FATAL"){
+        logLevelIndex=4;
+    }
+    ui->logLevelSelector->setCurrentIndex(logLevelIndex);
 }
 
 
