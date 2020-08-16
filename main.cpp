@@ -9,10 +9,14 @@
 #include <usoundutils.h>
 #include <QDateTime>
 #include <defaults.h>
+#include <QSettings>
 
-const QString logFilePath = Directories::LOGDIR+"/"+Directories::LOGFILENAME+QString(generateTimeStamp().c_str())+"."+Directories::LOGFILEFORMAT;
+
+QString logFilePath = "";
 QString tempString = "";
 Homescreen *homeScreenPointer = 0;
+QString m_sSettingsFile;
+
 
 void customLoggingHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -51,7 +55,7 @@ void customLoggingHandler(QtMsgType type, const QMessageLogContext &context, con
     outFile.open(QIODevice::WriteOnly | QIODevice::Append);
     QTextStream ts(&outFile);
     ts << txt << endl;
-//     Push to Message Box
+    //     Push to Message Box
     if(homeScreenPointer!=0 && Homescreen::globalMessageBox != 0 && Homescreen::logLevel == type){
         emit homeScreenPointer->pushToMessageBoxSignal(tempString+txt);
         tempString="";
@@ -61,12 +65,65 @@ void customLoggingHandler(QtMsgType type, const QMessageLogContext &context, con
     }
 }
 
+
+
+void loadSettings()
+{
+    try {
+        QSettings settings(m_sSettingsFile, QSettings::IniFormat);
+
+        // Set Directories
+        DIRECTORIES::APPDIR = settings.value("DIRECTORIES/APPDIR", DIRECTORIES::APPDIR).toString();
+
+        // Set Logging Configuration
+        LOGGING_CONFIGURATION::FILE_NAME = settings.value("LOGGING_CONFIGURATION/FILE_NAME", LOGGING_CONFIGURATION::FILE_NAME).toString();
+        LOGGING_CONFIGURATION::FILE_FORMAT = settings.value("LOGGING_CONFIGURATION/FILE_FORMAT", LOGGING_CONFIGURATION::FILE_FORMAT).toString();
+
+        // Set logfilepath
+        logFilePath=DIRECTORIES::APPDIR+"/"+LOGGING_CONFIGURATION::FILE_NAME+QString(generateTimeStamp().c_str())+"."+LOGGING_CONFIGURATION::FILE_FORMAT;
+
+        // Set loglevel
+        auto logLevel = settings.value("LOGGING_CONFIGURATION/LOG_LEVEL", LOGGING_CONFIGURATION::LOG_LEVEL).toString();
+        if (logLevel=="DEBUG"){
+            LOGGING_CONFIGURATION::LOG_LEVEL_INDEX=0;
+            LOGGING_CONFIGURATION::LOG_LEVEL = QtDebugMsg;
+        }
+        else if(logLevel == "INFO"){
+            LOGGING_CONFIGURATION::LOG_LEVEL_INDEX=1;
+            LOGGING_CONFIGURATION::LOG_LEVEL = QtInfoMsg;
+        }
+        else if(logLevel == "WARN"){
+            LOGGING_CONFIGURATION::LOG_LEVEL_INDEX=2;
+            LOGGING_CONFIGURATION::LOG_LEVEL = QtWarningMsg;
+        }
+        else if(logLevel == "CRITICAL"){
+            LOGGING_CONFIGURATION::LOG_LEVEL_INDEX=3;
+            LOGGING_CONFIGURATION::LOG_LEVEL = QtCriticalMsg;
+        }
+        else if(logLevel == "FATAL"){
+            LOGGING_CONFIGURATION::LOG_LEVEL_INDEX=4;
+            LOGGING_CONFIGURATION::LOG_LEVEL = QtFatalMsg;
+        }
+        qDebug() << "Successfully loaded settings";
+    }  catch (std::exception &e) {
+        qDebug() << e.what();
+        logFilePath=DIRECTORIES::APPDIR+"/"+LOGGING_CONFIGURATION::FILE_NAME+QString(generateTimeStamp().c_str())+"."+LOGGING_CONFIGURATION::FILE_FORMAT;
+        qCritical() << "Failed to load configuration from INI file. Using defaults!";
+    }
+
+}
+
+
 int main(int argc, char *argv[])
 {
     try {
+        // Load Settings
+        m_sSettingsFile = "USoundSettings.ini";
+        loadSettings();
+
         qRegisterMetaType<QList<long> >("QList<long>");
         // Setup directories
-        createDirectories();        
+        createDirectories();
         qInstallMessageHandler(customLoggingHandler); // Install the handler
         qInfo() << "Logging to file:" + logFilePath;
         QApplication a(argc, argv);
@@ -74,9 +131,9 @@ int main(int argc, char *argv[])
         QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
         Homescreen w;
         homeScreenPointer = &w;
-        w.setWindowIcon(QIcon("://icons/wpi_logo.ico"));        
+        w.setWindowIcon(QIcon("://icons/wpi_logo.ico"));
         w.show();
-        qInfo() << "Application initialized successfully";
+        qDebug() << "Application initialized successfully";
         return a.exec();
     }catch (HalconCpp::HOperatorException &e) {
         qDebug() << e.ErrorMessage().Text();

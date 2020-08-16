@@ -69,7 +69,7 @@ void ImageAcquisition::run()
             emit renderImageSignal(qImage);
 
             if(getRecording()){
-                imageBuffer.enqueue(RecordingBuffer(currentImage, currentRecordSaveDir+QString::number(currentBufferImageCounter)+"."+Directories::IMAGEFORMAT));
+                imageBuffer.enqueue(RecordingBuffer(currentImage, currentRecordSaveDir+QString::number(currentBufferImageCounter)+"."+DIRECTORIES::IMAGEFORMAT));
                 emit updateStatusBarSignal(QString("Images in buffer %1").arg(currentBufferImageCounter));
                 currentBufferImageCounter+=1;
             }

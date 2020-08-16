@@ -60,11 +60,6 @@ public:
     void setupDevicesUI();
     void detectAttachedDevices();
 
-private:
-    QString m_sSettingsFile;
-    void loadSettings();
-    void saveSettings();
-
 public slots:
     void on_devicesRefresh_clicked();
     void connectToCamera(QString deviceName);

@@ -19,15 +19,15 @@ static void mssleep(int ms){
 static void createDirectories(){
     qDebug() << "Initializing Directories . . .";
     QDir qdir;
-    // App Dir
-    if (!qdir.exists(Directories::APPDIR))   {
-        qDebug() << "Creating Application directory at "+Directories::APPDIR;
-        qdir.mkpath(Directories::APPDIR);
+    // App Dir    
+    if (!qdir.exists(DIRECTORIES::APPDIR))   {
+        qDebug() << "Creating Application directory at "+DIRECTORIES::APPDIR;
+        qdir.mkpath(DIRECTORIES::APPDIR);
     }
 
-    if (!qdir.exists(Directories::DATADIR))   {
-        qDebug() << "Creating Data directory at "+Directories::DATADIR;
-        qdir.mkpath(Directories::DATADIR);
+    if (!qdir.exists(DIRECTORIES::DATADIR))   {
+        qDebug() << "Creating Data directory at "+DIRECTORIES::DATADIR;
+        qdir.mkpath(DIRECTORIES::DATADIR);
     }
 }
 
@@ -35,29 +35,29 @@ static void initializeDirectoriesForDevice(QString deviceName){
     qDebug() << "Initializing Directories for "+deviceName;
     QDir qdir;
     // App Dir
-    QString deviceDir = Directories::DATADIR+"/"+deviceName;
+    QString deviceDir = DIRECTORIES::DATADIR+"/"+deviceName;
     if (!qdir.exists(deviceDir))   {
         qDebug() << "Creating device directory at "+deviceDir;
         qdir.mkpath(deviceDir);
     }
 
     // Images
-    if (!qdir.exists(deviceDir+Directories::IMAGESAVEDIR))   {
-        qDebug() << "Creating Image directory at "+deviceDir+Directories::IMAGESAVEDIR;
-        qdir.mkpath(deviceDir+Directories::IMAGESAVEDIR);
+    if (!qdir.exists(deviceDir+DIRECTORIES::IMAGESAVEDIR))   {
+        qDebug() << "Creating Image directory at "+deviceDir+DIRECTORIES::IMAGESAVEDIR;
+        qdir.mkpath(deviceDir+DIRECTORIES::IMAGESAVEDIR);
     }
 
     // Video
-    if (!qdir.exists(deviceDir+Directories::VIDEOSAVEDIR))   {
-        qDebug() << "Creating Video directory at "+deviceDir+Directories::VIDEOSAVEDIR;
-        qdir.mkpath(deviceDir+Directories::VIDEOSAVEDIR);
+    if (!qdir.exists(deviceDir+DIRECTORIES::VIDEOSAVEDIR))   {
+        qDebug() << "Creating Video directory at "+deviceDir+DIRECTORIES::VIDEOSAVEDIR;
+        qdir.mkpath(deviceDir+DIRECTORIES::VIDEOSAVEDIR);
     }
 }
 
 static QString getImageSavePathForDevice(QString deviceName){
-    return Directories::DATADIR+"/"+deviceName+Directories::IMAGESAVEDIR;
+    return DIRECTORIES::DATADIR+"/"+deviceName+DIRECTORIES::IMAGESAVEDIR;
 }
 
 static QString getVideoSavePathForDevice(QString deviceName){
-    return Directories::DATADIR+"/"+deviceName+Directories::VIDEOSAVEDIR;
+    return DIRECTORIES::DATADIR+"/"+deviceName+DIRECTORIES::VIDEOSAVEDIR;
 }

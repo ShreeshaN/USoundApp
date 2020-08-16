@@ -21,15 +21,17 @@ const std::string BaslerCameraParameterNames::MONOCHROME="monochrome";
 const std::string BaslerCameraParameterNames::RGB="rgb";
 
 //Set App Directory
-const QString Directories::APPDIR = QDir::tempPath() +"/USoundApp";
-// Logging configuration
-const QString Directories::LOGDIR = APPDIR;
-const QString Directories::LOGFILENAME = "USoundApp";
-const QString Directories::LOGFILEFORMAT = "log";
-
+QString DIRECTORIES::APPDIR = QDir::tempPath() +"/USoundApp";
 // Data directories configuration
-const QString Directories::DATADIR = APPDIR+"/data";
-const QString Directories::IMAGEFORMAT = AvailableImageFormats::TIFF;
-const QString Directories::IMAGESAVEDIR = "/images";
-const QString Directories::VIDEOSAVEDIR = "/videos";
+QString DIRECTORIES::DATADIR = APPDIR+"/data";
+QString DIRECTORIES::IMAGEFORMAT = AvailableImageFormats::TIFF;
+QString DIRECTORIES::IMAGESAVEDIR = "/images";
+QString DIRECTORIES::VIDEOSAVEDIR = "/videos";
+
+// Logging configuration
+QString LOGGING_CONFIGURATION::FILE_NAME = "USoundApp";
+QString LOGGING_CONFIGURATION::FILE_FORMAT = "log";
+QtMsgType LOGGING_CONFIGURATION::LOG_LEVEL = QtInfoMsg;
+int LOGGING_CONFIGURATION::LOG_LEVEL_INDEX=1;
+
 

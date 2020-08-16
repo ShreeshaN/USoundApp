@@ -60,16 +60,21 @@ public:
 };
 
 
-class Directories{
+class DIRECTORIES{
 public:
-    static const QString APPDIR;
-    static const QString LOGDIR;
-    static const QString LOGFILENAME;
-    static const QString LOGFILEFORMAT;
-    static const QString DATADIR;
-    static const QString IMAGEFORMAT;
-    static const QString IMAGESAVEDIR;
-    static const QString VIDEOSAVEDIR;
+    static QString APPDIR;
+    static QString DATADIR;
+    static QString IMAGEFORMAT;
+    static QString IMAGESAVEDIR;
+    static QString VIDEOSAVEDIR;
+};
+
+class LOGGING_CONFIGURATION{
+public :    
+    static QString FILE_NAME;
+    static QString FILE_FORMAT;
+    static QtMsgType LOG_LEVEL;
+    static int LOG_LEVEL_INDEX;
 };
 
 
