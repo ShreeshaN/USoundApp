@@ -5,7 +5,6 @@
 #include <QLabel>
 #include <ui_about.h>
 #include <ui_settings.h>
-#include <ui_tabbedsettings.h>
 #ifndef __APPLE__
 #  include "HalconCpp.h"
 #  include "Halcon.h"
@@ -83,15 +82,9 @@ private slots:
 
     void on_actionSettings_triggered();
 
-//    void on_listWidget_itemClicked(QListWidgetItem *item);
-
     void on_listWidget_itemSelectionChanged();
 
-//    void on_listWidget_itemActivated(QListWidgetItem *item);
-
-//    void on_listWidget_currentRowChanged(int currentRow);
-
-//    void on_listWidget_itemPressed(QListWidgetItem *item);
+    void on_applicationDirectoryBrowser_clicked();
 
 private:
     Ui::Homescreen *ui;
