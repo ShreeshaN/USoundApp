@@ -59,6 +59,7 @@ SOURCES += \
     parametercontainer.cpp \
     queuewriter.cpp \
     settings.cpp \
+    settingsstore.cpp \
     spinboxcontainer.cpp
 
 HEADERS += \
@@ -70,6 +71,8 @@ HEADERS += \
     doublespinboxcontainer.h \
     histogramwindow.h \
     settings.h \
+    settingsstore.h \
+    singleton.h \
     spinboxcontainer.h \
     homescreen.h \
     imageacquisition.h \

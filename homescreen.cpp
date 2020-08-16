@@ -448,21 +448,7 @@ void Homescreen::on_actionExit_triggered()
 
 void Homescreen::on_actionSettings_triggered()
 {
-    auto settingsDialog = new QDialog(0,0);
-    settings->setupUi(settingsDialog);
-    connect(settings->listWidget, SIGNAL(itemClicked(QListWidgetItem *)), this, SLOT(on_listWidget_itemSelectionChanged()));
-    connect(settings->applicationDirectoryBrowser, SIGNAL(clicked()), this, SLOT(on_applicationDirectoryBrowser_clicked()));
-    settingsDialog->exec();
+    settings->exec();
 }
 
-void Homescreen::on_listWidget_itemSelectionChanged()
-{
-    settings->stackedWidget->setCurrentIndex(settings->listWidget->currentIndex().row());
-}
 
-void Homescreen::on_applicationDirectoryBrowser_clicked()
-{
-    QString selectedDir =
-        QFileDialog::getExistingDirectory(this, "Select a directory", "directoryToOpen");
-    settings->applicationDirectoryBrowserText->setText(selectedDir);
-}

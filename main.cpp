@@ -10,13 +10,10 @@
 #include <QDateTime>
 #include <defaults.h>
 #include <QSettings>
+#include<settingsstore.h>
 
-
-QString logFilePath = "";
 QString tempString = "";
 Homescreen *homeScreenPointer = 0;
-QString m_sSettingsFile;
-
 
 void customLoggingHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -51,7 +48,7 @@ void customLoggingHandler(QtMsgType type, const QMessageLogContext &context, con
     }
 
     //todo: Prathyush SP -> Set settings for log file path
-    QFile outFile(logFilePath);
+    QFile outFile(LOGGING_CONFIGURATION::LOG_FILE_PATH);
     outFile.open(QIODevice::WriteOnly | QIODevice::Append);
     QTextStream ts(&outFile);
     ts << txt << endl;
@@ -66,66 +63,17 @@ void customLoggingHandler(QtMsgType type, const QMessageLogContext &context, con
 }
 
 
-
-void loadSettings()
-{
-    try {
-        QSettings settings(m_sSettingsFile, QSettings::IniFormat);
-
-        // Set Directories
-        DIRECTORIES::APPDIR = settings.value("DIRECTORIES/APPDIR", DIRECTORIES::APPDIR).toString();
-
-        // Set Logging Configuration
-        LOGGING_CONFIGURATION::FILE_NAME = settings.value("LOGGING_CONFIGURATION/FILE_NAME", LOGGING_CONFIGURATION::FILE_NAME).toString();
-        LOGGING_CONFIGURATION::FILE_FORMAT = settings.value("LOGGING_CONFIGURATION/FILE_FORMAT", LOGGING_CONFIGURATION::FILE_FORMAT).toString();
-
-        // Set logfilepath
-        logFilePath=DIRECTORIES::APPDIR+"/"+LOGGING_CONFIGURATION::FILE_NAME+QString(generateTimeStamp().c_str())+"."+LOGGING_CONFIGURATION::FILE_FORMAT;
-
-        // Set loglevel
-        auto logLevel = settings.value("LOGGING_CONFIGURATION/LOG_LEVEL", LOGGING_CONFIGURATION::LOG_LEVEL).toString();
-        if (logLevel=="DEBUG"){
-            LOGGING_CONFIGURATION::LOG_LEVEL_INDEX=0;
-            LOGGING_CONFIGURATION::LOG_LEVEL = QtDebugMsg;
-        }
-        else if(logLevel == "INFO"){
-            LOGGING_CONFIGURATION::LOG_LEVEL_INDEX=1;
-            LOGGING_CONFIGURATION::LOG_LEVEL = QtInfoMsg;
-        }
-        else if(logLevel == "WARN"){
-            LOGGING_CONFIGURATION::LOG_LEVEL_INDEX=2;
-            LOGGING_CONFIGURATION::LOG_LEVEL = QtWarningMsg;
-        }
-        else if(logLevel == "CRITICAL"){
-            LOGGING_CONFIGURATION::LOG_LEVEL_INDEX=3;
-            LOGGING_CONFIGURATION::LOG_LEVEL = QtCriticalMsg;
-        }
-        else if(logLevel == "FATAL"){
-            LOGGING_CONFIGURATION::LOG_LEVEL_INDEX=4;
-            LOGGING_CONFIGURATION::LOG_LEVEL = QtFatalMsg;
-        }
-        qDebug() << "Successfully loaded settings";
-    }  catch (std::exception &e) {
-        qDebug() << e.what();
-        logFilePath=DIRECTORIES::APPDIR+"/"+LOGGING_CONFIGURATION::FILE_NAME+QString(generateTimeStamp().c_str())+"."+LOGGING_CONFIGURATION::FILE_FORMAT;
-        qCritical() << "Failed to load configuration from INI file. Using defaults!";
-    }
-
-}
-
-
 int main(int argc, char *argv[])
 {
     try {
         // Load Settings
-        m_sSettingsFile = "USoundSettings.ini";
-        loadSettings();
+        SettingsStore::loadSettings();
 
         qRegisterMetaType<QList<long> >("QList<long>");
         // Setup directories
         createDirectories();
         qInstallMessageHandler(customLoggingHandler); // Install the handler
-        qInfo() << "Logging to file:" + logFilePath;
+        qInfo() << "Logging to file:" + LOGGING_CONFIGURATION::LOG_FILE_PATH;
         QApplication a(argc, argv);
         // This is used as a workaround to display menubar in mac os - https://stackoverflow.com/questions/25261760/menubar-not-showing-for-simple-qmainwindow-code-qt-creator-mac-os
         QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);

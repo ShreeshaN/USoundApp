@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QLabel>
 #include <ui_about.h>
-#include <ui_settings.h>
+#include <settings.h>
 #ifndef __APPLE__
 #  include "HalconCpp.h"
 #  include "Halcon.h"
@@ -50,7 +50,7 @@ public:
     QLabel *imageLabel;
     static inline QtMsgType logLevel = QtInfoMsg;
     Ui::About *about = new Ui::About;
-    Ui::Settings *settings = new Ui::Settings;
+    Settings *settings = new Settings();
 //    Ui_tabbedSettings *settings = new Ui_tabbedSettings;
 
     static QPlainTextEdit *globalMessageBox;
@@ -79,12 +79,8 @@ signals:
 private slots:
     void on_actionAbout_triggered();
     void on_actionExit_triggered();
-
     void on_actionSettings_triggered();
 
-    void on_listWidget_itemSelectionChanged();
-
-    void on_applicationDirectoryBrowser_clicked();
 
 private:
     Ui::Homescreen *ui;

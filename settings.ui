@@ -26,7 +26,10 @@
     <enum>Qt::Horizontal</enum>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Save</set>
+   </property>
+   <property name="centerButtons">
+    <bool>false</bool>
    </property>
   </widget>
   <widget class="QListWidget" name="listWidget">
@@ -101,6 +104,9 @@
        <height>491</height>
       </rect>
      </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -111,7 +117,7 @@
       <widget class="QToolButton" name="applicationDirectoryBrowser">
        <property name="geometry">
         <rect>
-         <x>450</x>
+         <x>440</x>
          <y>20</y>
          <width>26</width>
          <height>22</height>

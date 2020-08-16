@@ -73,6 +73,7 @@ class LOGGING_CONFIGURATION{
 public :    
     static QString FILE_NAME;
     static QString FILE_FORMAT;
+    static QString LOG_FILE_PATH;
     static QtMsgType LOG_LEVEL;
     static int LOG_LEVEL_INDEX;
 };

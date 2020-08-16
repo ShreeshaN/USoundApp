@@ -1,4 +1,5 @@
 #include "defaults.h"
+#include<usoundutils.h>
 #include <QDir>
 
 
@@ -31,6 +32,7 @@ QString DIRECTORIES::VIDEOSAVEDIR = "/videos";
 // Logging configuration
 QString LOGGING_CONFIGURATION::FILE_NAME = "USoundApp";
 QString LOGGING_CONFIGURATION::FILE_FORMAT = "log";
+QString LOGGING_CONFIGURATION::LOG_FILE_PATH = DIRECTORIES::APPDIR+"/"+LOGGING_CONFIGURATION::FILE_NAME+QString(generateTimeStamp().c_str())+"."+LOGGING_CONFIGURATION::FILE_FORMAT;;
 QtMsgType LOGGING_CONFIGURATION::LOG_LEVEL = QtInfoMsg;
 int LOGGING_CONFIGURATION::LOG_LEVEL_INDEX=1;
 
