@@ -407,7 +407,6 @@ void Homescreen::onCameraWindowClose()
 void Homescreen::pushToMessageBoxSlot(QString message)
 {
     ui->plainTextEdit->appendPlainText(message);
-    fprintf(stderr, message.toLatin1().data());
 }
 
 void Homescreen::updateLogLevel(QString message)
@@ -435,8 +434,6 @@ void Homescreen::clearLogs()
     ui->plainTextEdit->clear();
 }
 
-
-
 void Homescreen::on_actionAbout_triggered()
 {
     auto aboutDialog = new QDialog(0,0);
@@ -447,4 +444,17 @@ void Homescreen::on_actionAbout_triggered()
 void Homescreen::on_actionExit_triggered()
 {
     abort();
+}
+
+void Homescreen::on_actionSettings_triggered()
+{
+    auto settingsDialog = new QDialog(0,0);
+    settings->setupUi(settingsDialog);
+    connect(settings->listWidget, SIGNAL(itemClicked(QListWidgetItem *)), this, SLOT(on_listWidget_itemSelectionChanged()));
+    settingsDialog->exec();
+}
+
+void Homescreen::on_listWidget_itemSelectionChanged()
+{
+    settings->stackedWidget->setCurrentIndex(settings->listWidget->currentIndex().row());
 }

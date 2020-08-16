@@ -4,7 +4,8 @@
 #include <QMainWindow>
 #include <QLabel>
 #include <ui_about.h>
-
+#include <ui_settings.h>
+#include <ui_tabbedsettings.h>
 #ifndef __APPLE__
 #  include "HalconCpp.h"
 #  include "Halcon.h"
@@ -28,6 +29,7 @@
 #include <QGraphicsView>
 #include <imagestreamwindow.h>
 #include<QtWidgets/QPlainTextEdit>
+#include<QtWidgets/QListWidgetItem>
 #include <QDir>
 
 
@@ -48,7 +50,9 @@ public:
     ImageAcquisition *imageAcquisitionThread;
     QLabel *imageLabel;
     static inline QtMsgType logLevel = QtInfoMsg;
-    Ui_About *about = new Ui_About;
+    Ui::About *about = new Ui::About;
+    Ui::Settings *settings = new Ui::Settings;
+//    Ui_tabbedSettings *settings = new Ui_tabbedSettings;
 
     static QPlainTextEdit *globalMessageBox;
 
@@ -76,6 +80,18 @@ signals:
 private slots:
     void on_actionAbout_triggered();
     void on_actionExit_triggered();
+
+    void on_actionSettings_triggered();
+
+//    void on_listWidget_itemClicked(QListWidgetItem *item);
+
+    void on_listWidget_itemSelectionChanged();
+
+//    void on_listWidget_itemActivated(QListWidgetItem *item);
+
+//    void on_listWidget_currentRowChanged(int currentRow);
+
+//    void on_listWidget_itemPressed(QListWidgetItem *item);
 
 private:
     Ui::Homescreen *ui;

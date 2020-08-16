@@ -58,6 +58,7 @@ SOURCES += \
     homescreen.cpp \
     parametercontainer.cpp \
     queuewriter.cpp \
+    settings.cpp \
     spinboxcontainer.cpp
 
 HEADERS += \
@@ -68,6 +69,7 @@ HEADERS += \
     doubleslider.h \
     doublespinboxcontainer.h \
     histogramwindow.h \
+    settings.h \
     spinboxcontainer.h \
     homescreen.h \
     imageacquisition.h \
@@ -78,7 +80,8 @@ HEADERS += \
 
 FORMS += \
     about.ui \
-    homescreen.ui
+    homescreen.ui \
+    settings.ui
 
 
 # Default rules for deployment.
