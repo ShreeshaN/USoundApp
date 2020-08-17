@@ -11,7 +11,6 @@ void SettingsStore::loadSettings()
 {
     try {
         settings = new QSettings("/Users/prathyushsp/Git/chlst/USoundApp/USoundSettings.ini", QSettings::IniFormat);
-//        settings->allKeys();
 
         // Set Directories
         DIRECTORIES::APPDIR = settings->value("DIRECTORIES/APPDIR", DIRECTORIES::APPDIR).toString();
@@ -86,8 +85,9 @@ void SettingsStore::loadSettings()
         }
         qDebug() << "Successfully loaded settings";
     }  catch (std::exception &e) {
-        qDebug() << e.what();
+        qCritical() << e.what();
         qCritical() << "Failed to load configuration from INI file. Using defaults!";
+        throw SettingsStoreException();
     }
 
 }

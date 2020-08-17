@@ -25,9 +25,9 @@ static void createDirectories(){
         qdir.mkpath(DIRECTORIES::APPDIR);
     }
 
-    if (!qdir.exists(DIRECTORIES::DATADIR))   {
-        qDebug() << "Creating Data directory at "+DIRECTORIES::DATADIR;
-        qdir.mkpath(DIRECTORIES::DATADIR);
+    if (!qdir.exists(DIRECTORIES::APPDIR+"/"+DIRECTORIES::DATADIR))   {
+        qDebug() << "Creating Data directory at "+DIRECTORIES::APPDIR+"/"+DIRECTORIES::DATADIR;
+        qdir.mkpath(DIRECTORIES::APPDIR+"/"+DIRECTORIES::DATADIR);
     }
 }
 
@@ -35,7 +35,7 @@ static void initializeDirectoriesForDevice(QString deviceName){
     qDebug() << "Initializing Directories for "+deviceName;
     QDir qdir;
     // App Dir
-    QString deviceDir = DIRECTORIES::DATADIR+"/"+deviceName;
+    QString deviceDir = DIRECTORIES::APPDIR+"/"+DIRECTORIES::DATADIR+"/"+deviceName;
     if (!qdir.exists(deviceDir))   {
         qDebug() << "Creating device directory at "+deviceDir;
         qdir.mkpath(deviceDir);

@@ -351,13 +351,12 @@ void ImageStreamWindow::saveImage()
 Save Image
 */
 {
-    try {
-        //todo: Prathyush SP -> Change from tempPath to user set path
+    try {        
         QString filename=getImageSavePathForDevice(imageAcquisitionThread->getDeviceName())+"/"+QString(generateTimeStamp().c_str())+"."+IMAGE_CONFIGURATION::IMAGEFORMAT;
         qInfo() << "Saving image at "+filename;
         imageAcquisitionThread->currentImage.WriteImage(IMAGE_CONFIGURATION::IMAGEFORMAT.toStdString().c_str(), 0, filename.toStdString().c_str());
     } catch (HalconCpp::HException he) {
-        qDebug() << he.ErrorMessage().Text();
+        qCritical() << he.ErrorMessage().Text();
     }
 }
 
@@ -377,7 +376,7 @@ void ImageStreamWindow::startVideoRecord(){
         //        this->recordPauseButton->setEnabled(true);
         this->recordStopButton->setEnabled(true);
     } catch (std::exception &e) {
-        qDebug() << e.what();
+        qCritical() << e.what();
     }
 }
 

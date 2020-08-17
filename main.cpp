@@ -11,6 +11,8 @@
 #include <defaults.h>
 #include <QSettings>
 #include<settingsstore.h>
+//#include<QMessageBox>
+
 
 QString tempString = "";
 Homescreen *homeScreenPointer = 0;
@@ -51,7 +53,7 @@ void customLoggingHandler(QtMsgType type, const QMessageLogContext &context, con
     QFile outFile(LOGGING_CONFIGURATION::LOG_FILE_PATH);
     outFile.open(QIODevice::WriteOnly | QIODevice::Append);
     QTextStream ts(&outFile);
-    ts << txt << endl;
+    ts << txt << Qt::endl;
     //     Push to Message Box
     if(homeScreenPointer!=0 && Homescreen::globalMessageBox != 0 && Homescreen::logLevel <= type){
         emit homeScreenPointer->pushToMessageBoxSignal(tempString+txt);
@@ -82,11 +84,17 @@ int main(int argc, char *argv[])
         w.show();
         qDebug() << "Application initialized successfully";
         return a.exec();
-    }catch (HalconCpp::HOperatorException &e) {
-        qDebug() << e.ErrorMessage().Text();
+    }
+    catch (HalconCpp::HOperatorException &e) {
+        qFatal(e.ErrorMessage().Text());
+    }
+    catch (SettingsStoreException &e) {
+        qFatal(e.what());
+        QMessageBox::critical(0, "Issue with Settings",e.what(),QMessageBox::Ok);
     }
     catch (std::exception &e) {
-        qDebug() << e.what();
+        qFatal(e.what());
+//        QMessageBox::critical(0, "Close Camera","Image recording in progress",QMessageBox::Ok);
     }
 
 }
