@@ -27,6 +27,16 @@ private slots:
 
     void on_buttonBox_clicked(QAbstractButton *button);
 
+    void on_dataDirectoryText_editingFinished();
+
+    void on_imageDirectoryText_editingFinished();
+
+    void on_videoDirectoryText_editingFinished();
+
+    void on_logLevelToolBox_currentIndexChanged(int index);
+
+    void on_imageSaveFormatToolbox_currentIndexChanged(int index);
+
 private:
     Ui::Settings *ui;
 };

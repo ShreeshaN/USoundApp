@@ -68,7 +68,6 @@ int main(int argc, char *argv[])
     try {
         // Load Settings
         SettingsStore::loadSettings();
-
         qRegisterMetaType<QList<long> >("QList<long>");
         // Setup directories
         createDirectories();

@@ -353,9 +353,9 @@ Save Image
 {
     try {
         //todo: Prathyush SP -> Change from tempPath to user set path
-        QString filename=getImageSavePathForDevice(imageAcquisitionThread->getDeviceName())+"/"+QString(generateTimeStamp().c_str())+"."+DIRECTORIES::IMAGEFORMAT;
+        QString filename=getImageSavePathForDevice(imageAcquisitionThread->getDeviceName())+"/"+QString(generateTimeStamp().c_str())+"."+IMAGE_CONFIGURATION::IMAGEFORMAT;
         qInfo() << "Saving image at "+filename;
-        imageAcquisitionThread->currentImage.WriteImage(DIRECTORIES::IMAGEFORMAT.toStdString().c_str(), 0, filename.toStdString().c_str());
+        imageAcquisitionThread->currentImage.WriteImage(IMAGE_CONFIGURATION::IMAGEFORMAT.toStdString().c_str(), 0, filename.toStdString().c_str());
     } catch (HalconCpp::HException he) {
         qDebug() << he.ErrorMessage().Text();
     }

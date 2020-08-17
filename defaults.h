@@ -64,7 +64,6 @@ class DIRECTORIES{
 public:
     static QString APPDIR;
     static QString DATADIR;
-    static QString IMAGEFORMAT;
     static QString IMAGESAVEDIR;
     static QString VIDEOSAVEDIR;
 };
@@ -76,6 +75,12 @@ public :
     static QString LOG_FILE_PATH;
     static QtMsgType LOG_LEVEL;
     static int LOG_LEVEL_INDEX;
+};
+
+class IMAGE_CONFIGURATION{
+public:
+    static QString IMAGEFORMAT;
+    static int IMAGEFORMAT_INDEX;
 };
 
 

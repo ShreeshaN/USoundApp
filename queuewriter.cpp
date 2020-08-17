@@ -33,7 +33,7 @@ void QueueWriter::run()
         while(!imageAcquisitionThread->imageBuffer.isEmpty()){
             RecordingBuffer buffer = imageAcquisitionThread->imageBuffer.dequeue();
             qDebug() << "Saving frame at "+buffer.imageSavePath;
-            buffer.image.WriteImage(DIRECTORIES::IMAGEFORMAT.toStdString().c_str(), 0, buffer.imageSavePath.toStdString().c_str());            
+            buffer.image.WriteImage(IMAGE_CONFIGURATION::IMAGEFORMAT.toStdString().c_str(), 0, buffer.imageSavePath.toStdString().c_str());
             emit imageAcquisitionThread->updateStatusBarSignal(QString("Remaining images to write %1").arg(imageAcquisitionThread->imageBuffer.length()));
             imageCounter+=1;
         }
