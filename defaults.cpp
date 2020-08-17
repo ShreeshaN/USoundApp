@@ -24,7 +24,7 @@ const std::string BaslerCameraParameterNames::RGB="rgb";
 //Set App Directory
 QString DIRECTORIES::APPDIR = QDir::tempPath() +"/USoundApp";
 // Data directories configuration
-QString DIRECTORIES::DATADIR = APPDIR+"/data";
+QString DIRECTORIES::DATADIR = "/data";
 QString DIRECTORIES::IMAGESAVEDIR = "/images";
 QString DIRECTORIES::VIDEOSAVEDIR = "/videos";
 

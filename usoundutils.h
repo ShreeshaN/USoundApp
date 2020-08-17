@@ -9,7 +9,7 @@
 
 static std::string generateTimeStamp(){
     QDateTime currentDateTime = QDateTime::currentDateTime();
-    return std::to_string(currentDateTime.toTime_t());
+    return QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss_zzz").toLatin1().data();
 }
 
 static void mssleep(int ms){
@@ -55,9 +55,9 @@ static void initializeDirectoriesForDevice(QString deviceName){
 }
 
 static QString getImageSavePathForDevice(QString deviceName){
-    return DIRECTORIES::DATADIR+"/"+deviceName+DIRECTORIES::IMAGESAVEDIR;
+    return DIRECTORIES::APPDIR+ "/" + DIRECTORIES::DATADIR+"/"+deviceName+DIRECTORIES::IMAGESAVEDIR;
 }
 
 static QString getVideoSavePathForDevice(QString deviceName){
-    return DIRECTORIES::DATADIR+"/"+deviceName+DIRECTORIES::VIDEOSAVEDIR;
+    return DIRECTORIES::APPDIR+ "/" + DIRECTORIES::DATADIR+"/"+deviceName+DIRECTORIES::VIDEOSAVEDIR;
 }
