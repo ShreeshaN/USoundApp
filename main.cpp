@@ -1,5 +1,4 @@
 #include "homescreen.h"
-
 #include <QApplication>
 #include <QVBoxLayout>
 #include <QLabel>
@@ -11,7 +10,7 @@
 #include <defaults.h>
 #include <QSettings>
 #include<settingsstore.h>
-//#include<QMessageBox>
+#include<QMessageBox>
 
 
 QString tempString = "";
@@ -94,7 +93,6 @@ int main(int argc, char *argv[])
     }
     catch (std::exception &e) {
         qFatal(e.what());
-//        QMessageBox::critical(0, "Close Camera","Image recording in progress",QMessageBox::Ok);
     }
 
 }
