@@ -44,7 +44,8 @@ public:
     ~Homescreen();
 
     // variables
-    QList<QString> devices;
+    QMap<QString, QList<QString>> devices;
+    QMap<QString, QString> deviceMakeMapping;
     ImageStreamWindow *windowWidget;
     ImageAcquisition *imageAcquisitionThread;
     QLabel *imageLabel;
@@ -65,7 +66,7 @@ public:
 
 public slots:
     void on_devicesRefresh_clicked();
-    void connectToCamera(QString deviceName);
+    void connectToCamera(QString deviceType, QString deviceMake, QString deviceName);
     void on_devicesTreeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column);
     //    void renderImage(QImage qImage, int widgetIndex);
     void onCameraWindowClose();

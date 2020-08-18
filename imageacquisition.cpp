@@ -8,6 +8,52 @@
 #include <exception>
 #include <usoundutils.h>
 
+
+// Setters and Getters
+QString ImageAcquisition::getDeviceName() const
+{
+    return deviceName;
+}
+
+void ImageAcquisition::setDeviceName(const QString &value)
+{
+    deviceName = value;
+}
+
+int ImageAcquisition::getCounter() const
+{
+    return counter;
+}
+
+void ImageAcquisition::setCounter(int value)
+{
+    counter = value;
+}
+
+HalconCpp::HFramegrabber ImageAcquisition::getImageAcquisitionHandle() const
+{
+    return imageAcquisitionHandle;
+}
+
+void ImageAcquisition::setImageAcquisitionHandle(const HalconCpp::HFramegrabber &value)
+{
+    imageAcquisitionHandle = value;
+}
+
+bool ImageAcquisition::getStopAcquisition() const
+{
+    return stopAcquisition;
+}
+
+void ImageAcquisition::setStopAcquisition(bool value)
+{
+    stopAcquisition = value;
+}
+
+void ImageAcquisition::startAquisition(){
+    ImageAcquisition::run();
+}
+
 bool ImageAcquisition::getSupplyHistogramData() const
 {
     return supplyHistogramData;
@@ -18,9 +64,32 @@ void ImageAcquisition::setSupplyHistogramData(bool value)
     supplyHistogramData = value;
 }
 
-ImageAcquisition::ImageAcquisition(QString deviceName, QObject *parent): QThread(parent)
+QString ImageAcquisition::getDeviceType() const
 {
-    HalconCpp::HFramegrabber imageAcquisitionHandle("USB3Vision",
+    return deviceType;
+}
+
+void ImageAcquisition::setDeviceType(const QString &value)
+{
+    deviceType = value;
+}
+
+
+QString ImageAcquisition::getDeviceMake() const
+{
+    return deviceMake;
+}
+
+void ImageAcquisition::setDeviceMake(const QString &value)
+{
+    deviceMake = value;
+}
+
+
+// Constructor
+ImageAcquisition::ImageAcquisition(QString deviceType,QString deviceMake, QString deviceName, QObject *parent): QThread(parent)
+{
+    HalconCpp::HFramegrabber imageAcquisitionHandle(HalconCpp::HString(deviceType.toUtf8().constData()).Text(),
                                                     0, 0, 0, 0, 0, 0,
                                                     "progressive", -1, "default",
                                                     -1, "false", "default",
@@ -28,13 +97,10 @@ ImageAcquisition::ImageAcquisition(QString deviceName, QObject *parent): QThread
                                                         deviceName.toUtf8().constData()).Text(), 0, -1);
     this->imageAcquisitionHandle = imageAcquisitionHandle;
     this->deviceName = deviceName;
+    this->deviceType = deviceType;
+    this->deviceMake = deviceMake;
 }
 
-void ImageAcquisition::setup()
-{
-    setupCameraControls();
-
-}
 
 void ImageAcquisition::run()
 {
@@ -288,47 +354,4 @@ void ImageAcquisition::setValueForParam(std::string paramString, std::string par
 }
 
 
-// Setters and Getters
-QString ImageAcquisition::getDeviceName() const
-{
-    return deviceName;
-}
 
-void ImageAcquisition::setDeviceName(const QString &value)
-{
-    deviceName = value;
-}
-
-int ImageAcquisition::getCounter() const
-{
-    return counter;
-}
-
-void ImageAcquisition::setCounter(int value)
-{
-    counter = value;
-}
-
-HalconCpp::HFramegrabber ImageAcquisition::getImageAcquisitionHandle() const
-{
-    return imageAcquisitionHandle;
-}
-
-void ImageAcquisition::setImageAcquisitionHandle(const HalconCpp::HFramegrabber &value)
-{
-    imageAcquisitionHandle = value;
-}
-
-bool ImageAcquisition::getStopAcquisition() const
-{
-    return stopAcquisition;
-}
-
-void ImageAcquisition::setStopAcquisition(bool value)
-{
-    stopAcquisition = value;
-}
-
-void ImageAcquisition::startAquisition(){
-    ImageAcquisition::run();
-}

@@ -30,7 +30,7 @@ private:
     ImageAcquisition *imageAcquisitionThread;
 
 public:
-    explicit ImageStreamWindow(QWidget *parent = nullptr);
+    explicit ImageStreamWindow(ImageAcquisition* imageAcquisitionThread, QWidget *parent = nullptr);
 
 
     // widgets
@@ -72,6 +72,7 @@ public:
 
     QList<QGraphicsPixmapItem *> graphicsPixmapItemList;
     QList<ParameterContainer *> containers;
+    CameraParameterNames *cameraParameters;
 
 
     // Actions
@@ -96,6 +97,9 @@ public:
     ImageAcquisition *getImageAcquisitionThread() const;
     void setImageAcquisitionThread(ImageAcquisition *value);
 
+
+    CameraParameterNames *getCameraParameters() const;
+    void setCameraParameters(CameraParameterNames *value);
 
 public slots:
     void renderImage(QImage qImage);

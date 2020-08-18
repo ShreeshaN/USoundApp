@@ -110,6 +110,7 @@ RESOURCES += \
 # and need to be told explicitly.
 
 DISTFILES += \
+    CameraParameters.ini \
     USoundSettings.ini
 
 QT += charts

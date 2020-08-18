@@ -66,29 +66,33 @@ void Homescreen::setupDevicesUI()
 {
 
     QList<QTreeWidgetItem *> topLevelItems;
-    QListIterator<QString> devicesIterator(devices);
+    QList<QString> deviceTypes = devices.keys();
     QVBoxLayout* mainLayout = new QVBoxLayout();
 
 
     // USB
     // parent
-    auto usb3 = new QTreeWidgetItem();
-    usb3->setText(0, "USB3");
-    topLevelItems.append(usb3);
-
-    while(devicesIterator.hasNext())
-    {
+    for (QString deviceType : deviceTypes) {
+        auto deviceTypeWidget = new QTreeWidgetItem();
+        deviceTypeWidget->setText(0, deviceType);
+        topLevelItems.append(deviceTypeWidget);
 
         // child
-        auto * usbCamera = new QTreeWidgetItem(QStringList() << devicesIterator.next());
-        usbCamera->setToolTip(0,usbCamera->text(0));
-        usb3->addChild(usbCamera);
+        for (QString deviceName: devices.value(deviceType)){
+            auto * camera = new QTreeWidgetItem(QStringList() << deviceName);
+            camera->setToolTip(0,camera->text(0));
+            deviceTypeWidget->addChild(camera);
+        }
     }
+
 
     ui->devicesTreeWidget->addTopLevelItems(topLevelItems);
     ui->devicesTreeWidget->setLayout(mainLayout);
     ui->devicesTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    usb3->setExpanded(true);
+
+    for(int i=0;i<topLevelItems.size();i++)
+        topLevelItems[i]->setExpanded(true);
+
     connect(ui->devicesTreeWidget,&QTreeWidget::customContextMenuRequested,[=](const QPoint &pos){
         // prepare menu
         QTreeWidget *tree = ui->devicesTreeWidget;
@@ -97,10 +101,19 @@ void Homescreen::setupDevicesUI()
 
         qDebug()<<"Items : "<<pos<<nd->text(0);
         QString rightClickedOn = nd->text(0);
-        if(devices.contains(rightClickedOn))
+        if(!devices.keys().contains(rightClickedOn))
         {
             QAction *newAct = new QAction(QIcon(""), tr("&Connect"), this);
-            connect(newAct, &QAction::triggered, this, [=](){connectToCamera(rightClickedOn);});   // SLOT(&connectToCamera(rightClickedOn)));
+            connect(newAct, &QAction::triggered, this, [=](){
+                QString deviceType = "";
+                for(QString key: devices.keys())
+                {
+                    if(devices.value(key).contains(rightClickedOn)){
+                        deviceType = key;
+                        break;
+                    }
+                }
+                connectToCamera(deviceType, deviceMakeMapping.value(rightClickedOn), rightClickedOn);});
             QMenu menu(this);
             menu.addAction(newAct);
             menu.exec(tree->mapToGlobal(pos));
@@ -114,28 +127,39 @@ void Homescreen::detectAttachedDevices()
 {
 
     using namespace HalconCpp;
-    qDebug() << "Detecting attached devices . . .";
-    HalconCpp::HTuple *information = new HalconCpp::HTuple;
-    HalconCpp::HTuple * valueList = new HalconCpp::HTuple;
     try {
-        HalconCpp::InfoFramegrabber("USB3Vision","info_boards",information, valueList);
-        qDebug() << "Devices: "<<valueList->Length();
-        qDebug() << "Info: "<<information;
-        auto deviceList = valueList->ToSArr();
-        for(int i=0;i<valueList->Length();i++)
-        {
-            // Eg: Value list  (" ", " device:2676016419A3_Basler_acA2040120um ",
-            // " unique_name:2676016419A3_Basler_acA2040120um ",
-            // " interface:Usan_VirtualIF ", " producer:Usan")
-            auto device = QString(deviceList[i].Text()).split("|")[1].split(":")[1].trimmed();
-            qInfo() << "New camera detected "+device;
+        qDebug() << "Detecting attached devices . . .";
+        HalconCpp::HTuple *information = new HalconCpp::HTuple;
+        HalconCpp::HTuple * valueList = new HalconCpp::HTuple;
+        QList<std::string> deviceTypes = {"USB3Vision","GigEVision2"};
+        for (std::string deviceType  : deviceTypes) {
+            QList<QString> devicesForDeviceType;
+            HalconCpp::InfoFramegrabber(deviceType.c_str(),"info_boards",information, valueList);
+            qDebug() << "Devices: "<<valueList->Length();
+            qDebug() << "Info: "<<information;
+            auto deviceList = valueList->ToSArr();
+            for(int i=0;i<valueList->Length();i++)
+            {
+                QString deviceName = QString(deviceList[i].Text()).split("|")[1].split(":")[1].trimmed();
+                qInfo() << "New camera detected "+deviceName;
+                initializeDirectoriesForDevice(deviceName);
+                devicesForDeviceType.append(deviceName);
 
-            initializeDirectoriesForDevice(device);
-
-            devices.append(device);
+                // Identify vendor
+                // Sample output from Halcon
+                /* " | device:000f314e2145_AlliedVisionTechnologies_MantaG1236CE0022719 |
+                 unique_name:000f314e2145_AlliedVisionTechnologies_MantaG1236CE0022719 | interface:Esen_ITF_98e743951d79a9fec620ffff0000 |
+                 producer:Esen | vendor:Allied Vision Technologies | model:Manta G-1236C (E0022719) | tl_type:GEV |
+                 device_ip:169.254.162.10/16 | interface_ip:169.254.198.32/16 | status:available"
+                */
+                // Fetch vendor from the above string
+                QString vendor = QString(deviceList[i].Text()).split("|")[5].split(":")[1].trimmed();
+                deviceMakeMapping.insert(deviceName,vendor);
+            }
+            devices.insert(QString(deviceType.c_str()), devicesForDeviceType);
         }
-
-    }  catch (HException &except)
+    }
+    catch (HException &except)
     {
         qDebug() << "Device unavailable";
         qDebug() << except.ErrorCode();
@@ -147,7 +171,6 @@ void Homescreen::detectAttachedDevices()
         }
 
     }
-
 }
 
 
@@ -167,22 +190,19 @@ void Homescreen::onApplicationStartup()
 //2676016419A3_Basler_acA2040120um
 void Homescreen::on_devicesRefresh_clicked()
 {
-    //    try {
-    //        //        HalconCpp::HFramegrabber acq("usb3Vision", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "267601642BB5_Basler_acA2040120um", 0, -1);
-
-    //    } catch (HalconCpp::HException &e) {
-    //        qDebug() << e.ErrorMessage().Text();
-    //    }
 
 
-    //    qDebug() <<"Params: ";
-    ////    qDebug() <<"********************available_param_names******************************";
-    ////    try {
-    ////         h = acq.GetFramegrabberParam("available_param_names");
-    ////    } catch (HalconCpp::HException &e) {
-    ////        qDebug() << "Exception "<< e.ErrorMessage().Text();
-    ////    }
-    ////    qDebug() << h.ToString().Text() ;
+//    HalconCpp::HFramegrabber acq("GigEVision2", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "000f314e2145_AlliedVisionTechnologies_MantaG1236CE0022719", 0, -1);
+
+//    HalconCpp::HTuple h;
+//    qDebug() <<"Params: ";
+//    qDebug() <<"********************available_param_names******************************";
+//    try {
+//        h = acq.GetFramegrabberParam("available_param_names");
+//    } catch (HalconCpp::HException &e) {
+//        qDebug() << "Exception "<< e.ErrorMessage().Text();
+//    }
+//    qDebug() << h.ToString().Text() ;
 
     //    try {
     //         HalconCpp::HTuple h;
@@ -279,6 +299,84 @@ void Homescreen::on_devicesRefresh_clicked()
     //    qDebug() << cameraControlsMap["2676016419A3_Basler_acA2040120um"].getGamma();
     //    qDebug() << "Here ";
     //    qDebug() << "Reading"<<h.ToString().Text();
+    //    imageAcquisitionThread->getImageAcquisitionHandle().SetFramegrabberParam("ExposureAuto","Once");
+    //    Sleep(2000);
+
+    //    try {
+    //         imageAcquisitionThread->getImageAcquisitionHandle().SetFramegrabberParam("AcquisitionFrameRateEnable", true);
+    //         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRateEnable");
+
+    //    } catch (HalconCpp::HException &e) {
+    //        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    //    }
+    //    qDebug() << "Here ";
+    //    qDebug() << "Reading"<<h.ToString().Text();
+    //    qDebug() <<"Acquisition frame rate enable" <<h.D();
+    //    qDebug() << "Type "<<h.Type();
+
+    //    try {
+    //         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRateEnable");
+    //    } catch (HalconCpp::HException &e) {
+    //        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    //    }
+    //    qDebug() << "Here ";
+    //    qDebug() << "Reading"<<h.ToString().Text();
+    //    qDebug() <<"Acquisition frame rate enable" <<h.D();
+    //    HalconCpp::HTuple h;
+    //    try {
+    //         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("ResultingFrameRate");
+    //    } catch (HalconCpp::HException &e) {
+    //        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    //    }
+    //    qDebug() << "Resulting frame rate" <<h.DArr()[0];
+    //    try {
+    //        h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("TriggerSource");
+    //        qDebug() << "Source" <<h.S().Text();
+    //        h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("TriggerMode");
+    //        qDebug() << "Mode" <<h.S().Text();
+    //        h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("TriggerDelay");
+    //        qDebug() << "Delay" <<h.D();
+    //        h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("TriggerSelector");
+    //        qDebug() << "Select" <<h.S().Text();
+
+
+    //    } catch (HalconCpp::HException &e) {
+    //        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    //    }
+
+
+
+    //    using namespace HalconCpp;
+    //    HalconCpp::HTuple *information = new HalconCpp::HTuple;
+    //    HalconCpp::HTuple * valueList = new HalconCpp::HTuple;
+    //    QList<QString> list = { "bits_per_channel", "camera_type", "color_space", "defaults", "device", "external_trigger", "field", "general", "generic", "horizontal_resolution", "image_height", "image_width", "info_boards", "parameters", "parameters_readonly", "parameters_writeonly", "port", "revision", "start_column", "start_row", "vertical_resolution"};
+    //    for (auto param : list) {
+    //        qDebug()<< "************" << param << "*************";
+    //        HalconCpp::InfoFramegrabber("usb3vision",HTuple(HString::FromUtf8(param.toUtf8())),information, valueList);
+    //        qDebug () << "Information: "<< information->S().Text();
+    //        qDebug() << "Valuelist length: "<<valueList->Length();
+    //        auto deviceList = valueList->ToSArr();
+    //        for(int i=0;i<valueList->Length();i++)
+    //        {
+    //            qDebug() << QString(deviceList[i].Text());
+    //        }
+
+    //    }
+    //    HalconCpp::InfoFramegrabber("GigEVision2","parameters",information, valueList);
+    //    qDebug () << "Information: "<< information->S().Text();
+    //    qDebug() << "Valuelist length: "<<valueList->Length();
+    //    auto deviceList = valueList->ToSArr();
+    //    for(int i=0;i<valueList->Length();i++)
+    //    {
+    //        qDebug() << QString(deviceList[i].Text());
+    //    }
+
+
+
+    //    qDebug() << cameraControlsMap["267601642BB5_Basler_acA2040120um"].getGamma();
+    //    qDebug() << cameraControlsMap["2676016419A3_Basler_acA2040120um"].getGamma();
+    //    qDebug() << "Here ";
+    //    qDebug() << "Reading"<<h.ToString().Text();
 
     //    try {
     //         h = imageAcquisitionThread->getImageAcquisitionHandle().GetFramegrabberParam("AcquisitionFrameRate");
@@ -307,14 +405,28 @@ void Homescreen::on_devicesRefresh_clicked()
     //    qDebug() << h.DArr()[0];
 
 
+        try {
+            using namespace HalconCpp;
+            HalconCpp::HTuple *information = new HalconCpp::HTuple;
+            HalconCpp::HTuple * valueList = new HalconCpp::HTuple;
+            QList<QString> list = { "bits_per_channel", "camera_type", "color_space", "defaults", "device", "external_trigger", "field", "general", "generic", "horizontal_resolution", "image_height", "image_width", "info_boards", "parameters", "parameters_readonly", "parameters_writeonly", "port", "revision", "start_column", "start_row", "vertical_resolution"};
+            for (auto param : list) {
+                qDebug()<< "************" << param << "*************";
+                HalconCpp::InfoFramegrabber("GigEVision2",HTuple(HString::FromUtf8(param.toUtf8())),information, valueList);
+                qDebug () << "Information: "<< information->S().Text();
+                qDebug() << "Valuelist length: "<<valueList->Length();
+                auto deviceList = valueList->ToSArr();
+                for(int i=0;i<valueList->Length();i++)
+                {
+                    qDebug() << QString(deviceList[i].Text());
+                }
 
-    //    using namespace HalconCpp;
-    //    HalconCpp::HTuple *information = new HalconCpp::HTuple;
-    //    HalconCpp::HTuple * valueList = new HalconCpp::HTuple;
-    //    QList<QString> list = { "bits_per_channel", "camera_type", "color_space", "defaults", "device", "external_trigger", "field", "general", "generic", "horizontal_resolution", "image_height", "image_width", "info_boards", "parameters", "parameters_readonly", "parameters_writeonly", "port", "revision", "start_column", "start_row", "vertical_resolution"};
-    //    for (auto param : list) {
-    //        qDebug()<< "************" << param << "*************";
-    //        HalconCpp::InfoFramegrabber("usb3vision",HTuple(HString::FromUtf8(param.toUtf8())),information, valueList);
+            }
+        } catch (HalconCpp::HException &e) {
+            qDebug() << e.ErrorMessage().Text();
+        }
+
+    //        HalconCpp::InfoFramegrabber("GigEVision","parameters",information, valueList);
     //        qDebug () << "Information: "<< information->S().Text();
     //        qDebug() << "Valuelist length: "<<valueList->Length();
     //        auto deviceList = valueList->ToSArr();
@@ -322,16 +434,6 @@ void Homescreen::on_devicesRefresh_clicked()
     //        {
     //            qDebug() << QString(deviceList[i].Text());
     //        }
-
-    //    }
-    //    HalconCpp::InfoFramegrabber("usb3vision","parameters",information, valueList);
-    //    qDebug () << "Information: "<< information->S().Text();
-    //    qDebug() << "Valuelist length: "<<valueList->Length();
-    //    auto deviceList = valueList->ToSArr();
-    //    for(int i=0;i<valueList->Length();i++)
-    //    {
-    //        qDebug() << QString(deviceList[i].Text());
-    //    }
 
 
 
@@ -354,17 +456,15 @@ void Homescreen::on_devicesRefresh_clicked()
 }
 
 
-void Homescreen::connectToCamera(QString deviceName)
+void Homescreen::connectToCamera(QString deviceType, QString deviceMake, QString deviceName)
 {
     try {
         // Create a new thread for image acquisition
-        imageAcquisitionThread = new ImageAcquisition(deviceName, this);
-        imageAcquisitionThread->setup();
+        imageAcquisitionThread = new ImageAcquisition(deviceType, deviceMake, deviceName, this);
 
         // Create a new window for streaming acquired images
-        windowWidget = new ImageStreamWindow(this);
+        windowWidget = new ImageStreamWindow(imageAcquisitionThread, this);
         windowWidget->setWindowTitle(deviceName);
-        windowWidget->setImageAcquisitionThread(imageAcquisitionThread);
         windowWidget->setupCameraWindow();
         imageAcquisitionThread->start();
 
@@ -391,9 +491,17 @@ void Homescreen::connectToCamera(QString deviceName)
 void Homescreen::on_devicesTreeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
     QString doubleClickedOn = item->text(0);
-    if(devices.contains(doubleClickedOn))
+    if(!devices.keys().contains(doubleClickedOn))
     {
-        connectToCamera(doubleClickedOn);
+        QString deviceType = "";
+        for(QString key: devices.keys())
+        {
+            if(devices.value(key).contains(doubleClickedOn)){
+                deviceType = key;
+                break;
+            }
+        }
+        connectToCamera(deviceType, deviceMakeMapping.value(doubleClickedOn),doubleClickedOn);
     }
 }
 
