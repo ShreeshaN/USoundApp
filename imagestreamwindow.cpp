@@ -30,7 +30,6 @@ ImageStreamWindow::ImageStreamWindow(QWidget *parent) : QMainWindow(parent)
 void ImageStreamWindow::setupCameraWindow()
 {
 
-    //    this->;
     imageSaveButton = this->menuBar()->addAction(tr("ImageSaveButton"));
     imageSaveButton->setIcon(QIcon(":icons/icon-single-shot.png"));
     // todo: Prathyush SP -> Fix issue with tooltip display
@@ -58,6 +57,7 @@ void ImageStreamWindow::setupCameraWindow()
 
     fixedAspectRatioButton = this->menuBar()->addAction(tr("FixedAspectRatioButton"));
     fixedAspectRatioButton->setIcon(QIcon(":icons/icon-fullscreen.png"));
+    fixedAspectRatioButton->setCheckable(true);
     connect(fixedAspectRatioButton, SIGNAL(triggered()), this, SLOT(setFixedAspectRatio()));
 
     // Histogram
@@ -93,7 +93,7 @@ void ImageStreamWindow::setupCameraWindow()
     ccTreeWidget->setColumnCount(2);
     ccTreeWidget->setHeaderLabels(QStringList() <<"Feature"<<"Value");
 
-    // Set column width for ccTree (Dynamic resize only for image)    
+    // Set column width for ccTree (Dynamic resize only for image)
     ccTreeWidget->setFixedWidth(350);
     ccTreeWidget->setColumnWidth(0, 250);
 
@@ -356,7 +356,7 @@ void ImageStreamWindow::saveImage()
 Save Image
 */
 {
-    try {        
+    try {
         QString filename=getImageSavePathForDevice(imageAcquisitionThread->getDeviceName())+"/"+QString(generateTimeStamp().c_str())+"."+IMAGE_CONFIGURATION::IMAGEFORMAT;
         qInfo() << "Saving image at "+filename;
         imageAcquisitionThread->currentImage.WriteImage(IMAGE_CONFIGURATION::IMAGEFORMAT.toStdString().c_str(), 0, filename.toStdString().c_str());
@@ -434,9 +434,11 @@ void ImageStreamWindow::setFixedAspectRatio()
     if (fixedAspectRatio == Qt::KeepAspectRatio){
         fixedAspectRatio = Qt::IgnoreAspectRatio;
         qDebug() << "Image aspect ratio set to ignore";
+        fixedAspectRatioButton->setIcon(QIcon(":icons/icon-fullscreen-disabled.png"));
     }
     else{
         fixedAspectRatio = Qt::KeepAspectRatio;
+        fixedAspectRatioButton->setIcon(QIcon(":icons/icon-fullscreen.png"));
 
         qDebug() << "Image aspect ratio set to fixed";
     }
