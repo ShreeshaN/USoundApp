@@ -10,7 +10,7 @@ QSettings *SettingsStore::settings = 0;
 void SettingsStore::loadSettings()
 {
     try {
-        settings = new QSettings("/Users/prathyushsp/Git/chlst/USoundApp/USoundSettings.ini", QSettings::IniFormat);
+        settings = new QSettings("USoundSettings.ini", QSettings::IniFormat);
 
         // Set Directories
         DIRECTORIES::APPDIR = settings->value("DIRECTORIES/APPDIR", DIRECTORIES::APPDIR).toString();

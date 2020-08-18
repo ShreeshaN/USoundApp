@@ -117,10 +117,17 @@ QT += charts
 
 
 
-mkdata.commands = $(MKDIR) $${TARGETDIR}
-copydata.commands = $(COPY_FILE) $$PWD/USoundSettings.ini $${TARGETDIR}
-first.depends = $(first) mkdata copydata
+PWD_WIN = $${PWD}/USoundSettings.ini
+DESTDIR_WIN = $${TARGETDIR}
+PWD_WIN ~= s,/,\\,g
+DESTDIR_WIN ~= s,/,\\,g
+
+
+#mkdata.commands = $(MKDIR) $${DESTDIR_WIN}
+copydata.commands = $(COPY_FILE) $${PWD_WIN} $${DESTDIR_WIN}
+#copydata.commands = $$quote(cmd /c xcopy /S /I $${PWD_WIN}\\USoundSettings.ini $${DESTDIR_WIN})
+first.depends = $(first)  copydata
 export(first.depends)
-export(mkdata.commands)
+#export(mkdata.commands)
 export(copydata.commands)
-QMAKE_EXTRA_TARGETS += first mkdata copydata
+QMAKE_EXTRA_TARGETS += first  copydata
