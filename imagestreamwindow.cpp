@@ -433,13 +433,12 @@ void ImageStreamWindow::setFixedAspectRatio()
 {
     if (fixedAspectRatio == Qt::KeepAspectRatio){
         fixedAspectRatio = Qt::IgnoreAspectRatio;
-        qDebug() << "Image aspect ratio set to ignore";
         fixedAspectRatioButton->setIcon(QIcon(":icons/icon-fullscreen-disabled.png"));
+        qDebug() << "Image aspect ratio set to ignore";
     }
     else{
         fixedAspectRatio = Qt::KeepAspectRatio;
         fixedAspectRatioButton->setIcon(QIcon(":icons/icon-fullscreen.png"));
-
         qDebug() << "Image aspect ratio set to fixed";
     }
 

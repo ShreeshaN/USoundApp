@@ -23,7 +23,7 @@
    <string>USound</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QToolButton:checked {background-color: red; }</string>
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_4">
