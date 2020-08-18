@@ -75,7 +75,8 @@ public:
 
 
     // Actions
-    QAction *imageSaveButton, *recordButton, *recordPauseButton, *recordStopButton, *grayHistogramButton;
+    QAction *imageSaveButton, *recordButton, *recordPauseButton, *recordStopButton, *grayHistogramButton, *fixedAspectRatioButton;
+    Qt::AspectRatioMode fixedAspectRatio=Qt::KeepAspectRatio;
 
     // Chart window
     HistogramWindow *histogramWindow;
@@ -83,9 +84,9 @@ public:
 
 
 
-     // member functions
-     void setupCameraWindow();
-     void updateCameraParametersAndDisplay();
+    // member functions
+    void setupCameraWindow();
+    void updateCameraParametersAndDisplay();
     void displayCameraParameters();
 
 
@@ -103,6 +104,7 @@ public slots:
     void startVideoRecord();
     void pauseVideoRecord();
     void stopVideoRecord();
+    void setFixedAspectRatio();
     void writeQueue();
     void updateAllParameters();
     void createHistogramWindow();

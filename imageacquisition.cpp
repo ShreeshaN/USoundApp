@@ -44,14 +44,16 @@ void ImageAcquisition::run()
     Hlong  width,height;
     QList<long> absoluteHistFrequencies;
 //    this->imageAcquisitionHandle.SetFramegrabberParam("AcquisitionFrameRate", 75);
-//    this->imageAcquisitionHandle.GrabImageStart(0);
+    this->imageAcquisitionHandle.GrabImageStart(0);
+
     try {
 
         while(!stopAcquisition)
         {
 //            long int before = GetTickCount();
 
-            currentImage = this->imageAcquisitionHandle.GrabImage();
+            currentImage = this->imageAcquisitionHandle.GrabImageAsync(0);
+//            currentImage = this->imageAcquisitionHandle.GrabImage();
 //            long int after = GetTickCount();
 //            qDebug() << before << after<<(after-before)/1000.0;
 
@@ -89,7 +91,7 @@ void ImageAcquisition::run()
             }
 
             counter++;
-        }
+        }        
 
     } catch (HalconCpp::HOperatorException &e) {
         qDebug() << e.ErrorMessage().Text();

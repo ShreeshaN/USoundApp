@@ -55,6 +55,11 @@ void ImageStreamWindow::setupCameraWindow()
     recordStopButton->setDisabled(true);
     connect(recordStopButton, SIGNAL(triggered()), this, SLOT(stopVideoRecord()));
 
+
+    fixedAspectRatioButton = this->menuBar()->addAction(tr("FixedAspectRatioButton"));
+    fixedAspectRatioButton->setIcon(QIcon(":icons/icon-media-playback-stop.png"));
+    connect(fixedAspectRatioButton, SIGNAL(triggered()), this, SLOT(setFixedAspectRatio()));
+
     // Histogram
     grayHistogramButton = this->menuBar()->addAction(tr("GrayHistogramButton"));
     grayHistogramButton->setIcon(QIcon(":icons/icon-histogram.png"));
@@ -338,7 +343,7 @@ void ImageStreamWindow::renderImage(QImage qImage)
     // QGRAPHICSVIEW WAY OF STREAMING
     if(!imageAcquisitionThread->getStopAcquisition())
     {
-        qImage = qImage.scaled(graphicsView->width(), graphicsView->height(), Qt::IgnoreAspectRatio);
+        qImage = qImage.scaled(graphicsView->width(), graphicsView->height(), fixedAspectRatio);
         graphicsPixmapItem->setPixmap(QPixmap::fromImage(qImage));
         this->show();
     }
@@ -424,6 +429,20 @@ void ImageStreamWindow::writeQueue(){
     }
 }
 
+void ImageStreamWindow::setFixedAspectRatio()
+{
+    if (fixedAspectRatio == Qt::KeepAspectRatio){
+        fixedAspectRatio = Qt::IgnoreAspectRatio;
+        qDebug() << "Image aspect ratio set to ignore";
+    }
+    else{
+        fixedAspectRatio = Qt::KeepAspectRatio;
+
+        qDebug() << "Image aspect ratio set to fixed";
+    }
+
+}
+
 void ImageStreamWindow::updateAllParameters()
 {
     // query for all the parameters from hardware
@@ -438,6 +457,7 @@ void ImageStreamWindow::updateAllParameters()
 
 
 }
+
 
 void ImageStreamWindow::createHistogramWindow()
 {
