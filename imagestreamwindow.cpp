@@ -57,7 +57,7 @@ void ImageStreamWindow::setupCameraWindow()
 
 
     fixedAspectRatioButton = this->menuBar()->addAction(tr("FixedAspectRatioButton"));
-    fixedAspectRatioButton->setIcon(QIcon(":icons/icon-media-playback-stop.png"));
+    fixedAspectRatioButton->setIcon(QIcon(":icons/icon-fullscreen.png"));
     connect(fixedAspectRatioButton, SIGNAL(triggered()), this, SLOT(setFixedAspectRatio()));
 
     // Histogram
