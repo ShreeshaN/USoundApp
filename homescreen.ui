@@ -22,6 +22,9 @@
   <property name="windowTitle">
    <string>USound</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
@@ -54,6 +57,9 @@
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
             <widget class="QTreeWidget" name="devicesTreeWidget">
+             <property name="styleSheet">
+              <string notr="true">QToolButton:checked {background-color: red; }</string>
+             </property>
              <column>
               <property name="text">
                <string>Cameras</string>

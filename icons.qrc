@@ -6,5 +6,7 @@
         <file>icons/icon-media-record.png</file>
         <file>icons/wpi_logo.ico</file>
         <file>icons/icon-histogram.png</file>
+        <file>icons/icon-fullscreen.png</file>
+        <file>icons/icon-fullscreen-disabled.png</file>
     </qresource>
 </RCC>

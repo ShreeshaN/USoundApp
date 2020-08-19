@@ -25,6 +25,8 @@ macx {
   QMAKE_LFLAGS   += -F/Library/Frameworks
   LIBS           += -framework HALCONCpp
   TARGETDIR      += $$OUT_PWD/USoundApp.app/Contents/MacOS/
+  PWD_WIN = $${PWD}/USoundSettings.ini
+  DESTDIR_WIN = $${TARGETDIR}
 }
 else {
   #defines
@@ -42,6 +44,11 @@ else {
                    "$$(HALCONROOT)/lib/$$(HALCONARCH)/halcon.lib"
 
   TARGETDIR      += $$OUT_PWD
+
+  PWD_WIN = $${PWD}/USoundSettings.ini
+  DESTDIR_WIN = $${TARGETDIR}
+  PWD_WIN ~= s,/,\\,g
+  DESTDIR_WIN ~= s,/,\\,g
 }
 
 
@@ -115,10 +122,7 @@ QT += charts
 
 
 
-PWD_WIN = $${PWD}/USoundSettings.ini
-DESTDIR_WIN = $${TARGETDIR}
-PWD_WIN ~= s,/,\\,g
-DESTDIR_WIN ~= s,/,\\,g
+
 
 
 #mkdata.commands = $(MKDIR) $${DESTDIR_WIN}
