@@ -1,6 +1,5 @@
 #include "homescreen.h"
 #include "ui_homescreen.h"
-#include "cameracontrols.h"
 #include "imageacquisition.h"
 #include "defaults.h"
 #include <QMessageBox>

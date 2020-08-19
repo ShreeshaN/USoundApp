@@ -13,11 +13,12 @@
 #  endif
 #endif
 #include <QImage>
-#include "cameracontrols.h"
 #include "defaults.h"
 #include <QSignalMapper>
 #include <QQueue>
 #include<QtCharts/QLineSeries>
+using namespace QtCharts;
+
 
 // Custom class to store image and save path in a queue (Buffer for writing)
 class RecordingBuffer
@@ -98,7 +99,7 @@ public:
 signals:
     void renderImageSignal(QImage);
     void updateStatusBarSignal(QString);
-    void renderHistogramSignal(QList<long>, int);
+    void renderHistogramSignal(QList<QLineSeries*>, int);
 
 
 protected:

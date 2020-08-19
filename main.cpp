@@ -10,6 +10,7 @@
 #include <defaults.h>
 #include <QSettings>
 #include<settingsstore.h>
+#include"defaultcameraparameternames.h"
 #include<QMessageBox>
 
 
@@ -67,9 +68,12 @@ void customLoggingHandler(QtMsgType type, const QMessageLogContext &context, con
 int main(int argc, char *argv[])
 {
     try {
+        // Load the control parameter names for specific venfors from .ini file
+        DefaultCameraParameterNames::getInstance();
+
         // Load Settings
         SettingsStore::loadSettings();
-        qRegisterMetaType<QList<long> >("QList<long>");
+        qRegisterMetaType<QList<QLineSeries*> >("QList<QLineSeries*>");
         // Setup directories
         createDirectories();
         qInstallMessageHandler(customLoggingHandler); // Install the handler

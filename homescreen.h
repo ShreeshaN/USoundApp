@@ -21,7 +21,6 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QSpinBox>
-#include "cameracontrols.h"
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include<QPixmap>

@@ -46,9 +46,8 @@ else {
 
 
 SOURCES += \
-    cameracontrols.cpp \
-    cameracontrolsui.cpp \
     checkboxcontainer.cpp \
+    defaultcameraparameternames.cpp \
     defaults.cpp \
     doublespinboxcontainer.cpp \
     histogramwindow.cpp \
@@ -63,9 +62,8 @@ SOURCES += \
     spinboxcontainer.cpp
 
 HEADERS += \
-    cameracontrols.h \
-    cameracontrolsui.h \
     checkboxcontainer.h \
+    defaultcameraparameternames.h \
     defaults.h \
     doubleslider.h \
     doublespinboxcontainer.h \

@@ -3,33 +3,8 @@
 #include <QString>
 
 
-struct CameraControlDefaults{
-    std::string RESOLUTION="";
-
-    // exposure controls
-    long EXPOSURETIME = 0;
-    float ANALOGGAIN = 0.0;
-    bool AUTOGAIN = false;
-    float EXPOSURETARGET = 0.0;  // not sure about this implementation
-    bool AUTOEXPOSURE=false;
-
-    // color appearance parameters
-    float HUE = 0.0;
-    float SATURATION = 0.0;
-    float BRIGHTNESS = 0.0;
-    float CONTRAST = 0.0;
-    float GAMMA = 0.0;
-    long ACQUISITIONFRAMERATE=0;
-    bool ACQUISITIONFRAMERATEENABLE=false;
-    long RESULTINGFRAMERATE=0;
-    bool MONOCHROME=true; // not sure about this implementation
-    bool RGB=false; // not sure about this implementation
-};
-
-
-class CameraParameterNames{
+class CameraParameters{
 public:
-    CameraParameterNames();
     std::string EXPOSURETIME;
     std::string AUTOEXPOSURE;
     std::string GAMMA;
@@ -44,8 +19,6 @@ public:
     std::string CONTRAST;
     std::string MONOCHROME;
     std::string RGB;
-    virtual std::string getHUE() const;
-    void setHUE(const std::string &value);
     std::string getEXPOSURETIME() const;
     void setEXPOSURETIME(const std::string &value);
     std::string getAUTOEXPOSURE() const;
@@ -62,6 +35,8 @@ public:
     void setGAIN(const std::string &value);
     std::string getAUTOGAIN() const;
     void setAUTOGAIN(const std::string &value);
+    std::string getHUE() const;
+    void setHUE(const std::string &value);
     std::string getSATURATION() const;
     void setSATURATION(const std::string &value);
     std::string getBRIGHTNESS() const;
@@ -72,52 +47,6 @@ public:
     void setMONOCHROME(const std::string &value);
     std::string getRGB() const;
     void setRGB(const std::string &value);
-};
-
-class BaslerCameraParameterNames: public CameraParameterNames{
-
-public:
-    BaslerCameraParameterNames();
-    std::string EXPOSURETIME="ExposureTime";
-    std::string AUTOEXPOSURE="ExposureAuto";
-    std::string GAMMA="Gamma";
-    std::string ACQUISITIONFRAMERATE="AcquisitionFrameRate";
-    std::string ACQUISITIONFRAMERATEENABLE="AcquisitionFrameRateEnable";
-    std::string RESULTINGFRAMERATE="ResultingFrameRate";
-    std::string GAIN="Gain";
-    std::string AUTOGAIN="GainAuto";
-    // Although, I did not find these controls in acquisition handle's SetFramegrabberParam method
-    // Initializing just to maintain equality
-    std::string HUE="BslHue";
-    std::string SATURATION="BslSaturation";
-    std::string BRIGHTNESS="brightness";
-    std::string CONTRAST="constrast";
-    std::string MONOCHROME="monochrome";
-    std::string RGB="rgb";
-
-    std::string getHUE() const;
-    void setHUE(const std::string &value);
-};
-
-class AlliedVisionCameraParameterNames: public CameraParameterNames{
-public:
-    AlliedVisionCameraParameterNames();
-    static const inline std::string EXPOSURETIME="ExposureTime";
-    static const inline std::string AUTOEXPOSURE="ExposureAuto";
-    static const inline std::string GAMMA="Gamma";
-    static const inline std::string ACQUISITIONFRAMERATE="AcquisitionFrameRate";
-    static const inline std::string ACQUISITIONFRAMERATEENABLE="AcquisitionFrameRateEnable";
-    static const inline std::string RESULTINGFRAMERATE="ResultingFrameRate";
-    static const inline std::string GAIN="Gain";
-    static const inline std::string AUTOGAIN="GainAuto";
-    // Although, I did not find these controls in acquisition handle's SetFramegrabberParam method
-    // Initializing just to maintain equality
-    static const inline std::string HUE="BslHue";
-    static const inline std::string SATURATION="BslSaturation";
-    static const inline std::string BRIGHTNESS="brightness";
-    static const inline std::string CONTRAST="constrast";
-    static const inline std::string MONOCHROME="monochrome";
-    static const inline std::string RGB="rgb";
 };
 
 class CameraMakes{

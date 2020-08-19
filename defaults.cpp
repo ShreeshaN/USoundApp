@@ -3,160 +3,6 @@
 #include <QDir>
 
 
-CameraParameterNames::CameraParameterNames(){}
-
-std::string CameraParameterNames::getRGB() const
-{
-    return RGB;
-}
-
-void CameraParameterNames::setRGB(const std::string &value)
-{
-    RGB = value;
-}
-
-std::string CameraParameterNames::getMONOCHROME() const
-{
-    return MONOCHROME;
-}
-
-void CameraParameterNames::setMONOCHROME(const std::string &value)
-{
-    MONOCHROME = value;
-}
-
-std::string CameraParameterNames::getCONTRAST() const
-{
-    return CONTRAST;
-}
-
-void CameraParameterNames::setCONTRAST(const std::string &value)
-{
-    CONTRAST = value;
-}
-
-std::string CameraParameterNames::getBRIGHTNESS() const
-{
-    return BRIGHTNESS;
-}
-
-void CameraParameterNames::setBRIGHTNESS(const std::string &value)
-{
-    BRIGHTNESS = value;
-}
-
-std::string CameraParameterNames::getSATURATION() const
-{
-    return SATURATION;
-}
-
-void CameraParameterNames::setSATURATION(const std::string &value)
-{
-    SATURATION = value;
-}
-
-std::string CameraParameterNames::getAUTOGAIN() const
-{
-    return AUTOGAIN;
-}
-
-void CameraParameterNames::setAUTOGAIN(const std::string &value)
-{
-    AUTOGAIN = value;
-}
-
-std::string CameraParameterNames::getGAIN() const
-{
-    return GAIN;
-}
-
-void CameraParameterNames::setGAIN(const std::string &value)
-{
-    GAIN = value;
-}
-
-std::string CameraParameterNames::getRESULTINGFRAMERATE() const
-{
-    return RESULTINGFRAMERATE;
-}
-
-void CameraParameterNames::setRESULTINGFRAMERATE(const std::string &value)
-{
-    RESULTINGFRAMERATE = value;
-}
-
-std::string CameraParameterNames::getACQUISITIONFRAMERATEENABLE() const
-{
-    return ACQUISITIONFRAMERATEENABLE;
-}
-
-void CameraParameterNames::setACQUISITIONFRAMERATEENABLE(const std::string &value)
-{
-    ACQUISITIONFRAMERATEENABLE = value;
-}
-
-std::string CameraParameterNames::getACQUISITIONFRAMERATE() const
-{
-    return ACQUISITIONFRAMERATE;
-}
-
-void CameraParameterNames::setACQUISITIONFRAMERATE(const std::string &value)
-{
-    ACQUISITIONFRAMERATE = value;
-}
-
-std::string CameraParameterNames::getGAMMA() const
-{
-    return GAMMA;
-}
-
-void CameraParameterNames::setGAMMA(const std::string &value)
-{
-    GAMMA = value;
-}
-
-std::string CameraParameterNames::getAUTOEXPOSURE() const
-{
-    return AUTOEXPOSURE;
-}
-
-void CameraParameterNames::setAUTOEXPOSURE(const std::string &value)
-{
-    AUTOEXPOSURE = value;
-}
-
-std::string CameraParameterNames::getEXPOSURETIME() const
-{
-    return EXPOSURETIME;
-}
-
-void CameraParameterNames::setEXPOSURETIME(const std::string &value)
-{
-    EXPOSURETIME = value;
-}
-
-std::string CameraParameterNames::getHUE() const
-{
-    return HUE;
-}
-
-void CameraParameterNames::setHUE(const std::string &value)
-{
-    HUE = value;
-}
-BaslerCameraParameterNames::BaslerCameraParameterNames():CameraParameterNames(){}
-
-std::string BaslerCameraParameterNames::getHUE() const
-{
-    return HUE;
-}
-
-void BaslerCameraParameterNames::setHUE(const std::string &value)
-{
-    HUE = value;
-}
-AlliedVisionCameraParameterNames::AlliedVisionCameraParameterNames():CameraParameterNames(){}
-
 //Set App Directory
 QString DIRECTORIES::APPDIR = QDir::tempPath() +"/USoundApp";
 // Data directories configuration
@@ -176,3 +22,143 @@ QString IMAGE_CONFIGURATION::IMAGEFORMAT = AvailableImageFormats::TIFF;
 int IMAGE_CONFIGURATION::IMAGEFORMAT_INDEX=0;
 
 
+
+std::string CameraParameters::getAUTOEXPOSURE() const
+{
+    return AUTOEXPOSURE;
+}
+
+void CameraParameters::setAUTOEXPOSURE(const std::string &value)
+{
+    AUTOEXPOSURE = value;
+}
+
+std::string CameraParameters::getGAMMA() const
+{
+    return GAMMA;
+}
+
+void CameraParameters::setGAMMA(const std::string &value)
+{
+    GAMMA = value;
+}
+
+std::string CameraParameters::getACQUISITIONFRAMERATE() const
+{
+    return ACQUISITIONFRAMERATE;
+}
+
+void CameraParameters::setACQUISITIONFRAMERATE(const std::string &value)
+{
+    ACQUISITIONFRAMERATE = value;
+}
+
+std::string CameraParameters::getACQUISITIONFRAMERATEENABLE() const
+{
+    return ACQUISITIONFRAMERATEENABLE;
+}
+
+void CameraParameters::setACQUISITIONFRAMERATEENABLE(const std::string &value)
+{
+    ACQUISITIONFRAMERATEENABLE = value;
+}
+
+std::string CameraParameters::getRESULTINGFRAMERATE() const
+{
+    return RESULTINGFRAMERATE;
+}
+
+void CameraParameters::setRESULTINGFRAMERATE(const std::string &value)
+{
+    RESULTINGFRAMERATE = value;
+}
+
+std::string CameraParameters::getGAIN() const
+{
+    return GAIN;
+}
+
+void CameraParameters::setGAIN(const std::string &value)
+{
+    GAIN = value;
+}
+
+std::string CameraParameters::getAUTOGAIN() const
+{
+    return AUTOGAIN;
+}
+
+void CameraParameters::setAUTOGAIN(const std::string &value)
+{
+    AUTOGAIN = value;
+}
+
+std::string CameraParameters::getHUE() const
+{
+    return HUE;
+}
+
+void CameraParameters::setHUE(const std::string &value)
+{
+    HUE = value;
+}
+
+std::string CameraParameters::getSATURATION() const
+{
+    return SATURATION;
+}
+
+void CameraParameters::setSATURATION(const std::string &value)
+{
+    SATURATION = value;
+}
+
+std::string CameraParameters::getBRIGHTNESS() const
+{
+    return BRIGHTNESS;
+}
+
+void CameraParameters::setBRIGHTNESS(const std::string &value)
+{
+    BRIGHTNESS = value;
+}
+
+std::string CameraParameters::getCONTRAST() const
+{
+    return CONTRAST;
+}
+
+void CameraParameters::setCONTRAST(const std::string &value)
+{
+    CONTRAST = value;
+}
+
+std::string CameraParameters::getMONOCHROME() const
+{
+    return MONOCHROME;
+}
+
+void CameraParameters::setMONOCHROME(const std::string &value)
+{
+    MONOCHROME = value;
+}
+
+std::string CameraParameters::getRGB() const
+{
+    return RGB;
+}
+
+void CameraParameters::setRGB(const std::string &value)
+{
+    RGB = value;
+}
+
+std::string CameraParameters::getEXPOSURETIME() const
+{
+    return EXPOSURETIME;
+}
+
+void CameraParameters::setEXPOSURETIME(const std::string &value)
+{
+    EXPOSURETIME = value;
+}

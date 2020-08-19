@@ -106,11 +106,11 @@ void ImageAcquisition::run()
 {
     QImage qImage;
     using namespace HalconCpp;
-    HTuple relativeHisto, absoluteHisto;
     Hlong  width,height;
-    QList<long> absoluteHistFrequencies;
-//    this->imageAcquisitionHandle.SetFramegrabberParam("AcquisitionFrameRate", 75);
+    QList<QLineSeries*> absoluteHistFrequencies;
+    QList<QString> colors = {"red","green","blue"};
     this->imageAcquisitionHandle.GrabImageStart(0);
+
 
     try {
 
@@ -144,14 +144,42 @@ void ImageAcquisition::run()
             }
             if(getSupplyHistogramData()){
                 int max=0;
-                HalconCpp::GrayHisto(HalconCpp::HRegion(0.0,0.0,double(width-1), double(height-1)), currentImage, &absoluteHisto,&relativeHisto);
-                for(int l=0; l<absoluteHisto.Length()-1;l++)
+                int channels=currentImage.CountChannels().L();
+                if(channels == 3)
                 {
-                    long currentVal = absoluteHisto[l].L();
-                    if(max<currentVal)
-                        max = currentVal;
-                    absoluteHistFrequencies.append(currentVal);
+                    for(int c=1;c<=channels;c++)
+                    {
+                        QLineSeries *series = new QLineSeries();
+                        HTuple relativeHisto, absoluteHisto;
+                        HalconCpp::GrayHisto(HalconCpp::HRegion(0.0,0.0,double(width-1), double(height-1)), currentImage.AccessChannel(c), &absoluteHisto,&relativeHisto);
+                        for(int l=0; l<absoluteHisto.Length()-1;l++)
+                        {
+                            long currentVal = absoluteHisto[l].L();
+                            if(max<currentVal)
+                                max = currentVal;
+                            series->append(l, currentVal);
+                        }
+                        QPen pen = series->pen();
+                        pen.setBrush(QBrush(colors.at(c-1).toUtf8().constData()));
+                        series->setPen(pen);
+                        absoluteHistFrequencies.append(series);
+                    }
+
                 }
+                else{
+                    QLineSeries *series = new QLineSeries();
+                    HTuple relativeHisto, absoluteHisto;
+                    HalconCpp::GrayHisto(HalconCpp::HRegion(0.0,0.0,double(width-1), double(height-1)), currentImage, &absoluteHisto,&relativeHisto);
+                    for(int l=0; l<absoluteHisto.Length()-1;l++)
+                    {
+                        long currentVal = absoluteHisto[l].L();
+                        if(max<currentVal)
+                            max = currentVal;
+                        series->append(l, currentVal);
+                    }
+                    absoluteHistFrequencies.append(series);
+                }
+
                 emit renderHistogramSignal(absoluteHistFrequencies, max);
                 absoluteHistFrequencies.clear();
             }
