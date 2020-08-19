@@ -104,7 +104,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     icons.qrc \
     images.qrc \
-    USoundSettings.ini
+    USoundSettings.ini \
+    CameraParameters.ini
 
 #win32:CONFIG(release, debug|release): LIBS += -L$$PWD/'../../../../../Program Files/MVTec/HALCON-19.11-Progress/lib/x64-win64/' -lhalconcpp
 #else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/'../../../../../Program Files/MVTec/HALCON-19.11-Progress/lib/x64-win64/' -lhalconcppd
@@ -118,34 +119,27 @@ RESOURCES += \
 # and need to be told explicitly.
 
 DISTFILES += \
-    CameraParameters.ini \
     USoundSettings.ini
+    CameraParameters.ini \
 
 QT += charts
 
-#mkdata.commands = $(MKDIR) $${DESTDIR_WIN}
-copydata.commands = $(COPY_FILE) $${PWD_WIN} $${DESTDIR_WIN}
-first.depends = $(first)  copydata #mkdata before copydata
+# Copy CameraSettings.ini
+#mkdata.commands = $(MKDIR) $${DESTDIR_US}
+copySettings.commands = $(COPY_FILE) $${PWD_CameraParams} $${DESTDIR_US}
+first.depends = $(first)  copySettings #mkdata before copydata
 export(first.depends)
 #export(mkdata.commands)
-export(copydata.commands)
-QMAKE_EXTRA_TARGETS += first  copydata #mkdata before copydata
+export(copySettings.commands)
+QMAKE_EXTRA_TARGETS += first copySettings #mkdata before copydata
 
 
 # Copy USoundSettings.ini
-#mkdata.commands = $(MKDIR) $${DESTDIR_US}
-copydata.commands = $(COPY_FILE) $${PWD_Settings} $${DESTDIR_US}
-first.depends = $(first)  copydata #mkdata before copydata
-export(first.depends)
+mkdata.commands = $(MKDIR) $${DESTDIR_US}
+copyCameraParams.commands = $(COPY_FILE) $${PWD_Settings} $${DESTDIR_US}
+second.depends = $(second)  copyCameraParams #mkdata before copydata
+export(second.depends)
 #export(mkdata.commands)
-export(copydata.commands)
-QMAKE_EXTRA_TARGETS += first  copydata #mkdata before copydata
+export(copyCameraParams.commands)
+QMAKE_EXTRA_TARGETS += second copyCameraParams #mkdata before copydata
 
-# Copy CameraSettings.ini
-#mkdata.commands = $(MKDIR) $${DESTDIR_US}
-copydata.commands = $(COPY_FILE) $${PWD_CameraParams} $${DESTDIR_US}
-first.depends = $(first)  copydata #mkdata before copydata
-export(first.depends)
-#export(mkdata.commands)
-export(copydata.commands)
-QMAKE_EXTRA_TARGETS += first  copydata #mkdata before copydata

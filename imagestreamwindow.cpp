@@ -316,10 +316,14 @@ Save Image
             qDir.mkpath(dir);
         }
         QString filename=dir+"/"+QString(generateTimeStamp().c_str())+"."+IMAGE_CONFIGURATION::IMAGEFORMAT;
-        qInfo() << "Saving image at "+filename;        
-        imageAcquisitionThread->currentImage.WriteImage(IMAGE_CONFIGURATION::IMAGEFORMAT.toStdString().c_str(), 0, filename.toStdString().c_str());
+        qInfo() << "Saving image at "+filename;
+        imageAcquisitionThread->getImageAcquisitionHandle().GrabImageAsync(0).WriteImage(IMAGE_CONFIGURATION::IMAGEFORMAT.toStdString().c_str(), 1, filename.toStdString().c_str());
     } catch (HalconCpp::HException he) {
         qCritical() << he.ErrorMessage().Text();
+    }
+    catch(std::exception &e)
+    {
+        qCritical() << e.what();
     }
 }
 
@@ -328,7 +332,6 @@ void ImageStreamWindow::startVideoRecord(){
     try {
         QDir dir;
         qDebug() << "Starting video record";
-        //        qDebug() << "Images in buffer "+ QString(std::to_string(imageAcquisitionThread->imageBuffer.length()).c_str());
         imageAcquisitionThread->currentBufferImageCounter=0;
         imageAcquisitionThread->currentRecordSaveDir = getVideoSavePathForDevice(imageAcquisitionThread->getDeviceName())
                 + "/" + QString(generateTimeStamp().c_str()) + "/";

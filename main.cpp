@@ -55,7 +55,7 @@ void customLoggingHandler(QtMsgType type, const QMessageLogContext &context, con
     QTextStream ts(&outFile);
     ts << txt << Qt::endl;
     //     Push to Message Box
-    if(homeScreenPointer!=0 && Homescreen::globalMessageBox != 0 && Homescreen::logLevel <= type){
+    if(homeScreenPointer!=0 && Homescreen::globalMessageBox != 0 && LOGGING_CONFIGURATION::LOG_LEVEL <= type){
         emit homeScreenPointer->pushToMessageBoxSignal(tempString+txt);
         tempString="";
     }
@@ -68,9 +68,6 @@ void customLoggingHandler(QtMsgType type, const QMessageLogContext &context, con
 int main(int argc, char *argv[])
 {
     try {
-        // Load the control parameter names for specific venfors from .ini file
-        DefaultCameraParameterNames::getInstance();
-
         // Load Settings
         SettingsStore::loadSettings();
         qRegisterMetaType<QList<QLineSeries*> >("QList<QLineSeries*>");
@@ -83,9 +80,9 @@ int main(int argc, char *argv[])
         QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
         Homescreen w;
         homeScreenPointer = &w;
+         qDebug() << "Application initialized successfully";
         w.setWindowIcon(QIcon("://icons/wpi_logo.ico"));
         w.show();
-        qDebug() << "Application initialized successfully";
         return a.exec();
     }
     catch (HalconCpp::HOperatorException &e) {
