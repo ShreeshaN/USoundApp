@@ -332,7 +332,6 @@ void ImageStreamWindow::startVideoRecord(){
     try {
         QDir dir;
         qDebug() << "Starting video record";
-        //        qDebug() << "Images in buffer "+ QString(std::to_string(imageAcquisitionThread->imageBuffer.length()).c_str());
         imageAcquisitionThread->currentBufferImageCounter=0;
         imageAcquisitionThread->currentRecordSaveDir = getVideoSavePathForDevice(imageAcquisitionThread->getDeviceName())
                 + "/" + QString(generateTimeStamp().c_str()) + "/";
