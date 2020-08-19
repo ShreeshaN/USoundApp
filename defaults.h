@@ -67,8 +67,9 @@ public:
     static const inline QString IMA = "ima";
 };
 
-class VERSION{
+class META{
 public:
+    static QString APP_NAME;
     static QString APP_VERSION;
 };
 

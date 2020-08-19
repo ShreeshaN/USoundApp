@@ -57,6 +57,7 @@ Homescreen::Homescreen(QWidget *parent)
     connect(ui->logLevelSelector,SIGNAL(activated(QString)),this,SLOT(updateLogLevel(QString)));
     // Connect slot to clear logs
     connect(ui->clearLogs,SIGNAL(clicked()),this,SLOT(clearLogs()));
+    this->setWindowTitle(META::APP_NAME+" "+ META::APP_VERSION);
     onApplicationStartup();
 
 }
@@ -550,7 +551,8 @@ void Homescreen::on_actionAbout_triggered()
 {
     auto aboutDialog = new QDialog(0,0);
     about->setupUi(aboutDialog);
-    about->appVersion->setText(VERSION::APP_VERSION);
+    about->appName->setText(META::APP_NAME);
+    about->appVersion->setText(META::APP_VERSION);
     aboutDialog->exec();
 }
 

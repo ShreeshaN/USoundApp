@@ -119,14 +119,14 @@ RESOURCES += \
 # and need to be told explicitly.
 
 DISTFILES += \
-    USoundSettings.ini
+    USoundSettings.ini \
     CameraParameters.ini \
 
 QT += charts
 
 # Copy CameraSettings.ini
 #mkdata.commands = $(MKDIR) $${DESTDIR_US}
-copySettings.commands = $(COPY_FILE) $${PWD_CameraParams} $${DESTDIR_US}
+copySettings.commands = $(COPY_FILE) $${PWD_Settings} $${DESTDIR_US}
 first.depends = $(first)  copySettings #mkdata before copydata
 export(first.depends)
 #export(mkdata.commands)
@@ -135,8 +135,8 @@ QMAKE_EXTRA_TARGETS += first copySettings #mkdata before copydata
 
 
 # Copy USoundSettings.ini
-mkdata.commands = $(MKDIR) $${DESTDIR_US}
-copyCameraParams.commands = $(COPY_FILE) $${PWD_Settings} $${DESTDIR_US}
+#mkdata.commands = $(MKDIR) $${DESTDIR_US}
+copyCameraParams.commands = $(COPY_FILE) $${PWD_CameraParams} $${DESTDIR_US}
 second.depends = $(second)  copyCameraParams #mkdata before copydata
 export(second.depends)
 #export(mkdata.commands)

@@ -3,7 +3,8 @@
 #include <QDir>
 
 //Set App Version
-QString VERSION::APP_VERSION = "undefined";
+QString META::APP_VERSION = "";
+QString META::APP_NAME = "USound";
 
 //Set App Directory
 QString DIRECTORIES::APPDIR = QDir::tempPath() +"/USoundApp";
