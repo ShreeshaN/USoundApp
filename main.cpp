@@ -68,9 +68,6 @@ void customLoggingHandler(QtMsgType type, const QMessageLogContext &context, con
 int main(int argc, char *argv[])
 {
     try {
-        // Load the control parameter names for specific venfors from .ini file
-        DefaultCameraParameterNames::getInstance();
-
         // Load Settings
         SettingsStore::loadSettings();
         qRegisterMetaType<QList<QLineSeries*> >("QList<QLineSeries*>");
