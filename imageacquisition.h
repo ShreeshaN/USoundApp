@@ -13,11 +13,12 @@
 #  endif
 #endif
 #include <QImage>
-#include "cameracontrols.h"
 #include "defaults.h"
 #include <QSignalMapper>
 #include <QQueue>
 #include<QtCharts/QLineSeries>
+using namespace QtCharts;
+
 
 // Custom class to store image and save path in a queue (Buffer for writing)
 class RecordingBuffer
@@ -46,7 +47,7 @@ private:
     HalconCpp::HFramegrabber imageAcquisitionHandle;
     bool stopAcquisition=false;
     int counter=0;
-    QString deviceName;
+    QString deviceName, deviceType, deviceMake;
 //    CameraControls cameraControls;
     bool recording=false;
     bool supplyHistogramData=false;
@@ -55,7 +56,7 @@ private:
 
 public:
     // Constructor
-    ImageAcquisition(QString deviceName, QObject *parent=0);
+    ImageAcquisition(QString deviceType, QString deviceMake, QString deviceName, QObject *parent=0);
     HalconCpp::HImage currentImage;
     // Image Buffer
     QQueue<RecordingBuffer> imageBuffer;
@@ -65,7 +66,6 @@ public:
     bool writeInProgress=false;
 
     // Member Functions
-    void setup();
     bool HImage2QImage(HalconCpp::HImage &from, QImage &to);
     void setupCameraControls();
     HalconCpp::HTuple getValueForParam(std::string paramString);
@@ -90,11 +90,16 @@ public:
     bool getSupplyHistogramData() const;
     void setSupplyHistogramData(bool value);
 
+    QString getDeviceType() const;
+    void setDeviceType(const QString &value);
+
+    QString getDeviceMake() const;
+    void setDeviceMake(const QString &value);
 
 signals:
     void renderImageSignal(QImage);
     void updateStatusBarSignal(QString);
-    void renderHistogramSignal(QList<long>, int);
+    void renderHistogramSignal(QList<QLineSeries*>, int);
 
 
 protected:

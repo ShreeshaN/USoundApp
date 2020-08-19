@@ -44,7 +44,7 @@ void SpinboxContainer::updateParamValue()
         {
             this->uiElement->setDisabled(true);
             this->setParameterAvailable(false);
-            qDebug() << "Either parameter name is incorrect or the camera make does not support it "<< cameraParameterName.c_str()<< "Currently, a default value is set";
+            qDebug() << "Either parameter name is incorrect or the camera make does not support it>>"<< cameraParameterName.c_str()<< "<<. Currently, a default value is set";
         }
         else{
             qDebug() << "Unknown error while setting value for "<<cameraParameterName.c_str();

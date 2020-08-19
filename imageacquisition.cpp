@@ -8,6 +8,52 @@
 #include <exception>
 #include <usoundutils.h>
 
+
+// Setters and Getters
+QString ImageAcquisition::getDeviceName() const
+{
+    return deviceName;
+}
+
+void ImageAcquisition::setDeviceName(const QString &value)
+{
+    deviceName = value;
+}
+
+int ImageAcquisition::getCounter() const
+{
+    return counter;
+}
+
+void ImageAcquisition::setCounter(int value)
+{
+    counter = value;
+}
+
+HalconCpp::HFramegrabber ImageAcquisition::getImageAcquisitionHandle() const
+{
+    return imageAcquisitionHandle;
+}
+
+void ImageAcquisition::setImageAcquisitionHandle(const HalconCpp::HFramegrabber &value)
+{
+    imageAcquisitionHandle = value;
+}
+
+bool ImageAcquisition::getStopAcquisition() const
+{
+    return stopAcquisition;
+}
+
+void ImageAcquisition::setStopAcquisition(bool value)
+{
+    stopAcquisition = value;
+}
+
+void ImageAcquisition::startAquisition(){
+    ImageAcquisition::run();
+}
+
 bool ImageAcquisition::getSupplyHistogramData() const
 {
     return supplyHistogramData;
@@ -18,9 +64,32 @@ void ImageAcquisition::setSupplyHistogramData(bool value)
     supplyHistogramData = value;
 }
 
-ImageAcquisition::ImageAcquisition(QString deviceName, QObject *parent): QThread(parent)
+QString ImageAcquisition::getDeviceType() const
 {
-    HalconCpp::HFramegrabber imageAcquisitionHandle("USB3Vision",
+    return deviceType;
+}
+
+void ImageAcquisition::setDeviceType(const QString &value)
+{
+    deviceType = value;
+}
+
+
+QString ImageAcquisition::getDeviceMake() const
+{
+    return deviceMake;
+}
+
+void ImageAcquisition::setDeviceMake(const QString &value)
+{
+    deviceMake = value;
+}
+
+
+// Constructor
+ImageAcquisition::ImageAcquisition(QString deviceType,QString deviceMake, QString deviceName, QObject *parent): QThread(parent)
+{
+    HalconCpp::HFramegrabber imageAcquisitionHandle(HalconCpp::HString(deviceType.toUtf8().constData()).Text(),
                                                     0, 0, 0, 0, 0, 0,
                                                     "progressive", -1, "default",
                                                     -1, "false", "default",
@@ -28,23 +97,20 @@ ImageAcquisition::ImageAcquisition(QString deviceName, QObject *parent): QThread
                                                         deviceName.toUtf8().constData()).Text(), 0, -1);
     this->imageAcquisitionHandle = imageAcquisitionHandle;
     this->deviceName = deviceName;
+    this->deviceType = deviceType;
+    this->deviceMake = deviceMake;
 }
 
-void ImageAcquisition::setup()
-{
-    setupCameraControls();
-
-}
 
 void ImageAcquisition::run()
 {
     QImage qImage;
     using namespace HalconCpp;
-    HTuple relativeHisto, absoluteHisto;
     Hlong  width,height;
-    QList<long> absoluteHistFrequencies;
-//    this->imageAcquisitionHandle.SetFramegrabberParam("AcquisitionFrameRate", 75);
+    QList<QLineSeries*> absoluteHistFrequencies;
+    QList<QString> colors = {"red","green","blue"};
     this->imageAcquisitionHandle.GrabImageStart(0);
+
 
     try {
 
@@ -78,14 +144,42 @@ void ImageAcquisition::run()
             }
             if(getSupplyHistogramData()){
                 int max=0;
-                HalconCpp::GrayHisto(HalconCpp::HRegion(0.0,0.0,double(width-1), double(height-1)), currentImage, &absoluteHisto,&relativeHisto);
-                for(int l=0; l<absoluteHisto.Length()-1;l++)
+                int channels=currentImage.CountChannels().L();
+                if(channels == 3)
                 {
-                    long currentVal = absoluteHisto[l].L();
-                    if(max<currentVal)
-                        max = currentVal;
-                    absoluteHistFrequencies.append(currentVal);
+                    for(int c=1;c<=channels;c++)
+                    {
+                        QLineSeries *series = new QLineSeries();
+                        HTuple relativeHisto, absoluteHisto;
+                        HalconCpp::GrayHisto(HalconCpp::HRegion(0.0,0.0,double(width-1), double(height-1)), currentImage.AccessChannel(c), &absoluteHisto,&relativeHisto);
+                        for(int l=0; l<absoluteHisto.Length()-1;l++)
+                        {
+                            long currentVal = absoluteHisto[l].L();
+                            if(max<currentVal)
+                                max = currentVal;
+                            series->append(l, currentVal);
+                        }
+                        QPen pen = series->pen();
+                        pen.setBrush(QBrush(colors.at(c-1).toUtf8().constData()));
+                        series->setPen(pen);
+                        absoluteHistFrequencies.append(series);
+                    }
+
                 }
+                else{
+                    QLineSeries *series = new QLineSeries();
+                    HTuple relativeHisto, absoluteHisto;
+                    HalconCpp::GrayHisto(HalconCpp::HRegion(0.0,0.0,double(width-1), double(height-1)), currentImage, &absoluteHisto,&relativeHisto);
+                    for(int l=0; l<absoluteHisto.Length()-1;l++)
+                    {
+                        long currentVal = absoluteHisto[l].L();
+                        if(max<currentVal)
+                            max = currentVal;
+                        series->append(l, currentVal);
+                    }
+                    absoluteHistFrequencies.append(series);
+                }
+
                 emit renderHistogramSignal(absoluteHistFrequencies, max);
                 absoluteHistFrequencies.clear();
             }
@@ -288,47 +382,4 @@ void ImageAcquisition::setValueForParam(std::string paramString, std::string par
 }
 
 
-// Setters and Getters
-QString ImageAcquisition::getDeviceName() const
-{
-    return deviceName;
-}
 
-void ImageAcquisition::setDeviceName(const QString &value)
-{
-    deviceName = value;
-}
-
-int ImageAcquisition::getCounter() const
-{
-    return counter;
-}
-
-void ImageAcquisition::setCounter(int value)
-{
-    counter = value;
-}
-
-HalconCpp::HFramegrabber ImageAcquisition::getImageAcquisitionHandle() const
-{
-    return imageAcquisitionHandle;
-}
-
-void ImageAcquisition::setImageAcquisitionHandle(const HalconCpp::HFramegrabber &value)
-{
-    imageAcquisitionHandle = value;
-}
-
-bool ImageAcquisition::getStopAcquisition() const
-{
-    return stopAcquisition;
-}
-
-void ImageAcquisition::setStopAcquisition(bool value)
-{
-    stopAcquisition = value;
-}
-
-void ImageAcquisition::startAquisition(){
-    ImageAcquisition::run();
-}

@@ -53,9 +53,8 @@ else {
 
 
 SOURCES += \
-    cameracontrols.cpp \
-    cameracontrolsui.cpp \
     checkboxcontainer.cpp \
+    defaultcameraparameternames.cpp \
     defaults.cpp \
     doublespinboxcontainer.cpp \
     histogramwindow.cpp \
@@ -70,9 +69,8 @@ SOURCES += \
     spinboxcontainer.cpp
 
 HEADERS += \
-    cameracontrols.h \
-    cameracontrolsui.h \
     checkboxcontainer.h \
+    defaultcameraparameternames.h \
     defaults.h \
     doubleslider.h \
     doublespinboxcontainer.h \
@@ -117,6 +115,7 @@ RESOURCES += \
 # and need to be told explicitly.
 
 DISTFILES += \
+    CameraParameters.ini \
     USoundSettings.ini
 
 QT += charts

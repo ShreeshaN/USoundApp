@@ -16,8 +16,8 @@
 #include "spinboxcontainer.h"
 #include "parametercontainer.h"
 #include "histogramwindow.h"
-#include <QtCharts>
-using namespace QtCharts;
+#include <QtCharts/QChartView>
+//using namespace QtCharts;
 
 
 
@@ -30,7 +30,7 @@ private:
     ImageAcquisition *imageAcquisitionThread;
 
 public:
-    explicit ImageStreamWindow(QWidget *parent = nullptr);
+    explicit ImageStreamWindow(ImageAcquisition* imageAcquisitionThread, QWidget *parent = nullptr);
     QDir qDir;
 
     // widgets
@@ -72,6 +72,7 @@ public:
 
     QList<QGraphicsPixmapItem *> graphicsPixmapItemList;
     QList<ParameterContainer *> containers;
+    CameraParameters cameraParameters;
 
 
     // Actions
@@ -86,8 +87,6 @@ public:
 
     // member functions
     void setupCameraWindow();
-    void updateCameraParametersAndDisplay();
-    void displayCameraParameters();
 
 
     // setters and getters
@@ -96,6 +95,8 @@ public:
     ImageAcquisition *getImageAcquisitionThread() const;
     void setImageAcquisitionThread(ImageAcquisition *value);
 
+    CameraParameters getCameraParameters() const;
+    void setCameraParameters(const CameraParameters &value);
 
 public slots:
     void renderImage(QImage qImage);
@@ -108,7 +109,7 @@ public slots:
     void writeQueue();
     void updateAllParameters();
     void createHistogramWindow();
-    void renderHistogramSlot(QList<long>, int);
+    void renderHistogramSlot(QList<QLineSeries*>, int);
 
 signals:
 

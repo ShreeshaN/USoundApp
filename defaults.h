@@ -3,48 +3,56 @@
 #include <QString>
 
 
-struct CameraControlDefaults{
-    std::string RESOLUTION="";
-
-    // exposure controls
-    long EXPOSURETIME = 0;
-    float ANALOGGAIN = 0.0;
-    bool AUTOGAIN = false;
-    float EXPOSURETARGET = 0.0;  // not sure about this implementation
-    bool AUTOEXPOSURE=false;
-
-    // color appearance parameters
-    float HUE = 0.0;
-    float SATURATION = 0.0;
-    float BRIGHTNESS = 0.0;
-    float CONTRAST = 0.0;
-    float GAMMA = 0.0;
-    long ACQUISITIONFRAMERATE=0;
-    bool ACQUISITIONFRAMERATEENABLE=false;
-    long RESULTINGFRAMERATE=0;
-    bool MONOCHROME=true; // not sure about this implementation
-    bool RGB=false; // not sure about this implementation
+class CameraParameters{
+public:
+    std::string EXPOSURETIME;
+    std::string AUTOEXPOSURE;
+    std::string GAMMA;
+    std::string ACQUISITIONFRAMERATE;
+    std::string ACQUISITIONFRAMERATEENABLE;
+    std::string RESULTINGFRAMERATE;
+    std::string GAIN;
+    std::string AUTOGAIN;
+    std::string HUE;
+    std::string SATURATION;
+    std::string BRIGHTNESS;
+    std::string CONTRAST;
+    std::string MONOCHROME;
+    std::string RGB;
+    std::string getEXPOSURETIME() const;
+    void setEXPOSURETIME(const std::string &value);
+    std::string getAUTOEXPOSURE() const;
+    void setAUTOEXPOSURE(const std::string &value);
+    std::string getGAMMA() const;
+    void setGAMMA(const std::string &value);
+    std::string getACQUISITIONFRAMERATE() const;
+    void setACQUISITIONFRAMERATE(const std::string &value);
+    std::string getACQUISITIONFRAMERATEENABLE() const;
+    void setACQUISITIONFRAMERATEENABLE(const std::string &value);
+    std::string getRESULTINGFRAMERATE() const;
+    void setRESULTINGFRAMERATE(const std::string &value);
+    std::string getGAIN() const;
+    void setGAIN(const std::string &value);
+    std::string getAUTOGAIN() const;
+    void setAUTOGAIN(const std::string &value);
+    std::string getHUE() const;
+    void setHUE(const std::string &value);
+    std::string getSATURATION() const;
+    void setSATURATION(const std::string &value);
+    std::string getBRIGHTNESS() const;
+    void setBRIGHTNESS(const std::string &value);
+    std::string getCONTRAST() const;
+    void setCONTRAST(const std::string &value);
+    std::string getMONOCHROME() const;
+    void setMONOCHROME(const std::string &value);
+    std::string getRGB() const;
+    void setRGB(const std::string &value);
 };
 
-
-class BaslerCameraParameterNames{
+class CameraMakes{
 public:
-    static const std::string EXPOSURETIME;
-    static const std::string AUTOEXPOSURE;
-    static const std::string GAMMA;
-    static const std::string ACQUISITIONFRAMERATE;
-    static const std::string ACQUISITIONFRAMERATEENABLE;
-    static const std::string RESULTINGFRAMERATE;
-    static const  std::string GAIN;
-    static const  std::string AUTOGAIN;
-    static const  std::string HUE;
-    static const  std::string SATURATION;
-    static const  std::string BRIGHTNESS;
-    static const  std::string CONTRAST;
-    static const  std::string MONOCHROME;
-    static const  std::string RGB;
-
-
+    static const inline QString BASLER="Basler";
+    static const inline QString ALLIEDVISION="Allied Vision Technologies";
 };
 
 class AvailableImageFormats{
