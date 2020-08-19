@@ -357,8 +357,13 @@ Save Image
 */
 {
     try {
-        QString filename=getImageSavePathForDevice(imageAcquisitionThread->getDeviceName())+"/"+QString(generateTimeStamp().c_str())+"."+IMAGE_CONFIGURATION::IMAGEFORMAT;
-        qInfo() << "Saving image at "+filename;
+        auto dir = getImageSavePathForDevice(imageAcquisitionThread->getDeviceName());
+        if (!qDir.exists(dir))   {
+            qDebug() << "Creating Application directory at "+dir;
+            qDir.mkpath(dir);
+        }
+        QString filename=dir+"/"+QString(generateTimeStamp().c_str())+"."+IMAGE_CONFIGURATION::IMAGEFORMAT;
+        qInfo() << "Saving image at "+filename;        
         imageAcquisitionThread->currentImage.WriteImage(IMAGE_CONFIGURATION::IMAGEFORMAT.toStdString().c_str(), 0, filename.toStdString().c_str());
     } catch (HalconCpp::HException he) {
         qCritical() << he.ErrorMessage().Text();

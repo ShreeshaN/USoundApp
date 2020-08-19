@@ -31,7 +31,7 @@ private:
 
 public:
     explicit ImageStreamWindow(QWidget *parent = nullptr);
-
+    QDir qDir;
 
     // widgets
     QTreeWidgetItem *exposureControls;
