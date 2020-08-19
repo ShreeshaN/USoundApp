@@ -25,8 +25,9 @@ macx {
   QMAKE_LFLAGS   += -F/Library/Frameworks
   LIBS           += -framework HALCONCpp
   TARGETDIR      += $$OUT_PWD/USoundApp.app/Contents/MacOS/
-  PWD_WIN = $${PWD}/USoundSettings.ini
-  DESTDIR_WIN = $${TARGETDIR}
+  PWD_Settings = $${PWD}/USoundSettings.ini
+  PWD_CameraParams = $${PWD}/CameraParameters.ini
+  DESTDIR_US = $${TARGETDIR}
 }
 else {
   #defines
@@ -45,10 +46,12 @@ else {
 
   TARGETDIR      += $$OUT_PWD
 
-  PWD_WIN = $${PWD}/USoundSettings.ini
-  DESTDIR_WIN = $${TARGETDIR}
-  PWD_WIN ~= s,/,\\,g
-  DESTDIR_WIN ~= s,/,\\,g
+  PWD_Settings = $${PWD}/USoundSettings.ini
+  PWD_CameraParams = $${PWD}/CameraParameters.ini
+  DESTDIR_US = $${TARGETDIR}
+  PWD_Settings ~= s,/,\\,g
+  PWD_CameraParams ~= s,/,\\,g
+  DESTDIR_US ~= s,/,\\,g
 }
 
 
@@ -120,16 +123,29 @@ DISTFILES += \
 
 QT += charts
 
-
-
-
-
-
 #mkdata.commands = $(MKDIR) $${DESTDIR_WIN}
 copydata.commands = $(COPY_FILE) $${PWD_WIN} $${DESTDIR_WIN}
-#copydata.commands = $$quote(cmd /c xcopy /S /I $${PWD_WIN}\\USoundSettings.ini $${DESTDIR_WIN})
-first.depends = $(first)  copydata
+first.depends = $(first)  copydata #mkdata before copydata
 export(first.depends)
 #export(mkdata.commands)
 export(copydata.commands)
-QMAKE_EXTRA_TARGETS += first  copydata
+QMAKE_EXTRA_TARGETS += first  copydata #mkdata before copydata
+
+
+# Copy USoundSettings.ini
+#mkdata.commands = $(MKDIR) $${DESTDIR_US}
+copydata.commands = $(COPY_FILE) $${PWD_Settings} $${DESTDIR_US}
+first.depends = $(first)  copydata #mkdata before copydata
+export(first.depends)
+#export(mkdata.commands)
+export(copydata.commands)
+QMAKE_EXTRA_TARGETS += first  copydata #mkdata before copydata
+
+# Copy CameraSettings.ini
+#mkdata.commands = $(MKDIR) $${DESTDIR_US}
+copydata.commands = $(COPY_FILE) $${PWD_CameraParams} $${DESTDIR_US}
+first.depends = $(first)  copydata #mkdata before copydata
+export(first.depends)
+#export(mkdata.commands)
+export(copydata.commands)
+QMAKE_EXTRA_TARGETS += first  copydata #mkdata before copydata
