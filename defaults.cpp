@@ -2,6 +2,8 @@
 #include<usoundutils.h>
 #include <QDir>
 
+//Set App Version
+QString VERSION::APP_VERSION = "undefined";
 
 //Set App Directory
 QString DIRECTORIES::APPDIR = QDir::tempPath() +"/USoundApp";

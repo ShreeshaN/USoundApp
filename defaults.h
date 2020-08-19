@@ -67,6 +67,11 @@ public:
     static const inline QString IMA = "ima";
 };
 
+class VERSION{
+public:
+    static QString APP_VERSION;
+};
+
 
 class DIRECTORIES{
 public:

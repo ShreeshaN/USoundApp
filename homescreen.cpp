@@ -191,17 +191,17 @@ void Homescreen::on_devicesRefresh_clicked()
 {
 
 
-//    HalconCpp::HFramegrabber acq("GigEVision2", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "000f314e2145_AlliedVisionTechnologies_MantaG1236CE0022719", 0, -1);
+    //    HalconCpp::HFramegrabber acq("GigEVision2", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "000f314e2145_AlliedVisionTechnologies_MantaG1236CE0022719", 0, -1);
 
-//    HalconCpp::HTuple h;
-//    qDebug() <<"Params: ";
-//    qDebug() <<"********************available_param_names******************************";
-//    try {
-//        h = acq.GetFramegrabberParam("available_param_names");
-//    } catch (HalconCpp::HException &e) {
-//        qDebug() << "Exception "<< e.ErrorMessage().Text();
-//    }
-//    qDebug() << h.ToString().Text() ;
+    //    HalconCpp::HTuple h;
+    //    qDebug() <<"Params: ";
+    //    qDebug() <<"********************available_param_names******************************";
+    //    try {
+    //        h = acq.GetFramegrabberParam("available_param_names");
+    //    } catch (HalconCpp::HException &e) {
+    //        qDebug() << "Exception "<< e.ErrorMessage().Text();
+    //    }
+    //    qDebug() << h.ToString().Text() ;
 
     //    try {
     //         HalconCpp::HTuple h;
@@ -404,26 +404,26 @@ void Homescreen::on_devicesRefresh_clicked()
     //    qDebug() << h.DArr()[0];
 
 
-        try {
-            using namespace HalconCpp;
-            HalconCpp::HTuple *information = new HalconCpp::HTuple;
-            HalconCpp::HTuple * valueList = new HalconCpp::HTuple;
-            QList<QString> list = { "bits_per_channel", "camera_type", "color_space", "defaults", "device", "external_trigger", "field", "general", "generic", "horizontal_resolution", "image_height", "image_width", "info_boards", "parameters", "parameters_readonly", "parameters_writeonly", "port", "revision", "start_column", "start_row", "vertical_resolution"};
-            for (auto param : list) {
-                qDebug()<< "************" << param << "*************";
-                HalconCpp::InfoFramegrabber("GigEVision2",HTuple(HString::FromUtf8(param.toUtf8())),information, valueList);
-                qDebug () << "Information: "<< information->S().Text();
-                qDebug() << "Valuelist length: "<<valueList->Length();
-                auto deviceList = valueList->ToSArr();
-                for(int i=0;i<valueList->Length();i++)
-                {
-                    qDebug() << QString(deviceList[i].Text());
-                }
-
+    try {
+        using namespace HalconCpp;
+        HalconCpp::HTuple *information = new HalconCpp::HTuple;
+        HalconCpp::HTuple * valueList = new HalconCpp::HTuple;
+        QList<QString> list = { "bits_per_channel", "camera_type", "color_space", "defaults", "device", "external_trigger", "field", "general", "generic", "horizontal_resolution", "image_height", "image_width", "info_boards", "parameters", "parameters_readonly", "parameters_writeonly", "port", "revision", "start_column", "start_row", "vertical_resolution"};
+        for (auto param : list) {
+            qDebug()<< "************" << param << "*************";
+            HalconCpp::InfoFramegrabber("GigEVision2",HTuple(HString::FromUtf8(param.toUtf8())),information, valueList);
+            qDebug () << "Information: "<< information->S().Text();
+            qDebug() << "Valuelist length: "<<valueList->Length();
+            auto deviceList = valueList->ToSArr();
+            for(int i=0;i<valueList->Length();i++)
+            {
+                qDebug() << QString(deviceList[i].Text());
             }
-        } catch (HalconCpp::HException &e) {
-            qDebug() << e.ErrorMessage().Text();
+
         }
+    } catch (HalconCpp::HException &e) {
+        qDebug() << e.ErrorMessage().Text();
+    }
 
     //        HalconCpp::InfoFramegrabber("GigEVision","parameters",information, valueList);
     //        qDebug () << "Information: "<< information->S().Text();
@@ -545,6 +545,7 @@ void Homescreen::on_actionAbout_triggered()
 {
     auto aboutDialog = new QDialog(0,0);
     about->setupUi(aboutDialog);
+    about->appVersion->setText(VERSION::APP_VERSION);
     aboutDialog->exec();
 }
 

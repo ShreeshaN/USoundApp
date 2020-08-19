@@ -11,6 +11,8 @@ void SettingsStore::loadSettings()
 {
     try {
         settings = new QSettings("USoundSettings.ini", QSettings::IniFormat);
+        //Set Version
+        VERSION::APP_VERSION = settings->value("VERSION/APP_VERSION", VERSION::APP_VERSION).toString();
 
         // Set Directories
         DIRECTORIES::APPDIR = settings->value("DIRECTORIES/APPDIR", DIRECTORIES::APPDIR).toString();

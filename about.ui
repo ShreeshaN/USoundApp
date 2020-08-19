@@ -352,7 +352,27 @@
     </font>
    </property>
    <property name="text">
-    <string>USound v1.0.0</string>
+    <string>USound</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="appVersion">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>50</y>
+     <width>281</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>32</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>v1.0.0</string>
    </property>
   </widget>
  </widget>
