@@ -57,8 +57,8 @@ Homescreen::Homescreen(QWidget *parent)
     connect(ui->logLevelSelector,SIGNAL(activated(QString)),this,SLOT(updateLogLevel(QString)));
     // Connect slot to clear logs
     connect(ui->clearLogs,SIGNAL(clicked()),this,SLOT(clearLogs()));
-
     onApplicationStartup();
+
 }
 
 void Homescreen::setupDevicesUI()
@@ -520,19 +520,24 @@ void Homescreen::updateLogLevel(QString message)
 {
     qDebug() << "Log Level changed to: "+ message;
     if(message=="DEBUG"){
-        logLevel = QtDebugMsg;
+        LOGGING_CONFIGURATION::LOG_LEVEL = QtDebugMsg;
+        LOGGING_CONFIGURATION::LOG_LEVEL_INDEX = 0;
     }
     else if(message == "INFO"){
-        logLevel = QtInfoMsg;
-    }
-    else if(message == "CRITICAL"){
-        logLevel = QtCriticalMsg;
+        LOGGING_CONFIGURATION::LOG_LEVEL = QtInfoMsg;
+        LOGGING_CONFIGURATION::LOG_LEVEL_INDEX = 1;
     }
     else if(message == "WARN"){
-        logLevel = QtWarningMsg;
+        LOGGING_CONFIGURATION::LOG_LEVEL = QtWarningMsg;
+        LOGGING_CONFIGURATION::LOG_LEVEL_INDEX = 2;
     }
+    else if(message == "CRITICAL"){
+        LOGGING_CONFIGURATION::LOG_LEVEL = QtCriticalMsg;
+        LOGGING_CONFIGURATION::LOG_LEVEL_INDEX = 3;
+    }   
     else if(message == "FATAL"){
-        logLevel = QtFatalMsg;
+        LOGGING_CONFIGURATION::LOG_LEVEL = QtFatalMsg;
+        LOGGING_CONFIGURATION::LOG_LEVEL_INDEX = 4;
     }
 }
 
@@ -556,6 +561,8 @@ void Homescreen::on_actionExit_triggered()
 void Homescreen::on_actionSettings_triggered()
 {
     settings->exec();
+    //todo: Prathyush  - Move below to Signal and slot based to detect changes in default variable (How to update parent window object)
+    ui->logLevelSelector->setCurrentIndex(LOGGING_CONFIGURATION::LOG_LEVEL_INDEX);
 }
 
 
