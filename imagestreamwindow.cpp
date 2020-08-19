@@ -227,7 +227,6 @@ void ImageStreamWindow::setupCameraWindow()
     exposureControls->setExpanded(true);
     colorAppearance->setExpanded(true);
 
-
     emit updateStatusBar("Frame Rate: "+ QString::number(this->getImageAcquisitionThread()->getValueForParam(cameraParameters.RESULTINGFRAMERATE).D()));
     // resulting frame rate in status bar
     hlayout->addWidget(ccTreeWidget);

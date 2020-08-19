@@ -19,7 +19,7 @@ DefaultCameraParameterNames *DefaultCameraParameterNames::getInstance()
 void DefaultCameraParameterNames::loadSettings()
 {
     try {
-        settings = new QSettings("C:\\Users\\daruizcadalso\\Documents\\QTApplications\\USoundApp\\CameraParameters.ini", QSettings::IniFormat);
+        settings = new QSettings("CameraParameters.ini", QSettings::IniFormat);
         QStringList cameraMakes = settings->childGroups();
         for(int i=0;i<cameraMakes.size();i++)
         {
