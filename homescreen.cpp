@@ -36,7 +36,6 @@
 //#include "qtvariantproperty.h"
 #include <QComboBox>
 #include <ui_about.h>
-#include <ui_about.h>
 
 // Initialize Global Message Box
 QPlainTextEdit * Homescreen::globalMessageBox = 0;
@@ -462,7 +461,7 @@ void Homescreen::connectToCamera(QString deviceType, QString deviceMake, QString
         // Create a new thread for image acquisition
         imageAcquisitionThread = new ImageAcquisition(deviceType, deviceMake, deviceName, this);
 
-        // Create a new window for streaming acquired images
+        // Create a new window for streaming acquired images        
         windowWidget = new ImageStreamWindow(imageAcquisitionThread, this);
         windowWidget->setWindowTitle(deviceName);
         windowWidget->setupCameraWindow();
