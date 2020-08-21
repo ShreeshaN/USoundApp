@@ -65,7 +65,8 @@ public:
     int currentBufferImageCounter;
     bool writeInProgress=false;
     double imageRotation = 0.0;
-    bool mirrorImage=false;
+    bool mirrorImageHorizontal=false;
+    bool mirrorImageVertical=false;
 
     // Member Functions
     bool HImage2QImage(HalconCpp::HImage &from, QImage &to);

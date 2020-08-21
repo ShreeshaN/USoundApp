@@ -128,8 +128,12 @@ void ImageAcquisition::run()
                 currentImage = currentImage.RotateImage(imageRotation, "constant");
             }
 
-            if (mirrorImage){
+            if (mirrorImageHorizontal){
                 currentImage = currentImage.MirrorImage("column");
+            }
+
+            if (mirrorImageVertical){
+                currentImage = currentImage.MirrorImage("row");
             }
 
             // todo: Prathyush SP currentImage is saved to the disk. Check the importance of the resolution saved?

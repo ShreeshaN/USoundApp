@@ -78,7 +78,7 @@ public:
 
     // Actions
     QAction *imageSaveButton, *recordButton, *recordPauseButton, *recordStopButton, *grayHistogramButton, *fixedAspectRatioButton,
-    *rotateClockwise90Button, *rotateAntiClockwise90Button, *mirrorImage, *resetImage;
+    *rotateClockwise90Button, *rotateAntiClockwise90Button, *mirrorImageHorizontal, *mirrorImageVertical, *resetImage;
     Qt::AspectRatioMode fixedAspectRatio=Qt::KeepAspectRatio;        
 
     // Chart window
@@ -110,7 +110,8 @@ public slots:
     void stopVideoRecord();
     void setFixedAspectRatio();    
     void rotateAntiClockwise90Deg();
-    void mirrorImageSlot();
+    void mirrorImageHorizontalSlot();
+    void mirrorImageVerticalSlot();
     void resetImageSlot();
     void writeQueue();
     void updateAllParameters();

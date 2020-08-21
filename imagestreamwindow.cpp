@@ -46,9 +46,10 @@ void ImageStreamWindow::restoreDeviceSpecificSettings(){
     try {
         imageAcquisitionThread->imageRotation = SettingsStore::getDeviceSpecificSettings(imageAcquisitionThread->getDeviceName(),
                                                                                          "rotation", QString("0.0")).toDouble();
-        imageAcquisitionThread->mirrorImage = SettingsStore::getDeviceSpecificSettings(imageAcquisitionThread->getDeviceName(),
-                                                                                         "mirror", QString("%1").arg(false)).toBool();
-        qDebug() << imageAcquisitionThread->mirrorImage;
+        imageAcquisitionThread->mirrorImageHorizontal = SettingsStore::getDeviceSpecificSettings(imageAcquisitionThread->getDeviceName(),
+                                                                                         "mirrorH", QString("%1").arg(false)).toBool();
+        imageAcquisitionThread->mirrorImageVertical = SettingsStore::getDeviceSpecificSettings(imageAcquisitionThread->getDeviceName(),
+                                                                                         "mirrorV", QString("%1").arg(false)).toBool();
     } catch (std::exception &e) {
         qDebug() << e.what();
     }
@@ -96,9 +97,13 @@ void ImageStreamWindow::setupCameraWindow()
     rotateClockwise90Button->setIcon(QIcon(":icons/rotate.png"));
     connect(rotateClockwise90Button, SIGNAL(triggered()), this, SLOT(rotateAntiClockwise90Deg()));
 
-    mirrorImage = this->menuBar()->addAction(tr("MirrorImage"));
-    mirrorImage->setIcon(QIcon(":icons/flip.png"));
-    connect(mirrorImage, SIGNAL(triggered()), this, SLOT(mirrorImageSlot()));
+    mirrorImageHorizontal = this->menuBar()->addAction(tr("MirrorImage"));
+    mirrorImageHorizontal->setIcon(QIcon(":icons/flip-horizontal.png"));
+    connect(mirrorImageHorizontal, SIGNAL(triggered()), this, SLOT(mirrorImageHorizontalSlot()));
+
+    mirrorImageVertical = this->menuBar()->addAction(tr("MirrorImage"));
+    mirrorImageVertical->setIcon(QIcon(":icons/flip-vertical.png"));
+    connect(mirrorImageVertical, SIGNAL(triggered()), this, SLOT(mirrorImageVerticalSlot()));
 
     resetImage = this->menuBar()->addAction(tr("ResetImage"));
     resetImage->setIcon(QIcon(":icons/reset.png"));
@@ -445,19 +450,29 @@ void ImageStreamWindow::rotateAntiClockwise90Deg()
     SettingsStore::addDeviceSpecificSetting(imageAcquisitionThread->getDeviceName(), "rotation", QString::number(imageAcquisitionThread->imageRotation));
 }
 
-void ImageStreamWindow::mirrorImageSlot()
+void ImageStreamWindow::mirrorImageHorizontalSlot()
 {
-    imageAcquisitionThread->mirrorImage = !imageAcquisitionThread->mirrorImage;
-    qDebug() << "Mirror Image: "+QString("%1").arg(imageAcquisitionThread->mirrorImage);
-    SettingsStore::addDeviceSpecificSetting(imageAcquisitionThread->getDeviceName(), "mirror", QString("%1").arg(imageAcquisitionThread->mirrorImage));
+    imageAcquisitionThread->mirrorImageHorizontal = !imageAcquisitionThread->mirrorImageHorizontal;
+    qDebug() << "Mirror Image: "+QString("%1").arg(imageAcquisitionThread->mirrorImageHorizontal);
+    SettingsStore::addDeviceSpecificSetting(imageAcquisitionThread->getDeviceName(), "mirrorH", QString("%1").arg(imageAcquisitionThread->mirrorImageHorizontal));
+}
+
+void ImageStreamWindow::mirrorImageVerticalSlot()
+{
+    imageAcquisitionThread->mirrorImageVertical = !imageAcquisitionThread->mirrorImageVertical;
+    qDebug() << "Mirror Image: "+QString("%1").arg(imageAcquisitionThread->mirrorImageVertical);
+    SettingsStore::addDeviceSpecificSetting(imageAcquisitionThread->getDeviceName(), "mirrorV", QString("%1").arg(imageAcquisitionThread->mirrorImageVertical));
 }
 
 
 void ImageStreamWindow::resetImageSlot()
 {
-    imageAcquisitionThread->mirrorImage = false;
-    SettingsStore::addDeviceSpecificSetting(imageAcquisitionThread->getDeviceName(), "mirror", QString("%1").arg(imageAcquisitionThread->mirrorImage));
-    qDebug() << "Reset Mirror Image:  "+QString("%1").arg(imageAcquisitionThread->mirrorImage);
+    imageAcquisitionThread->mirrorImageHorizontal = false;
+    SettingsStore::addDeviceSpecificSetting(imageAcquisitionThread->getDeviceName(), "mirrorH", QString("%1").arg(imageAcquisitionThread->mirrorImageHorizontal));
+    qDebug() << "Reset Horizontal Mirror Image:  "+QString("%1").arg(imageAcquisitionThread->mirrorImageHorizontal);
+    imageAcquisitionThread->mirrorImageHorizontal = false;
+    SettingsStore::addDeviceSpecificSetting(imageAcquisitionThread->getDeviceName(), "mirrorV", QString("%1").arg(imageAcquisitionThread->mirrorImageVertical));
+    qDebug() << "Reset Vertical Mirror Image:  "+QString("%1").arg(imageAcquisitionThread->mirrorImageVertical);
     imageAcquisitionThread->imageRotation = 0.0;
     SettingsStore::addDeviceSpecificSetting(imageAcquisitionThread->getDeviceName(), "rotation", QString::number(imageAcquisitionThread->imageRotation));
     qDebug() << "Reset Image Rotation:  "+QString("%1").arg(imageAcquisitionThread->imageRotation);

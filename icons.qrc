@@ -9,7 +9,8 @@
         <file>icons/icon-fullscreen.png</file>
         <file>icons/icon-fullscreen-disabled.png</file>
         <file>icons/rotate.png</file>
-        <file>icons/flip.png</file>
         <file>icons/reset.png</file>
+        <file>icons/flip-horizontal.png</file>
+        <file>icons/flip-vertical.png</file>
     </qresource>
 </RCC>
