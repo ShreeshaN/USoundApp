@@ -100,6 +100,10 @@ void ImageStreamWindow::setupCameraWindow()
     mirrorImage->setIcon(QIcon(":icons/flip.png"));
     connect(mirrorImage, SIGNAL(triggered()), this, SLOT(mirrorImageSlot()));
 
+    resetImage = this->menuBar()->addAction(tr("ResetImage"));
+    resetImage->setIcon(QIcon(":icons/reset.png"));
+    connect(resetImage, SIGNAL(triggered()), this, SLOT(resetImageSlot()));
+
 
     //    QOverload<int> qOverloadInt;
     //    QOverload<double> qOverloadDouble;
@@ -318,7 +322,7 @@ void ImageStreamWindow::renderImage(QImage qImage)
     // QGRAPHICSVIEW WAY OF STREAMING
     if(!imageAcquisitionThread->getStopAcquisition())
     {
-        qImage = qImage.scaled(graphicsView->width(), graphicsView->height(), fixedAspectRatio);        
+        qImage = qImage.scaled(graphicsView->width(), graphicsView->height(), fixedAspectRatio);
         graphicsPixmapItem->setPixmap(QPixmap::fromImage(qImage));
         this->show();
     }
@@ -448,6 +452,18 @@ void ImageStreamWindow::mirrorImageSlot()
     SettingsStore::addDeviceSpecificSetting(imageAcquisitionThread->getDeviceName(), "mirror", QString("%1").arg(imageAcquisitionThread->mirrorImage));
 }
 
+
+void ImageStreamWindow::resetImageSlot()
+{
+    imageAcquisitionThread->mirrorImage = false;
+    SettingsStore::addDeviceSpecificSetting(imageAcquisitionThread->getDeviceName(), "mirror", QString("%1").arg(imageAcquisitionThread->mirrorImage));
+    qDebug() << "Reset Mirror Image:  "+QString("%1").arg(imageAcquisitionThread->mirrorImage);
+    imageAcquisitionThread->imageRotation = 0.0;
+    SettingsStore::addDeviceSpecificSetting(imageAcquisitionThread->getDeviceName(), "rotation", QString::number(imageAcquisitionThread->imageRotation));
+    qDebug() << "Reset Image Rotation:  "+QString("%1").arg(imageAcquisitionThread->imageRotation);
+    qDebug() << imageAcquisitionThread->getDeviceName();
+
+}
 
 void ImageStreamWindow::updateAllParameters()
 {
