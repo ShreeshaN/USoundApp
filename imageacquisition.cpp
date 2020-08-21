@@ -123,7 +123,15 @@ void ImageAcquisition::run()
 //            long int after = GetTickCount();
 //            qDebug() << before << after<<(after-before)/1000.0;
 
-            currentImage.GetImageSize(&width,&height);
+//            currentImage.GetImageSize(&width,&height);
+            if (imageRotation > 0.0){
+                currentImage = currentImage.RotateImage(imageRotation, "constant");
+            }
+
+            if (mirrorImage){
+                currentImage = currentImage.MirrorImage("column");
+            }
+
             // todo: Prathyush SP currentImage is saved to the disk. Check the importance of the resolution saved?
             //            HImage zoomedImage = currentImage;//.ZoomImageSize(600,600,"constant");
 
