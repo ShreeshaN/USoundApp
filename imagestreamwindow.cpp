@@ -21,6 +21,7 @@
 #include "checkboxcontainer.h"
 #include <QScrollBar>
 #include <defaultcameraparameternames.h>
+#include <settingsstore.h>
 
 
 ImageStreamWindow::ImageStreamWindow(ImageAcquisition* imageAcquisitionThread, QWidget *parent) : QMainWindow(parent)
@@ -38,6 +39,19 @@ CameraParameters ImageStreamWindow::getCameraParameters() const
 void ImageStreamWindow::setCameraParameters(const CameraParameters &value)
 {
     cameraParameters = value;
+}
+
+void ImageStreamWindow::restoreDeviceSpecificSettings(){
+    qDebug() << "Restoring device specific settings . . .";
+    try {
+        imageAcquisitionThread->imageRotation = SettingsStore::getDeviceSpecificSettings(imageAcquisitionThread->getDeviceName(),
+                                                                                         "rotation", QString("0.0")).toDouble();
+        imageAcquisitionThread->mirrorImage = SettingsStore::getDeviceSpecificSettings(imageAcquisitionThread->getDeviceName(),
+                                                                                         "mirror", QString("%1").arg(false)).toBool();
+        qDebug() << imageAcquisitionThread->mirrorImage;
+    } catch (std::exception &e) {
+        qDebug() << e.what();
+    }
 }
 
 void ImageStreamWindow::setupCameraWindow()
@@ -77,6 +91,18 @@ void ImageStreamWindow::setupCameraWindow()
     grayHistogramButton = this->menuBar()->addAction(tr("GrayHistogramButton"));
     grayHistogramButton->setIcon(QIcon(":icons/icon-histogram.png"));
     connect(grayHistogramButton, SIGNAL(triggered()), this, SLOT(createHistogramWindow()));
+
+    rotateClockwise90Button = this->menuBar()->addAction(tr("Rotate90Button"));
+    rotateClockwise90Button->setIcon(QIcon(":icons/rotate.png"));
+    connect(rotateClockwise90Button, SIGNAL(triggered()), this, SLOT(rotateClockwise90Deg()));
+
+    mirrorImage = this->menuBar()->addAction(tr("MirrorImage"));
+    mirrorImage->setIcon(QIcon(":icons/flip.png"));
+    connect(mirrorImage, SIGNAL(triggered()), this, SLOT(mirrorImageSlot()));
+
+    resetImage = this->menuBar()->addAction(tr("ResetImage"));
+    resetImage->setIcon(QIcon(":icons/reset.png"));
+    connect(resetImage, SIGNAL(triggered()), this, SLOT(resetImageSlot()));
 
 
     //    QOverload<int> qOverloadInt;
@@ -248,7 +274,7 @@ void ImageStreamWindow::setupCameraWindow()
     //    connect(rgbContainer->getUiElement(), SIGNAL(clicked(bool)),this,SLOT(updateAllParameters()));
 
     connect(imageAcquisitionThread, SIGNAL(renderHistogramSignal(QList<QLineSeries*>, int)), this, SLOT(renderHistogramSlot(QList<QLineSeries*>, int)));
-
+    restoreDeviceSpecificSettings();
 }
 
 void ImageStreamWindow::closeEvent(QCloseEvent *event)
@@ -296,7 +322,7 @@ void ImageStreamWindow::renderImage(QImage qImage)
     // QGRAPHICSVIEW WAY OF STREAMING
     if(!imageAcquisitionThread->getStopAcquisition())
     {
-        qImage = qImage.scaled(graphicsView->width(), graphicsView->height(), fixedAspectRatio);
+        qImage = qImage.scaled(graphicsView->width(), graphicsView->height(), fixedAspectRatio);        
         graphicsPixmapItem->setPixmap(QPixmap::fromImage(qImage));
         this->show();
     }
@@ -401,6 +427,54 @@ void ImageStreamWindow::setFixedAspectRatio()
         fixedAspectRatio = Qt::KeepAspectRatio;
         fixedAspectRatioButton->setIcon(QIcon(":icons/icon-fullscreen.png"));
         qDebug() << "Image aspect ratio set to fixed";
+    }
+
+}
+
+
+void ImageStreamWindow::rotateClockwise90Deg()
+{
+    if (imageAcquisitionThread->imageRotation+90.0 >= 360){
+        imageAcquisitionThread->imageRotation = 0;
+        qDebug() << "Rotation Clockwise: "+ QString::number(imageAcquisitionThread->imageRotation);
+    }
+    else{
+        imageAcquisitionThread->imageRotation += 90;
+        qDebug() << "Rotation Clockwise: "+ QString::number(imageAcquisitionThread->imageRotation);
+    }
+    SettingsStore::addDeviceSpecificSetting(imageAcquisitionThread->getDeviceName(), "rotation", QString::number(imageAcquisitionThread->imageRotation));
+}
+
+void ImageStreamWindow::mirrorImageSlot()
+{
+    imageAcquisitionThread->mirrorImage = !imageAcquisitionThread->mirrorImage;
+    qDebug() << "Mirror Image: "+QString("%1").arg(imageAcquisitionThread->mirrorImage);
+    SettingsStore::addDeviceSpecificSetting(imageAcquisitionThread->getDeviceName(), "mirror", QString("%1").arg(imageAcquisitionThread->mirrorImage));
+}
+
+
+void ImageStreamWindow::resetImageSlot()
+{
+    imageAcquisitionThread->mirrorImage = false;
+    SettingsStore::addDeviceSpecificSetting(imageAcquisitionThread->getDeviceName(), "mirror", QString("%1").arg(imageAcquisitionThread->mirrorImage));
+    qDebug() << "Reset Mirror Image:  "+QString("%1").arg(imageAcquisitionThread->mirrorImage);
+    imageAcquisitionThread->imageRotation = 0.0;
+    SettingsStore::addDeviceSpecificSetting(imageAcquisitionThread->getDeviceName(), "rotation", QString::number(imageAcquisitionThread->imageRotation));
+    qDebug() << "Reset Image Rotation:  "+QString("%1").arg(imageAcquisitionThread->imageRotation);
+    qDebug() << imageAcquisitionThread->getDeviceName();
+
+}
+
+
+void ImageStreamWindow::rotateAntiClockwise90Deg()
+{
+    if (imageAcquisitionThread->imageRotation-90.0 < 0){
+        imageAcquisitionThread->imageRotation = 0;
+        qDebug() << "Rotation Anti-Clockwise: "+ QString::number(imageAcquisitionThread->imageRotation);
+    }
+    else{
+        imageAcquisitionThread->imageRotation -= 90;
+        qDebug() << "Rotation Anti-Clockwise: "+ QString::number(imageAcquisitionThread->imageRotation);
     }
 
 }
