@@ -108,8 +108,7 @@ public slots:
     void startVideoRecord();
     void pauseVideoRecord();
     void stopVideoRecord();
-    void setFixedAspectRatio();
-    void rotateClockwise90Deg();
+    void setFixedAspectRatio();    
     void rotateAntiClockwise90Deg();
     void mirrorImageSlot();
     void resetImageSlot();
