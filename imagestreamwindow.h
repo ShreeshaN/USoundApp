@@ -17,6 +17,7 @@
 #include "parametercontainer.h"
 #include "histogramwindow.h"
 #include <QtCharts/QChartView>
+#include <QPushButton>
 //using namespace QtCharts;
 
 
@@ -76,8 +77,9 @@ public:
 
 
     // Actions
-    QAction *imageSaveButton, *recordButton, *recordPauseButton, *recordStopButton, *grayHistogramButton, *fixedAspectRatioButton;
-    Qt::AspectRatioMode fixedAspectRatio=Qt::KeepAspectRatio;
+    QAction *imageSaveButton, *recordButton, *recordPauseButton, *recordStopButton, *grayHistogramButton, *fixedAspectRatioButton,
+    *rotateClockwise90Button, *rotateAntiClockwise90Button, *mirrorImage, *resetImage;
+    Qt::AspectRatioMode fixedAspectRatio=Qt::KeepAspectRatio;        
 
     // Chart window
     HistogramWindow *histogramWindow;
@@ -97,6 +99,7 @@ public:
 
     CameraParameters getCameraParameters() const;
     void setCameraParameters(const CameraParameters &value);
+    void restoreDeviceSpecificSettings();
 
 public slots:
     void renderImage(QImage qImage);
@@ -106,6 +109,10 @@ public slots:
     void pauseVideoRecord();
     void stopVideoRecord();
     void setFixedAspectRatio();
+    void rotateClockwise90Deg();
+    void rotateAntiClockwise90Deg();
+    void mirrorImageSlot();
+    void resetImageSlot();
     void writeQueue();
     void updateAllParameters();
     void createHistogramWindow();
