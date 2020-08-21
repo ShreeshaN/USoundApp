@@ -3,6 +3,7 @@
 #include<QDebug>
 #include<usoundutils.h>
 
+
 using namespace std;
 
 QSettings *SettingsStore::settings = 0;
@@ -10,7 +11,7 @@ QSettings *SettingsStore::settings = 0;
 void SettingsStore::loadSettings()
 {
     try {
-        settings = new QSettings("USoundSettings.ini", QSettings::IniFormat);
+        settings = new QSettings("USoundSettings.ini", QSettings::IniFormat);        
         //Set Version
         META::APP_VERSION = settings->value("META/APP_VERSION", META::APP_VERSION).toString();
         META::APP_NAME = settings->value("META/APP_NAME", META::APP_NAME).toString();
@@ -95,6 +96,21 @@ void SettingsStore::loadSettings()
 
 }
 
+void SettingsStore::addDeviceSpecificSetting(QString device, QString key, QString value){
+    auto sKey = device+"/"+key;
+    if(settings->childGroups().contains(sKey, Qt::CaseInsensitive)){
+        qDebug() << QString("Key not found. Adding key: %1").arg(sKey);
+        settings->beginGroup(sKey);
+    }
+    qDebug() << QString("Update %1 key with value %2").arg(sKey).arg(value);
+    settings->setValue(sKey, value);
+    SettingsStore::saveSettings();
+}
+
+QVariant SettingsStore::getDeviceSpecificSettings(QString device, QString key, const QVariant &defaultValue){
+    auto sKey = device+"/"+key;
+    return settings->value(sKey, defaultValue);
+}
 
 void SettingsStore::saveSettings()
 {
