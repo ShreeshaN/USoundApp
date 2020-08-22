@@ -470,7 +470,7 @@ void ImageStreamWindow::resetImageSlot()
     imageAcquisitionThread->mirrorImageHorizontal = false;
     SettingsStore::addDeviceSpecificSetting(imageAcquisitionThread->getDeviceName(), "mirrorH", QString("%1").arg(imageAcquisitionThread->mirrorImageHorizontal));
     qDebug() << "Reset Horizontal Mirror Image:  "+QString("%1").arg(imageAcquisitionThread->mirrorImageHorizontal);
-    imageAcquisitionThread->mirrorImageHorizontal = false;
+    imageAcquisitionThread->mirrorImageVertical = false;
     SettingsStore::addDeviceSpecificSetting(imageAcquisitionThread->getDeviceName(), "mirrorV", QString("%1").arg(imageAcquisitionThread->mirrorImageVertical));
     qDebug() << "Reset Vertical Mirror Image:  "+QString("%1").arg(imageAcquisitionThread->mirrorImageVertical);
     imageAcquisitionThread->imageRotation = 0.0;
