@@ -16,9 +16,9 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>480</x>
+     <x>460</x>
      <y>580</y>
-     <width>341</width>
+     <width>361</width>
      <height>32</height>
     </rect>
    </property>
@@ -26,7 +26,7 @@
     <enum>Qt::Horizontal</enum>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Save</set>
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::RestoreDefaults|QDialogButtonBox::Save</set>
    </property>
    <property name="centerButtons">
     <bool>false</bool>
@@ -67,7 +67,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="page">
     <widget class="QLabel" name="label">
@@ -494,71 +494,175 @@
       <attribute name="title">
        <string>Image Options</string>
       </attribute>
-      <widget class="QLabel" name="label_11">
+      <widget class="QLabel" name="label_13">
        <property name="geometry">
         <rect>
-         <x>0</x>
-         <y>10</y>
+         <x>80</x>
+         <y>70</y>
          <width>91</width>
          <height>41</height>
         </rect>
        </property>
        <property name="text">
-        <string>Image Save Format:</string>
+        <string/>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
        </property>
       </widget>
-      <widget class="QComboBox" name="imageSaveFormatToolbox">
+      <widget class="QWidget" name="">
        <property name="geometry">
         <rect>
-         <x>90</x>
+         <x>0</x>
          <y>10</y>
-         <width>201</width>
-         <height>41</height>
+         <width>264</width>
+         <height>162</height>
         </rect>
        </property>
-       <item>
-        <property name="text">
-         <string>TIFF</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>JPEG</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>BMP</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>JP2</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>JPEGXR</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>PNG</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>HOBJ</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>IMA</string>
-        </property>
-       </item>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Image Save Format:</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="imageSaveFormatToolbox">
+            <item>
+             <property name="text">
+              <string>TIFF</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>JPEG</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>BMP</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>JP2</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>JPEGXR</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PNG</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>HOBJ</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>IMA</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0">
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_18">
+            <property name="text">
+             <string>Resolution:</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="resolutionWidth">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_19">
+            <property name="text">
+             <string>width</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="resolutionHeight">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="label_20">
+            <property name="text">
+             <string>height</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0">
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>Grid Lines:</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_16">
+            <property name="text">
+             <string>rows</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="gridColumns">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="label_17">
+            <property name="text">
+             <string>columns</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="gridRows">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
      </widget>
     </widget>

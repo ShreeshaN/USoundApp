@@ -80,6 +80,8 @@ public:
     static QString DATADIR;
     static QString IMAGESAVEDIR;
     static QString VIDEOSAVEDIR;
+
+    static void reset();
 };
 
 class LOGGING_CONFIGURATION{
@@ -89,6 +91,8 @@ public :
     static QString LOG_FILE_PATH;
     static QtMsgType LOG_LEVEL;
     static int LOG_LEVEL_INDEX;
+
+    static void reset();
 };
 
 class IMAGE_CONFIGURATION{
@@ -99,8 +103,8 @@ public:
     static int IMAGE_RESOLUTION_HEIGHT;
     static int IMAGE_GRID_ROWS;
     static int IMAGE_GRID_COLUMNS;
+
+    static void reset();
 };
-
-
 
 #endif // DEFAULTS_H

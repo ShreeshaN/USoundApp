@@ -18,6 +18,9 @@ public:
     explicit Settings(QWidget *parent = nullptr);
     QSettings *settings = new QSettings();
     ~Settings();
+    void loadImageSettings();
+    void loadDirectorySettings();
+    void loadLoggingSettings();
 
 private slots:
 
@@ -36,6 +39,10 @@ private slots:
     void on_logLevelToolBox_currentIndexChanged(int index);
 
     void on_imageSaveFormatToolbox_currentIndexChanged(int index);
+
+    void on_resolutionWidth_editingFinished();
+
+    void on_resolutionHeight_editingFinished();
 
 private:
     Ui::Settings *ui;
