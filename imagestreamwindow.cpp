@@ -83,10 +83,10 @@ void ImageStreamWindow::setupCameraWindow()
     connect(recordStopButton, SIGNAL(triggered()), this, SLOT(stopVideoRecord()));
 
 
-    fixedAspectRatioButton = this->menuBar()->addAction(tr("FixedAspectRatioButton"));
-    fixedAspectRatioButton->setIcon(QIcon(":icons/icon-fullscreen.png"));
-    fixedAspectRatioButton->setCheckable(true);
-    connect(fixedAspectRatioButton, SIGNAL(triggered()), this, SLOT(setFixedAspectRatio()));
+//    fixedAspectRatioButton = this->menuBar()->addAction(tr("FixedAspectRatioButton"));
+//    fixedAspectRatioButton->setIcon(QIcon(":icons/icon-fullscreen.png"));
+//    fixedAspectRatioButton->setCheckable(true);
+//    connect(fixedAspectRatioButton, SIGNAL(triggered()), this, SLOT(setFixedAspectRatio()));
 
     // Histogram
     grayHistogramButton = this->menuBar()->addAction(tr("GrayHistogramButton"));
