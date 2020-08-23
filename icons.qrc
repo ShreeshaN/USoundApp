@@ -12,5 +12,6 @@
         <file>icons/reset.png</file>
         <file>icons/flip-horizontal.png</file>
         <file>icons/flip-vertical.png</file>
+        <file>icons/icon-grid.png</file>
     </qresource>
 </RCC>
