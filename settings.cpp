@@ -33,6 +33,7 @@ Settings::~Settings()
 }
 
 void Settings::loadImageSettings(){
+    qDebug() << "Loading Image Settings . . .";
     ui->imageSaveFormatToolbox->setCurrentIndex(IMAGE_CONFIGURATION::IMAGE_FORMAT_INDEX);
     ui->resolutionWidth->setText(QString::number(IMAGE_CONFIGURATION::IMAGE_RESOLUTION_WIDTH));
     ui->resolutionHeight->setText(QString::number(IMAGE_CONFIGURATION::IMAGE_RESOLUTION_HEIGHT));
@@ -41,6 +42,7 @@ void Settings::loadImageSettings(){
 }
 
 void Settings::loadDirectorySettings(){
+    qDebug() << "Loading Directory Settings . . .";
     ui->applicationDirectoryBrowserText->setText(DIRECTORIES::APPDIR);
     ui->dataDirectoryText->setText(DIRECTORIES::DATADIR);
     ui->imageDirectoryText->setText(DIRECTORIES::IMAGESAVEDIR);
@@ -51,6 +53,7 @@ void Settings::loadDirectorySettings(){
 
 
 void Settings::loadLoggingSettings(){
+    qDebug() << "Loading Logging Settings . . .";
     ui->logFileNameText->setText(LOGGING_CONFIGURATION::FILE_NAME);
     ui->logFileFormatText->setText(LOGGING_CONFIGURATION::FILE_FORMAT);
     ui->logLevelToolBox->setCurrentIndex(LOGGING_CONFIGURATION::LOG_LEVEL_INDEX);
@@ -59,6 +62,7 @@ void Settings::loadLoggingSettings(){
 
 void Settings::on_listWidget_itemSelectionChanged()
 {
+    qDebug() << QString("Changing to %1 configuration page").arg(ui->listWidget->currentItem()->text());
     ui->stackedWidget->setCurrentIndex(ui->listWidget->currentIndex().row());
 }
 
@@ -72,6 +76,7 @@ void Settings::on_applicationDirectoryBrowser_clicked()
     SettingsStore::settings->setValue("DIRECTORIES/APPDIR", DIRECTORIES::APPDIR);
     ui->sampleImageSaveDirText->setText(QString("%1/%2/%3/{Device}/{Timestamp}.%4").arg(DIRECTORIES::APPDIR).arg(DIRECTORIES::DATADIR).arg(DIRECTORIES::IMAGESAVEDIR).arg(IMAGE_CONFIGURATION::IMAGE_FORMAT));
     ui->sampleVideoSaveDirText->setText(QString("%1/%2/%3/{Device}/{Timestamp of Record Start}/{Timestamp}.%4").arg(DIRECTORIES::APPDIR).arg(DIRECTORIES::DATADIR).arg(DIRECTORIES::VIDEOSAVEDIR).arg(IMAGE_CONFIGURATION::IMAGE_FORMAT));
+    qDebug() << QString("Updating Application directory to: %1").arg(selectedDir);
 }
 
 void Settings::on_buttonBox_clicked(QAbstractButton *button)
@@ -83,7 +88,6 @@ void Settings::on_buttonBox_clicked(QAbstractButton *button)
 
     else if(button->text() == "Restore Defaults"){
         auto curIndex = ui->stackedWidget->currentIndex();
-
         if (curIndex==0){
             qDebug() << "Restoring default settings for Directories . . .";
             DIRECTORIES::reset();
@@ -105,11 +109,12 @@ void Settings::on_buttonBox_clicked(QAbstractButton *button)
 }
 
 void Settings::on_dataDirectoryText_editingFinished()
-{
+{    
     DIRECTORIES::DATADIR = ui->dataDirectoryText->text();
     SettingsStore::settings->setValue("DIRECTORIES/DATADIR", DIRECTORIES::DATADIR);
     ui->sampleImageSaveDirText->setText(QString("%1/%2/%3/{Device}/{Timestamp}.%4").arg(DIRECTORIES::APPDIR).arg(DIRECTORIES::DATADIR).arg(DIRECTORIES::IMAGESAVEDIR).arg(IMAGE_CONFIGURATION::IMAGE_FORMAT));
     ui->sampleVideoSaveDirText->setText(QString("%1/%2/%3/{Device}/{Timestamp of Record Start}/{Timestamp}.%4").arg(DIRECTORIES::APPDIR).arg(DIRECTORIES::DATADIR).arg(DIRECTORIES::VIDEOSAVEDIR).arg(IMAGE_CONFIGURATION::IMAGE_FORMAT));
+    qDebug() << QString("Updating data directory to: %1").arg(DIRECTORIES::DATADIR);
 }
 
 void Settings::on_imageDirectoryText_editingFinished()
@@ -117,6 +122,7 @@ void Settings::on_imageDirectoryText_editingFinished()
     DIRECTORIES::IMAGESAVEDIR = ui->imageDirectoryText->text();
     SettingsStore::settings->setValue("DIRECTORIES/IMAGESAVEDIR", DIRECTORIES::IMAGESAVEDIR);
     ui->sampleImageSaveDirText->setText(QString("%1/%2/%3/{Device}/{Timestamp}.%4").arg(DIRECTORIES::APPDIR).arg(DIRECTORIES::DATADIR).arg(DIRECTORIES::IMAGESAVEDIR).arg(IMAGE_CONFIGURATION::IMAGE_FORMAT));
+    qDebug() << QString("Updating image directory to: %1").arg(DIRECTORIES::IMAGESAVEDIR);
 }
 
 void Settings::on_videoDirectoryText_editingFinished()
@@ -124,6 +130,7 @@ void Settings::on_videoDirectoryText_editingFinished()
     DIRECTORIES::VIDEOSAVEDIR = ui->videoDirectoryText->text();
     SettingsStore::settings->setValue("DIRECTORIES/VIDEOSAVEDIR", DIRECTORIES::VIDEOSAVEDIR);
     ui->sampleVideoSaveDirText->setText(QString("%1/%2/%3/{Device}/{Timestamp of Record Start}/{Timestamp}.%4").arg(DIRECTORIES::APPDIR).arg(DIRECTORIES::DATADIR).arg(DIRECTORIES::VIDEOSAVEDIR).arg(IMAGE_CONFIGURATION::IMAGE_FORMAT));
+    qDebug() << QString("Updating video directory to: %1").arg(DIRECTORIES::VIDEOSAVEDIR);
 }
 
 void Settings::on_logLevelToolBox_currentIndexChanged(int index)
@@ -132,23 +139,29 @@ void Settings::on_logLevelToolBox_currentIndexChanged(int index)
     if (index==0){
         LOGGING_CONFIGURATION::LOG_LEVEL = QtDebugMsg;
         SettingsStore::settings->setValue("LOGGING_CONFIGURATION/LOG_LEVEL", "DEBUG");
+        qDebug() << QString("Changing current log level to : DEBUG");
     }
     else if(index == 1){
         LOGGING_CONFIGURATION::LOG_LEVEL = QtInfoMsg;
         SettingsStore::settings->setValue("LOGGING_CONFIGURATION/LOG_LEVEL", "INFO");
+        qDebug() << QString("Changing current log level to : INFO");
     }
     else if(index == 2){
         LOGGING_CONFIGURATION::LOG_LEVEL = QtWarningMsg;
         SettingsStore::settings->setValue("LOGGING_CONFIGURATION/LOG_LEVEL", "WARN");
+        qDebug() << QString("Changing current log level to : WARN");
     }
     else if(index == 3){
         LOGGING_CONFIGURATION::LOG_LEVEL = QtCriticalMsg;
         SettingsStore::settings->setValue("LOGGING_CONFIGURATION/LOG_LEVEL", "CRITICAL");
+        qDebug() << QString("Changing current log level to : CRITICAL");
     }
     else if(index == 4){
         LOGGING_CONFIGURATION::LOG_LEVEL = QtFatalMsg;
         SettingsStore::settings->setValue("LOGGING_CONFIGURATION/LOG_LEVEL", "FATAL");
+        qDebug() << QString("Changing current log level to : FATAL");
     }
+
 }
 
 void Settings::on_imageSaveFormatToolbox_currentIndexChanged(int index)
@@ -181,28 +194,34 @@ void Settings::on_imageSaveFormatToolbox_currentIndexChanged(int index)
     }
     IMAGE_CONFIGURATION::IMAGE_FORMAT_INDEX = index;
     SettingsStore::settings->setValue("IMAGE_CONFIGURATION/IMAGE_FORMAT", IMAGE_CONFIGURATION::IMAGE_FORMAT);
+    qDebug() << QString("Changing current log level to : %1").arg(IMAGE_CONFIGURATION::IMAGE_FORMAT);
+
 }
 
 void Settings::on_resolutionWidth_editingFinished()
 {
     IMAGE_CONFIGURATION::IMAGE_RESOLUTION_WIDTH = ui->resolutionWidth->text().toInt();
     SettingsStore::settings->setValue("IMAGE_CONFIGURATION/IMAGE_RESOLUTION_WIDTH", IMAGE_CONFIGURATION::IMAGE_RESOLUTION_WIDTH);
+    qDebug() << QString("Updating image resolution width to: %1").arg(IMAGE_CONFIGURATION::IMAGE_RESOLUTION_WIDTH);
 }
 
 void Settings::on_resolutionHeight_editingFinished()
 {
     IMAGE_CONFIGURATION::IMAGE_RESOLUTION_HEIGHT = ui->resolutionHeight->text().toInt();
     SettingsStore::settings->setValue("IMAGE_CONFIGURATION/IMAGE_RESOLUTION_HEIGHT", IMAGE_CONFIGURATION::IMAGE_RESOLUTION_HEIGHT);
+    qDebug() << QString("Updating image resolution height to: %1").arg(IMAGE_CONFIGURATION::IMAGE_RESOLUTION_HEIGHT);
 }
 
 void Settings::on_gridRows_editingFinished()
 {
     IMAGE_CONFIGURATION::IMAGE_GRID_ROWS = ui->gridRows->text().toInt();
     SettingsStore::settings->setValue("IMAGE_CONFIGURATION/IMAGE_GRID_ROWS", IMAGE_CONFIGURATION::IMAGE_GRID_ROWS);
+    qDebug() << QString("Updating grid rows to: %1").arg(IMAGE_CONFIGURATION::IMAGE_GRID_ROWS);
 }
 
 void Settings::on_gridColumns_editingFinished()
 {
     IMAGE_CONFIGURATION::IMAGE_GRID_COLUMNS = ui->gridColumns->text().toInt();
     SettingsStore::settings->setValue("IMAGE_CONFIGURATION/IMAGE_GRID_COLUMNS", IMAGE_CONFIGURATION::IMAGE_GRID_COLUMNS);
+    qDebug() << QString("Updating grid columns to: %1").arg(IMAGE_CONFIGURATION::IMAGE_GRID_COLUMNS);
 }
