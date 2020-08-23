@@ -67,7 +67,7 @@ void customLoggingHandler(QtMsgType type, const QMessageLogContext &context, con
 
 int main(int argc, char *argv[])
 {
-    try {
+    try {        
         // Load Settings
         SettingsStore::loadSettings();
         qRegisterMetaType<QList<QLineSeries*> >("QList<QLineSeries*>");
