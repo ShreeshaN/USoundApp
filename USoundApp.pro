@@ -124,22 +124,13 @@ DISTFILES += \
 
 QT += charts
 
-# Copy CameraSettings.ini
+# Copy INI Files
 #mkdata.commands = $(MKDIR) $${DESTDIR_US}
-copySettings.commands = $(COPY_FILE) $${PWD_Settings} $${DESTDIR_US}
-first.depends = $(first)  copySettings #mkdata before copydata
+copy.commands = $(COPY_FILE) $${PWD_Settings} $${DESTDIR_US} &&  $(COPY_FILE) $${PWD_CameraParams} $${DESTDIR_US}
+first.depends = $(first)  copy #mkdata before copydata
 export(first.depends)
 #export(mkdata.commands)
-export(copySettings.commands)
-QMAKE_EXTRA_TARGETS += first copySettings #mkdata before copydata
+export(copy.commands)
+QMAKE_EXTRA_TARGETS += first copy #mkdata before copydata
 
-
-# Copy USoundSettings.ini
-#mkdata.commands = $(MKDIR) $${DESTDIR_US}
-copyCameraParams.commands = $(COPY_FILE) $${PWD_CameraParams} $${DESTDIR_US}
-second.depends = $(second)  copyCameraParams #mkdata before copydata
-export(second.depends)
-#export(mkdata.commands)
-export(copyCameraParams.commands)
-QMAKE_EXTRA_TARGETS += second copyCameraParams #mkdata before copydata
 
