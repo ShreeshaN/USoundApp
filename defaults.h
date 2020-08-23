@@ -93,8 +93,12 @@ public :
 
 class IMAGE_CONFIGURATION{
 public:
-    static QString IMAGEFORMAT;
-    static int IMAGEFORMAT_INDEX;
+    static QString IMAGE_FORMAT;
+    static int IMAGE_FORMAT_INDEX;
+    static int IMAGE_RESOLUTION_WIDTH;
+    static int IMAGE_RESOLUTION_HEIGHT;
+    static int IMAGE_GRID_ROWS;
+    static int IMAGE_GRID_COLUMNS;
 };
 
 

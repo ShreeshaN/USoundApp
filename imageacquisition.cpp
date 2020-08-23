@@ -135,11 +135,20 @@ void ImageAcquisition::run()
             if (mirrorImageVertical){
                 currentImage = currentImage.MirrorImage("row");
             }
+            currentImage = currentImage.ZoomImageSize(1024, 768, "constant");
+
+            if (enableGrid){
+                HalconCpp::HRegion *grid = new HalconCpp::HRegion();
+                HalconCpp::GenGridRegion(grid, 100, 100, "lines", currentImage.Width(), currentImage.Height());
+                currentImage = currentImage.PaintRegion(*grid, 255.0, "fill");
+            }
+
 
             // todo: Prathyush SP currentImage is saved to the disk. Check the importance of the resolution saved?
             //            HImage zoomedImage = currentImage;//.ZoomImageSize(600,600,"constant");
 
             auto conversionStatus = HImage2QImage(currentImage, qImage);
+
             if (!conversionStatus)
             {
                 // failed to convert himage to qimage. Handle it here
@@ -150,7 +159,7 @@ void ImageAcquisition::run()
             emit renderImageSignal(qImage);
 
             if(getRecording()){
-                imageBuffer.enqueue(RecordingBuffer(currentImage, currentRecordSaveDir+QString::number(currentBufferImageCounter)+"."+IMAGE_CONFIGURATION::IMAGEFORMAT));
+                imageBuffer.enqueue(RecordingBuffer(currentImage, currentRecordSaveDir+QString::number(currentBufferImageCounter)+"."+IMAGE_CONFIGURATION::IMAGE_FORMAT));
                 emit updateStatusBarSignal(QString("Images in buffer %1").arg(currentBufferImageCounter));
                 currentBufferImageCounter+=1;
             }
@@ -200,6 +209,9 @@ void ImageAcquisition::run()
         }        
 
     } catch (HalconCpp::HOperatorException &e) {
+        qDebug() << e.ErrorMessage().Text();
+    }
+     catch (HalconCpp::HException &e) {
         qDebug() << e.ErrorMessage().Text();
     }
     catch (std::exception &e) {

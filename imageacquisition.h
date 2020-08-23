@@ -65,8 +65,10 @@ public:
     int currentBufferImageCounter;
     bool writeInProgress=false;
     double imageRotation = 0.0;
+    bool enableGrid = false;
     bool mirrorImageHorizontal=false;
     bool mirrorImageVertical=false;
+    double dynamicWidth=100.0, dynamicHeight=100.0;
 
     // Member Functions
     bool HImage2QImage(HalconCpp::HImage &from, QImage &to);
