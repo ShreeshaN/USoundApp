@@ -44,6 +44,10 @@ private slots:
 
     void on_resolutionHeight_editingFinished();
 
+    void on_gridRows_editingFinished();
+
+    void on_gridColumns_editingFinished();
+
 private:
     Ui::Settings *ui;
 };

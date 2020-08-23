@@ -116,14 +116,8 @@ void ImageAcquisition::run()
 
         while(!stopAcquisition)
         {
-//            long int before = GetTickCount();
-
             currentImage = this->imageAcquisitionHandle.GrabImageAsync(0);
-//            currentImage = this->imageAcquisitionHandle.GrabImage();
-//            long int after = GetTickCount();
-//            qDebug() << before << after<<(after-before)/1000.0;
-
-//            currentImage.GetImageSize(&width,&height);
+            currentImage = currentImage.ZoomImageSize(IMAGE_CONFIGURATION::IMAGE_RESOLUTION_WIDTH, IMAGE_CONFIGURATION::IMAGE_RESOLUTION_HEIGHT, "constant");
             if (imageRotation > 0.0){
                 currentImage = currentImage.RotateImage(imageRotation, "constant");
             }
@@ -135,17 +129,13 @@ void ImageAcquisition::run()
             if (mirrorImageVertical){
                 currentImage = currentImage.MirrorImage("row");
             }
-            currentImage = currentImage.ZoomImageSize(1024, 768, "constant");
+
 
             if (enableGrid){
                 HalconCpp::HRegion *grid = new HalconCpp::HRegion();
-                HalconCpp::GenGridRegion(grid, 100, 100, "lines", currentImage.Width(), currentImage.Height());
+                HalconCpp::GenGridRegion(grid, IMAGE_CONFIGURATION::IMAGE_GRID_ROWS, IMAGE_CONFIGURATION::IMAGE_GRID_COLUMNS, "lines", currentImage.Width(), currentImage.Height());
                 currentImage = currentImage.PaintRegion(*grid, 255.0, "fill");
             }
-
-
-            // todo: Prathyush SP currentImage is saved to the disk. Check the importance of the resolution saved?
-            //            HImage zoomedImage = currentImage;//.ZoomImageSize(600,600,"constant");
 
             auto conversionStatus = HImage2QImage(currentImage, qImage);
 
@@ -154,7 +144,6 @@ void ImageAcquisition::run()
                 // failed to convert himage to qimage. Handle it here
                 QCoreApplication::quit();
             }
-            //        msleep(1000);
 
             emit renderImageSignal(qImage);
 

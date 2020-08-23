@@ -36,6 +36,8 @@ void Settings::loadImageSettings(){
     ui->imageSaveFormatToolbox->setCurrentIndex(IMAGE_CONFIGURATION::IMAGE_FORMAT_INDEX);
     ui->resolutionWidth->setText(QString::number(IMAGE_CONFIGURATION::IMAGE_RESOLUTION_WIDTH));
     ui->resolutionHeight->setText(QString::number(IMAGE_CONFIGURATION::IMAGE_RESOLUTION_HEIGHT));
+    ui->gridRows->setText(QString::number(IMAGE_CONFIGURATION::IMAGE_GRID_ROWS));
+    ui->gridColumns->setText(QString::number(IMAGE_CONFIGURATION::IMAGE_GRID_COLUMNS));
 }
 
 void Settings::loadDirectorySettings(){
@@ -191,4 +193,16 @@ void Settings::on_resolutionHeight_editingFinished()
 {
     IMAGE_CONFIGURATION::IMAGE_RESOLUTION_HEIGHT = ui->resolutionHeight->text().toInt();
     SettingsStore::settings->setValue("IMAGE_CONFIGURATION/IMAGE_RESOLUTION_HEIGHT", IMAGE_CONFIGURATION::IMAGE_RESOLUTION_HEIGHT);
+}
+
+void Settings::on_gridRows_editingFinished()
+{
+    IMAGE_CONFIGURATION::IMAGE_GRID_ROWS = ui->gridRows->text().toInt();
+    SettingsStore::settings->setValue("IMAGE_CONFIGURATION/IMAGE_GRID_ROWS", IMAGE_CONFIGURATION::IMAGE_GRID_ROWS);
+}
+
+void Settings::on_gridColumns_editingFinished()
+{
+    IMAGE_CONFIGURATION::IMAGE_GRID_COLUMNS = ui->gridColumns->text().toInt();
+    SettingsStore::settings->setValue("IMAGE_CONFIGURATION/IMAGE_GRID_COLUMNS", IMAGE_CONFIGURATION::IMAGE_GRID_COLUMNS);
 }

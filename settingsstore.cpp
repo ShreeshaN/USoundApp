@@ -52,41 +52,45 @@ void SettingsStore::loadSettings()
             LOGGING_CONFIGURATION::LOG_LEVEL = QtFatalMsg;
         }
 
-        // Set Image Configuration
-        // Set loglevel
-        auto imageFormat = settings->value("IMAGE_CONFIGURATION/IMAGEFORMAT", IMAGE_CONFIGURATION::IMAGEFORMAT).toString();
+        // Set Image Configuration        
+        auto imageFormat = settings->value("IMAGE_CONFIGURATION/IMAGE_FORMAT", IMAGE_CONFIGURATION::IMAGE_FORMAT).toString();
         if (imageFormat=="tiff"){
-            IMAGE_CONFIGURATION::IMAGEFORMAT_INDEX=0;
-            IMAGE_CONFIGURATION::IMAGEFORMAT=AvailableImageFormats::TIFF;
+            IMAGE_CONFIGURATION::IMAGE_FORMAT_INDEX=0;
+            IMAGE_CONFIGURATION::IMAGE_FORMAT=AvailableImageFormats::TIFF;
         }
         else if(imageFormat == "jpeg"){
-            IMAGE_CONFIGURATION::IMAGEFORMAT_INDEX=1;
-            IMAGE_CONFIGURATION::IMAGEFORMAT=AvailableImageFormats::JPEG;
+            IMAGE_CONFIGURATION::IMAGE_FORMAT_INDEX=1;
+            IMAGE_CONFIGURATION::IMAGE_FORMAT=AvailableImageFormats::JPEG;
         }
         else if(imageFormat == "bmp"){
-            IMAGE_CONFIGURATION::IMAGEFORMAT_INDEX=2;
-            IMAGE_CONFIGURATION::IMAGEFORMAT=AvailableImageFormats::BMP;
+            IMAGE_CONFIGURATION::IMAGE_FORMAT_INDEX=2;
+            IMAGE_CONFIGURATION::IMAGE_FORMAT=AvailableImageFormats::BMP;
         }
         else if(imageFormat == "jp2"){
-            IMAGE_CONFIGURATION::IMAGEFORMAT_INDEX=3;
-            IMAGE_CONFIGURATION::IMAGEFORMAT=AvailableImageFormats::JP2;
+            IMAGE_CONFIGURATION::IMAGE_FORMAT_INDEX=3;
+            IMAGE_CONFIGURATION::IMAGE_FORMAT=AvailableImageFormats::JP2;
         }
         else if(imageFormat == "jpegxr"){
-            IMAGE_CONFIGURATION::IMAGEFORMAT_INDEX=4;
-            IMAGE_CONFIGURATION::IMAGEFORMAT=AvailableImageFormats::JPEGXR;
+            IMAGE_CONFIGURATION::IMAGE_FORMAT_INDEX=4;
+            IMAGE_CONFIGURATION::IMAGE_FORMAT=AvailableImageFormats::JPEGXR;
         }
         else if(imageFormat == "png"){
-            IMAGE_CONFIGURATION::IMAGEFORMAT_INDEX=5;
-            IMAGE_CONFIGURATION::IMAGEFORMAT=AvailableImageFormats::PNG;
+            IMAGE_CONFIGURATION::IMAGE_FORMAT_INDEX=5;
+            IMAGE_CONFIGURATION::IMAGE_FORMAT=AvailableImageFormats::PNG;
         }
         else if(imageFormat == "hobj"){
-            IMAGE_CONFIGURATION::IMAGEFORMAT_INDEX=4;
-            IMAGE_CONFIGURATION::IMAGEFORMAT=AvailableImageFormats::HOBJ;
+            IMAGE_CONFIGURATION::IMAGE_FORMAT_INDEX=4;
+            IMAGE_CONFIGURATION::IMAGE_FORMAT=AvailableImageFormats::HOBJ;
         }
         else if(imageFormat == "ima"){
-            IMAGE_CONFIGURATION::IMAGEFORMAT_INDEX=4;
-            IMAGE_CONFIGURATION::IMAGEFORMAT=AvailableImageFormats::IMA;
+            IMAGE_CONFIGURATION::IMAGE_FORMAT_INDEX=4;
+            IMAGE_CONFIGURATION::IMAGE_FORMAT=AvailableImageFormats::IMA;
         }
+        IMAGE_CONFIGURATION::IMAGE_GRID_ROWS=settings->value("IMAGE_CONFIGURATION/IMAGE_GRID_ROWS", IMAGE_CONFIGURATION::IMAGE_GRID_ROWS).toInt();
+        IMAGE_CONFIGURATION::IMAGE_GRID_COLUMNS=settings->value("IMAGE_CONFIGURATION/IMAGE_GRID_COLUMNS", IMAGE_CONFIGURATION::IMAGE_GRID_COLUMNS).toInt();
+        IMAGE_CONFIGURATION::IMAGE_RESOLUTION_WIDTH=settings->value("IMAGE_CONFIGURATION/IMAGE_RESOLUTION_WIDTH", IMAGE_CONFIGURATION::IMAGE_RESOLUTION_WIDTH).toInt();
+        IMAGE_CONFIGURATION::IMAGE_RESOLUTION_HEIGHT=settings->value("IMAGE_CONFIGURATION/IMAGE_RESOLUTION_HEIGHT", IMAGE_CONFIGURATION::IMAGE_RESOLUTION_HEIGHT).toInt();
+
         qDebug() << "Successfully loaded settings";
     }  catch (std::exception &e) {
         qCritical() << e.what();
