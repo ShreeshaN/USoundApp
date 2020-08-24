@@ -118,6 +118,7 @@ void ImageAcquisition::run()
         {
             currentImage = this->imageAcquisitionHandle.GrabImageAsync(0);
             currentImage = currentImage.ZoomImageSize(IMAGE_CONFIGURATION::IMAGE_RESOLUTION_WIDTH, IMAGE_CONFIGURATION::IMAGE_RESOLUTION_HEIGHT, "constant");
+            width = currentImage.Width(); height = currentImage.Height();
             if (imageRotation > 0.0){
                 currentImage = currentImage.RotateImage(imageRotation, "constant");
             }
@@ -131,11 +132,20 @@ void ImageAcquisition::run()
             }
 
 
-            if (enableGrid){
-                HalconCpp::HRegion *grid = new HalconCpp::HRegion();
-                HalconCpp::GenGridRegion(grid, IMAGE_CONFIGURATION::IMAGE_GRID_ROWS, IMAGE_CONFIGURATION::IMAGE_GRID_COLUMNS, "lines", currentImage.Width(), currentImage.Height());
-                currentImage = currentImage.PaintRegion(*grid, 255.0, "fill");
-            }
+//            if (enableGrid){
+        /*        HalconCpp::HRegion *grid = new HalconCpp::HRegion();
+                //HalconCpp::GenGridRegion(grid, IMAGE_CONFIGURATION::IMAGE_GRID_ROWS, IMAGE_CONFIGURATION::IMAGE_GRID_COLUMNS, "lines", currentImage.Width(), currentImage.Height());
+                qDebug() << QString("Width %1 | Height: %2").arg(currentImage.Width().D()).arg(currentImage.Height().D());
+                HalconCpp::HTuple tuple(255.0, 255.0, 255.0);
+                tuple.Append(255.0);
+                tuple.Append(255.0);
+                tuple.Append(255.0);
+                HalconCpp::GenGridRegion(grid, 10, 10, "lines", currentImage.Width(), currentImage.Height());
+                qDebug() << "Grid Created . . .";
+                currentImage = currentImage.PaintRegion(*grid, tuple, "fill");
+                qDebug() << "Region Painted . . .";*/
+
+//            }
 
             auto conversionStatus = HImage2QImage(currentImage, qImage);
 

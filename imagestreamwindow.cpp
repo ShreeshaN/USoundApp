@@ -22,7 +22,8 @@
 #include <QScrollBar>
 #include <defaultcameraparameternames.h>
 #include <settingsstore.h>
-
+#include <QSplitter>
+#include<intslider.h>
 
 ImageStreamWindow::ImageStreamWindow(ImageAcquisition* imageAcquisitionThread, QWidget *parent) : QMainWindow(parent)
 {
@@ -47,9 +48,9 @@ void ImageStreamWindow::restoreDeviceSpecificSettings(){
         imageAcquisitionThread->imageRotation = SettingsStore::getDeviceSpecificSettings(imageAcquisitionThread->getDeviceName(),
                                                                                          "rotation", QString("0.0")).toDouble();
         imageAcquisitionThread->mirrorImageHorizontal = SettingsStore::getDeviceSpecificSettings(imageAcquisitionThread->getDeviceName(),
-                                                                                         "mirrorH", QString("%1").arg(false)).toBool();
+                                                                                                 "mirrorH", QString("%1").arg(false)).toBool();
         imageAcquisitionThread->mirrorImageVertical = SettingsStore::getDeviceSpecificSettings(imageAcquisitionThread->getDeviceName(),
-                                                                                         "mirrorV", QString("%1").arg(false)).toBool();
+                                                                                               "mirrorV", QString("%1").arg(false)).toBool();
     } catch (std::exception &e) {
         qDebug() << e.what();
     }
@@ -83,10 +84,10 @@ void ImageStreamWindow::setupCameraWindow()
     connect(recordStopButton, SIGNAL(triggered()), this, SLOT(stopVideoRecord()));
 
 
-//    fixedAspectRatioButton = this->menuBar()->addAction(tr("FixedAspectRatioButton"));
-//    fixedAspectRatioButton->setIcon(QIcon(":icons/icon-fullscreen.png"));
-//    fixedAspectRatioButton->setCheckable(true);
-//    connect(fixedAspectRatioButton, SIGNAL(triggered()), this, SLOT(setFixedAspectRatio()));
+    //    fixedAspectRatioButton = this->menuBar()->addAction(tr("FixedAspectRatioButton"));
+    //    fixedAspectRatioButton->setIcon(QIcon(":icons/icon-fullscreen.png"));
+    //    fixedAspectRatioButton->setCheckable(true);
+    //    connect(fixedAspectRatioButton, SIGNAL(triggered()), this, SLOT(setFixedAspectRatio()));
 
     // Histogram
     grayHistogramButton = this->menuBar()->addAction(tr("GrayHistogramButton"));
@@ -113,29 +114,19 @@ void ImageStreamWindow::setupCameraWindow()
     resetImageButton->setIcon(QIcon(":icons/reset.png"));
     connect(resetImageButton, SIGNAL(triggered()), this, SLOT(resetImageSlot()));
 
+    QOverload<double> qOverloadDouble;
+    QOverload<int> qOverloadInt;
 
-    //    QOverload<int> qOverloadInt;
-    //    QOverload<double> qOverloadDouble;
-    QWidget *widget = new QWidget(this);
-    QHBoxLayout * hlayout = new QHBoxLayout(widget);
+    QSplitter *splitter = new QSplitter(Qt::Horizontal);
+    this->setCentralWidget(splitter);
 
-
-    this->setCentralWidget(widget);
     // Setting up graphics view
     graphicsView = new QGraphicsView();
     connect(graphicsView, SIGNAL(QGraphicsView::resizeEvent()), this, SLOT(saveImage()));
-
-    //    connect(graphicsView, SIGNAL(triggered()), this, SLOT(stopVideoRecord()));
-    //    graphicsView->setVerticalScrollBar(new QScrollBar());
-
-    //        this->setCentralWidget(graphicsView);
     graphicsScene = new QGraphicsScene();
-
     graphicsView->setScene(graphicsScene);
     graphicsPixmapItem = new QGraphicsPixmapItem();
-
     graphicsView->scene()->addItem(graphicsPixmapItem);
-    graphicsPixmapItemList.append(graphicsPixmapItem);
 
     QTreeWidget *ccTreeWidget = new QTreeWidget;
     ccTreeWidget->setColumnCount(2);
@@ -144,6 +135,10 @@ void ImageStreamWindow::setupCameraWindow()
     // Set column width for ccTree (Dynamic resize only for image)
     ccTreeWidget->setFixedWidth(350);
     ccTreeWidget->setColumnWidth(0, 250);
+
+    // Set the two UI elements on the camera acquisition screen
+    splitter->addWidget(ccTreeWidget);
+    splitter->addWidget(graphicsView);
 
 
     QList<QTreeWidgetItem *> topLevelItems;
@@ -155,25 +150,58 @@ void ImageStreamWindow::setupCameraWindow()
     topLevelItems.append(exposureControls);
 
     // child
+    // EXPOSURE
+    QHBoxLayout * exposureLayout = new QHBoxLayout(splitter);
+    QWidget *exposureWidget = new QWidget;
+    exposureWidget->setLayout(exposureLayout);
+    exposureLayout->setSpacing(0);
+    exposureLayout->setMargin(0);
     SpinboxContainer *exposureContainer = new SpinboxContainer(3000,cameraParameters.EXPOSURETIME,cameraParameters.EXPOSURETIME,0,1000000,50,imageAcquisitionThread);
-    containers.append(exposureContainer);
+    addToContainer(exposureContainer,exposureContainer->getUiElement()->isEnabled());
+    IntSlider *exposureSlider = new IntSlider(exposureContainer->getParamValue(),0, 1000000, 50, Qt::Horizontal);
+    exposureSlider->setEnabled(exposureContainer->getUiElement()->isEnabled());
+    connect(exposureSlider, &IntSlider::valueChanged,exposureContainer->getUiElement(), &QSpinBox::setValue);
+    connect(exposureContainer->getUiElement(), qOverloadInt(&QSpinBox::valueChanged),exposureSlider,&IntSlider::setValue);
+    exposureLayout->addWidget(exposureContainer->getUiElement());
+    exposureLayout->addWidget(exposureSlider);
     exposureControls->addChild(exposureContainer->getQTreeWidgetItem());
-    ccTreeWidget->setItemWidget(exposureContainer->getQTreeWidgetItem(), 1, exposureContainer->getUiElement());
+    ccTreeWidget->setItemWidget(exposureContainer->getQTreeWidgetItem(), 1, exposureWidget);
 
+
+    // ANALOG GAIN
+    QHBoxLayout * gainLayout = new QHBoxLayout(splitter);
+    QWidget *gainWidget = new QWidget;
+    gainWidget->setLayout(gainLayout);
     DoubleSpinboxContainer *analogGainContainer = new DoubleSpinboxContainer(5,cameraParameters.GAIN,cameraParameters.GAIN,0,36,0.1,imageAcquisitionThread);
-    containers.append(analogGainContainer);
+    addToContainer(analogGainContainer,analogGainContainer->getUiElement()->isEnabled());
+    DoubleSlider *gainSlider = new DoubleSlider(analogGainContainer->getParamValue(),0, 360, 1, Qt::Horizontal);
+    gainSlider->setEnabled(analogGainContainer->getUiElement()->isEnabled());
+    connect(gainSlider, &DoubleSlider::doubleValueChanged,analogGainContainer->getUiElement(), &QDoubleSpinBox::setValue);
+    connect(analogGainContainer->getUiElement(), qOverloadDouble(&QDoubleSpinBox::valueChanged),gainSlider,&DoubleSlider::doubleValueChanged);
+    gainLayout->addWidget(analogGainContainer->getUiElement());
+    gainLayout->addWidget(gainSlider);
     exposureControls->addChild(analogGainContainer->getQTreeWidgetItem());
-    ccTreeWidget->setItemWidget(analogGainContainer->getQTreeWidgetItem(), 1, analogGainContainer->getUiElement());
+    ccTreeWidget->setItemWidget(analogGainContainer->getQTreeWidgetItem(), 1, gainWidget);
 
+    // AUTO GAIN
+    QHBoxLayout * autoGainLayout = new QHBoxLayout(splitter);
+    QWidget *autoGainWidget = new QWidget;
+    autoGainWidget->setLayout(autoGainLayout);
     CheckboxContainer *autoGainContainer = new CheckboxContainer(false,cameraParameters.AUTOGAIN,cameraParameters.AUTOGAIN,"Once","Off",imageAcquisitionThread);
-    containers.append(autoGainContainer);
+    addToContainer(autoGainContainer,autoGainContainer->getUiElement()->isEnabled());
+    autoGainLayout->addWidget(autoGainContainer->getUiElement());
     exposureControls->addChild(autoGainContainer->getQTreeWidgetItem());
-    ccTreeWidget->setItemWidget(autoGainContainer->getQTreeWidgetItem(), 1, autoGainContainer->getUiElement());
+    ccTreeWidget->setItemWidget(autoGainContainer->getQTreeWidgetItem(), 1, autoGainWidget);
 
+    // AUTO EXPOSURE
+    QHBoxLayout * autoExposureLayout = new QHBoxLayout(splitter);
+    QWidget *autoExposureWidget = new QWidget;
+    autoExposureWidget->setLayout(autoExposureLayout);
     CheckboxContainer *autoExposureContainer = new CheckboxContainer(false,cameraParameters.AUTOEXPOSURE,cameraParameters.AUTOEXPOSURE,"Once","Off",imageAcquisitionThread);
-    containers.append(autoExposureContainer);
+    addToContainer(autoExposureContainer,autoExposureContainer->getUiElement()->isEnabled());
+    autoExposureLayout->addWidget(autoExposureContainer->getUiElement());
     exposureControls->addChild(autoExposureContainer->getQTreeWidgetItem());
-    ccTreeWidget->setItemWidget(autoExposureContainer->getQTreeWidgetItem(), 1, autoExposureContainer->getUiElement());
+    ccTreeWidget->setItemWidget(autoExposureContainer->getQTreeWidgetItem(), 1, autoExposureWidget);
 
     // color appearance parameters
     // parent
@@ -184,98 +212,144 @@ void ImageStreamWindow::setupCameraWindow()
 
 
     // child
+    // HUE
+    QHBoxLayout * hueLayout = new QHBoxLayout(splitter);
+    QWidget *hueWidget = new QWidget;
+    hueWidget->setLayout(hueLayout);
     SpinboxContainer *hueContainer = new SpinboxContainer(0,cameraParameters.HUE, cameraParameters.HUE,-180,180,1, imageAcquisitionThread);
-    //    containers.append(hueContainer);
+    addToContainer(hueContainer,hueContainer->getUiElement()->isEnabled());
+    IntSlider *hueSlider = new IntSlider(hueContainer->getParamValue(),-180, 180, 1, Qt::Horizontal);
+    hueSlider->setEnabled(hueContainer->getUiElement()->isEnabled());
+    connect(hueSlider, &IntSlider::valueChanged,hueContainer->getUiElement(), &QSpinBox::setValue);
+    connect(hueContainer->getUiElement(), qOverloadInt(&QSpinBox::valueChanged),hueSlider,&IntSlider::setValue);
+    hueLayout->addWidget(hueContainer->getUiElement());
+    hueLayout->addWidget(hueSlider);
     colorAppearance->addChild(hueContainer->getQTreeWidgetItem());
-    ccTreeWidget->setItemWidget(hueContainer->getQTreeWidgetItem(), 1, hueContainer->getUiElement());
+    ccTreeWidget->setItemWidget(hueContainer->getQTreeWidgetItem(), 1, hueWidget);
 
+    // SATURATION
+    QHBoxLayout * saturationLayout = new QHBoxLayout(splitter);
+    QWidget *saturationWidget = new QWidget;
+    saturationWidget->setLayout(saturationLayout);
     SpinboxContainer *saturationContainer = new SpinboxContainer(0,cameraParameters.SATURATION,cameraParameters.SATURATION,0,100,1, imageAcquisitionThread);
-    //    containers.append(saturationContainer);
+    addToContainer(saturationContainer,saturationContainer->getUiElement()->isEnabled());
+    IntSlider *saturationSlider = new IntSlider(saturationContainer->getParamValue(),0, 100, 1, Qt::Horizontal);
+    saturationSlider->setEnabled(saturationContainer->getUiElement()->isEnabled());
+    connect(saturationSlider, &IntSlider::valueChanged,saturationContainer->getUiElement(), &QSpinBox::setValue);
+    connect(saturationContainer->getUiElement(), qOverloadInt(&QSpinBox::valueChanged),saturationSlider,&IntSlider::setValue);
+    saturationLayout->addWidget(saturationContainer->getUiElement());
+    saturationLayout->addWidget(saturationSlider);
     colorAppearance->addChild(saturationContainer->getQTreeWidgetItem());
-    ccTreeWidget->setItemWidget(saturationContainer->getQTreeWidgetItem(), 1, saturationContainer->getUiElement());
+    ccTreeWidget->setItemWidget(saturationContainer->getQTreeWidgetItem(), 1, saturationWidget);
 
+
+    // BRIGHTNESS
+    QHBoxLayout * brightnessLayout = new QHBoxLayout(splitter);
+    QWidget *brightnessWidget = new QWidget;
+    brightnessWidget->setLayout(brightnessLayout);
     SpinboxContainer *brightnessContainer = new SpinboxContainer(0,cameraParameters.BRIGHTNESS, cameraParameters.BRIGHTNESS,0,100,1, imageAcquisitionThread);
-    //    containers.append(brightnessContainer);
+    addToContainer(brightnessContainer,brightnessContainer->getUiElement()->isEnabled());
+    IntSlider *brightnessSlider = new IntSlider(brightnessContainer->getParamValue(),0, 100, 1, Qt::Horizontal);
+    brightnessSlider->setEnabled(brightnessContainer->getUiElement()->isEnabled());
+    connect(brightnessSlider, &IntSlider::valueChanged,brightnessContainer->getUiElement(), &QSpinBox::setValue);
+    connect(brightnessContainer->getUiElement(), qOverloadInt(&QSpinBox::valueChanged),brightnessSlider,&IntSlider::setValue);
+    brightnessLayout->addWidget(brightnessContainer->getUiElement());
+    brightnessLayout->addWidget(brightnessSlider);
     colorAppearance->addChild(brightnessContainer->getQTreeWidgetItem());
-    ccTreeWidget->setItemWidget(brightnessContainer->getQTreeWidgetItem(), 1, brightnessContainer->getUiElement());
+    ccTreeWidget->setItemWidget(brightnessContainer->getQTreeWidgetItem(), 1, brightnessWidget);
 
+    // CONTRAST
+    QHBoxLayout * contrastLayout = new QHBoxLayout(splitter);
+    QWidget *contrastWidget = new QWidget;
+    contrastWidget->setLayout(contrastLayout);
     SpinboxContainer *contrastContainer = new SpinboxContainer(0,cameraParameters.CONTRAST,cameraParameters.CONTRAST,0,100,1, imageAcquisitionThread);
-    //    containers.append(contrastContainer);
+    addToContainer(contrastContainer,contrastContainer->getUiElement()->isEnabled());
+    IntSlider *contrastSlider = new IntSlider(contrastContainer->getParamValue(),0, 100, 1, Qt::Horizontal);
+    contrastSlider->setEnabled(contrastContainer->getUiElement()->isEnabled());
+    connect(contrastSlider, &IntSlider::valueChanged,contrastContainer->getUiElement(), &QSpinBox::setValue);
+    connect(contrastContainer->getUiElement(), qOverloadInt(&QSpinBox::valueChanged),contrastSlider,&IntSlider::setValue);
+    contrastLayout->addWidget(contrastContainer->getUiElement());
+    contrastLayout->addWidget(contrastSlider);
     colorAppearance->addChild(contrastContainer->getQTreeWidgetItem());
-    ccTreeWidget->setItemWidget(contrastContainer->getQTreeWidgetItem(), 1, contrastContainer->getUiElement());
+    ccTreeWidget->setItemWidget(contrastContainer->getQTreeWidgetItem(), 1, contrastWidget);
 
-    // SLider experiment
-    //    DoubleSlider *slider = new DoubleSlider(Qt::Horizontal);
-    //    slider->setFocusPolicy(Qt::StrongFocus);
-    //    slider->setTickPosition(QSlider::TicksBothSides);
-    //    slider->setTickInterval(0);
-    //    slider->setSingleStep(1);
-    //    slider->setRange(0,4);
-    //    connect(slider, &DoubleSlider::doubleValueChanged,gammaSpinBox, &QDoubleSpinBox::setValue);
-    //    connect(gammaSpinBox, qOverloadDouble(&QDoubleSpinBox::valueChanged),slider,&QSlider::setValue);
-    //    QHBoxLayout * hu = new QHBoxLayout(widget);
-    //    QWidget *gammaWidget = new QWidget;
-    //    gammaWidget->setLayout(hu);
-    //    hu->addWidget(gammaSpinBox);
-    //    hu->addWidget(slider);
-    //    ccTreeWidget->setItemWidget(gamma, 1, gammaWidget);
 
-    //    colorAppearance->addChild(gamma);
-    //    connect(gammaSpinBox, qOverloadDouble(&QDoubleSpinBox::valueChanged), [=]{
-    //        this->imageAcquisitionThread->getCameraControls().setGamma(gammaSpinBox->value());
-    //        imageAcquisitionThread->setValueForParam(cameraParameters.GAMMA,gammaSpinBox->value());
-    //        updateCameraParametersAndDisplay();
-    //    });
-
+    // GAMMA
+    QHBoxLayout * gammaLayout = new QHBoxLayout(splitter);
+    QWidget *gammaWidget = new QWidget;
+    gammaWidget->setLayout(gammaLayout);
     DoubleSpinboxContainer *gammaContainer = new DoubleSpinboxContainer(0,cameraParameters.GAMMA,cameraParameters.GAMMA,0,4,0.1,imageAcquisitionThread);
-    containers.append(gammaContainer);
+    addToContainer(gammaContainer,gammaContainer->getUiElement()->isEnabled());
+    DoubleSlider *gammaSlider = new DoubleSlider(gammaContainer->getParamValue(),0, 40, 1, Qt::Horizontal);
+    connect(gammaSlider, &DoubleSlider::doubleValueChanged,gammaContainer->getUiElement(), &QDoubleSpinBox::setValue);
+    connect(gammaContainer->getUiElement(), qOverloadDouble(&QDoubleSpinBox::valueChanged),gammaSlider,&DoubleSlider::doubleValueChanged);
+    gammaLayout->addWidget(gammaContainer->getUiElement());
+    gammaLayout->addWidget(gammaSlider);
     colorAppearance->addChild(gammaContainer->getQTreeWidgetItem());
-    ccTreeWidget->setItemWidget(gammaContainer->getQTreeWidgetItem(), 1, gammaContainer->getUiElement());
+    ccTreeWidget->setItemWidget(gammaContainer->getQTreeWidgetItem(), 1, gammaWidget);
 
+
+    // ACQUISITION FRAME RATE ENABLER
+    QHBoxLayout * acquisitionFrameRateEnableLayout = new QHBoxLayout(splitter);
+    QWidget *acquisitionFrameRateEnableWidget = new QWidget;
+    acquisitionFrameRateEnableWidget->setLayout(acquisitionFrameRateEnableLayout);
     CheckboxContainer *acquisitionFrameRateEnableContainer = new CheckboxContainer(false,cameraParameters.ACQUISITIONFRAMERATEENABLE,
                                                                                    cameraParameters.ACQUISITIONFRAMERATEENABLE,"","",imageAcquisitionThread);
-    containers.append(acquisitionFrameRateEnableContainer);
+    addToContainer(acquisitionFrameRateEnableContainer,acquisitionFrameRateEnableContainer->getUiElement()->isEnabled());
+    acquisitionFrameRateEnableLayout->addWidget(acquisitionFrameRateEnableContainer->getUiElement());
     colorAppearance->addChild(acquisitionFrameRateEnableContainer->getQTreeWidgetItem());
-    ccTreeWidget->setItemWidget(acquisitionFrameRateEnableContainer->getQTreeWidgetItem(), 1, acquisitionFrameRateEnableContainer->getUiElement());
+    ccTreeWidget->setItemWidget(acquisitionFrameRateEnableContainer->getQTreeWidgetItem(), 1, acquisitionFrameRateEnableWidget);
 
 
-    SpinboxContainer *acquisitionFrameRateContainer = new SpinboxContainer(5,cameraParameters.ACQUISITIONFRAMERATE,cameraParameters.ACQUISITIONFRAMERATE,5,120,1, imageAcquisitionThread);
-    containers.append(acquisitionFrameRateContainer);
+
+    // ACQUISITION FRAME RATE
+    QHBoxLayout * acquisitionFrameRateLayout = new QHBoxLayout(splitter);
+    QWidget *acquisitionFrameRateWidget = new QWidget;
+    acquisitionFrameRateWidget->setLayout(acquisitionFrameRateLayout);
+    SpinboxContainer *acquisitionFrameRateContainer = new SpinboxContainer(10,cameraParameters.ACQUISITIONFRAMERATE,cameraParameters.ACQUISITIONFRAMERATE,1,120,1, imageAcquisitionThread);
+    addToContainer(acquisitionFrameRateContainer,acquisitionFrameRateContainer->getUiElement()->isEnabled());
+    IntSlider *acquisitionFrameRateSlider = new IntSlider(acquisitionFrameRateContainer->getParamValue(),1, 120, 1, Qt::Horizontal);
+    acquisitionFrameRateSlider->setEnabled(acquisitionFrameRateContainer->getUiElement()->isEnabled());
+    connect(acquisitionFrameRateSlider, &IntSlider::valueChanged,acquisitionFrameRateContainer->getUiElement(), &QSpinBox::setValue);
+    connect(acquisitionFrameRateContainer->getUiElement(), qOverloadInt(&QSpinBox::valueChanged),acquisitionFrameRateSlider,&IntSlider::setValue);
+    acquisitionFrameRateLayout->addWidget(acquisitionFrameRateContainer->getUiElement());
+    acquisitionFrameRateLayout->addWidget(acquisitionFrameRateSlider);
     colorAppearance->addChild(acquisitionFrameRateContainer->getQTreeWidgetItem());
-    ccTreeWidget->setItemWidget(acquisitionFrameRateContainer->getQTreeWidgetItem(), 1, acquisitionFrameRateContainer->getUiElement());
+    ccTreeWidget->setItemWidget(acquisitionFrameRateContainer->getQTreeWidgetItem(), 1, acquisitionFrameRateWidget);
 
 
-    CheckboxContainer *monochromeContainer = new CheckboxContainer(false,cameraParameters.MONOCHROME,
-                                                                   cameraParameters.MONOCHROME,"","",imageAcquisitionThread);
-    containers.append(monochromeContainer);
-    colorAppearance->addChild(monochromeContainer->getQTreeWidgetItem());
-    ccTreeWidget->setItemWidget(monochromeContainer->getQTreeWidgetItem(), 1, monochromeContainer->getUiElement());
+//    // MONOCHROME
+//    CheckboxContainer *monochromeContainer = new CheckboxContainer(false,cameraParameters.MONOCHROME,
+//                                                                   cameraParameters.MONOCHROME,"","",imageAcquisitionThread);
+//    addToContainer(monochromeContainer,monochromeContainer->getUiElement()->isEnabled());
+//    colorAppearance->addChild(monochromeContainer->getQTreeWidgetItem());
+//    ccTreeWidget->setItemWidget(monochromeContainer->getQTreeWidgetItem(), 1, monochromeContainer->getUiElement());
 
 
-    CheckboxContainer *rgbContainer = new CheckboxContainer(false,cameraParameters.RGB,
-                                                            cameraParameters.RGB,"","",imageAcquisitionThread);
-    containers.append(rgbContainer);
-    colorAppearance->addChild(rgbContainer->getQTreeWidgetItem());
-    ccTreeWidget->setItemWidget(rgbContainer->getQTreeWidgetItem(), 1, rgbContainer->getUiElement());
+//    // RGB
+//    CheckboxContainer *rgbContainer = new CheckboxContainer(false,cameraParameters.RGB,
+//                                                            cameraParameters.RGB,"","",imageAcquisitionThread);
+//    addToContainer(rgbContainer,rgbContainer->getUiElement()->isEnabled());
+//    colorAppearance->addChild(rgbContainer->getQTreeWidgetItem());
+//    ccTreeWidget->setItemWidget(rgbContainer->getQTreeWidgetItem(), 1, rgbContainer->getUiElement());
+
     ccTreeWidget->addTopLevelItems(topLevelItems);
-
     exposureControls->setExpanded(true);
     colorAppearance->setExpanded(true);
 
     emit updateStatusBar("Frame Rate: "+ QString::number(this->getImageAcquisitionThread()->getValueForParam(cameraParameters.RESULTINGFRAMERATE).D()));
     // resulting frame rate in status bar
-    hlayout->addWidget(ccTreeWidget);
-    hlayout->addWidget(graphicsView);
+
 
     // TODO: THis is a temp fix. The below line of code currently has to be written for every parameter addition. Going forward find a level of abstraction for it.
     connect(exposureContainer->getUiElement(), SIGNAL(valueChanged(int)),this,SLOT(updateAllParameters()));
     connect(analogGainContainer->getUiElement(), SIGNAL(valueChanged(double)),this,SLOT(updateAllParameters()));
     connect(autoGainContainer->getUiElement(), SIGNAL(clicked(bool)),this,SLOT(updateAllParameters()));
     connect(autoExposureContainer->getUiElement(), SIGNAL(clicked(bool)),this,SLOT(updateAllParameters()));
-    //    connect(saturationContainer->getUiElement(), SIGNAL(valueChanged(int)),this,SLOT(updateAllParameters()));
-    //    connect(hueContainer->getUiElement(), SIGNAL(valueChanged(int)),this,SLOT(updateAllParameters()));
-    //    connect(brightnessContainer->getUiElement(), SIGNAL(valueChanged(int)),this,SLOT(updateAllParameters()));
-    //    connect(contrastContainer->getUiElement(), SIGNAL(valueChanged(int)),this,SLOT(updateAllParameters()));
+    connect(saturationContainer->getUiElement(), SIGNAL(valueChanged(int)),this,SLOT(updateAllParameters()));
+    connect(hueContainer->getUiElement(), SIGNAL(valueChanged(int)),this,SLOT(updateAllParameters()));
+    connect(brightnessContainer->getUiElement(), SIGNAL(valueChanged(int)),this,SLOT(updateAllParameters()));
+    connect(contrastContainer->getUiElement(), SIGNAL(valueChanged(int)),this,SLOT(updateAllParameters()));
     connect(acquisitionFrameRateEnableContainer->getUiElement(), SIGNAL(clicked(bool)),this,SLOT(updateAllParameters()));
     connect(gammaContainer->getUiElement(), SIGNAL(valueChanged(double)),this,SLOT(updateAllParameters()));
     connect(acquisitionFrameRateContainer->getUiElement(), SIGNAL(valueChanged(int)),this,SLOT(updateAllParameters()));
@@ -284,6 +358,12 @@ void ImageStreamWindow::setupCameraWindow()
 
     connect(imageAcquisitionThread, SIGNAL(renderHistogramSignal(QList<QLineSeries*>, int)), this, SLOT(renderHistogramSlot(QList<QLineSeries*>, int)));
     restoreDeviceSpecificSettings();
+}
+
+void ImageStreamWindow::addToContainer(ParameterContainer *container, bool exists)
+{
+    if(exists)
+        containers.append(container);
 }
 
 void ImageStreamWindow::closeEvent(QCloseEvent *event)
@@ -333,7 +413,7 @@ void ImageStreamWindow::renderImage(QImage qImage)
     {
         imageAcquisitionThread->dynamicWidth = graphicsView->width();
         imageAcquisitionThread->dynamicHeight = graphicsView->height();
-//        qImage = qImage.scaled(graphicsView->width(), graphicsView->height(), fixedAspectRatio);
+        //        qImage = qImage.scaled(graphicsView->width(), graphicsView->height(), fixedAspectRatio);
         graphicsPixmapItem->setPixmap(QPixmap::fromImage(qImage));
         this->show();
     }
@@ -535,18 +615,18 @@ void ImageStreamWindow::renderHistogramSlot(QList<QLineSeries*> frequencies, int
 {
 
     chartView->chart()->removeAllSeries();
-//    for(int i=0;i<frequencies.size();i++)
-//    {
-//        series->append(i, frequencies[i]);
-//    }
-//        chartView->chart()->addSeries(series);
+    //    for(int i=0;i<frequencies.size();i++)
+    //    {
+    //        series->append(i, frequencies[i]);
+    //    }
+    //        chartView->chart()->addSeries(series);
 
     for(int i=0;i<frequencies.size();i++)
     {
         chartView->chart()->addSeries(frequencies.at(i));
     }
     chartView->chart()->axes(Qt::Vertical).first()->setRange(0, QVariant(max));
-//    chartView->chart()->legend()->markers(series)[0]->setVisible(false);
+    //    chartView->chart()->legend()->markers(series)[0]->setVisible(false);
     grayHistogramButton->setDisabled(true);
     histogramWindow->show();
 }

@@ -18,7 +18,6 @@
 #include "histogramwindow.h"
 #include <QtCharts/QChartView>
 #include <QPushButton>
-//using namespace QtCharts;
 
 
 
@@ -101,6 +100,7 @@ public:
     CameraParameters getCameraParameters() const;
     void setCameraParameters(const CameraParameters &value);
     void restoreDeviceSpecificSettings();
+    void addToContainer(ParameterContainer *container, bool exists);
 
 public slots:
     void renderImage(QImage qImage);
