@@ -132,20 +132,16 @@ void ImageAcquisition::run()
             }
 
 
-//            if (enableGrid){
-        /*        HalconCpp::HRegion *grid = new HalconCpp::HRegion();
-                //HalconCpp::GenGridRegion(grid, IMAGE_CONFIGURATION::IMAGE_GRID_ROWS, IMAGE_CONFIGURATION::IMAGE_GRID_COLUMNS, "lines", currentImage.Width(), currentImage.Height());
-                qDebug() << QString("Width %1 | Height: %2").arg(currentImage.Width().D()).arg(currentImage.Height().D());
-                HalconCpp::HTuple tuple(255.0, 255.0, 255.0);
-                tuple.Append(255.0);
-                tuple.Append(255.0);
-                tuple.Append(255.0);
-                HalconCpp::GenGridRegion(grid, 10, 10, "lines", currentImage.Width(), currentImage.Height());
-                qDebug() << "Grid Created . . .";
-                currentImage = currentImage.PaintRegion(*grid, tuple, "fill");
-                qDebug() << "Region Painted . . .";*/
-
-//            }
+            if (enableGrid){
+                HalconCpp::HRegion *grid = new HalconCpp::HRegion();
+                HalconCpp::HTuple *tuple= new HalconCpp::HTuple;
+                tuple->Append(255.0);
+                tuple->Append(255.0);
+                tuple->Append(255.0);
+                HalconCpp::HString *str =  new HalconCpp::HString("fill");
+                HalconCpp::GenGridRegion(grid, IMAGE_CONFIGURATION::IMAGE_GRID_ROWS, IMAGE_CONFIGURATION::IMAGE_GRID_COLUMNS, "lines", currentImage.Width(), currentImage.Height());
+                currentImage = currentImage.PaintRegion(*grid, *tuple, *str);
+            }
 
             auto conversionStatus = HImage2QImage(currentImage, qImage);
 
