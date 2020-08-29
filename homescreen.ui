@@ -184,7 +184,7 @@
             <enum>Qt::RichText</enum>
            </property>
            <property name="pixmap">
-            <pixmap resource="images.qrc">:/images/chslt_cropped.png</pixmap>
+            <pixmap>:/images/chslt_cropped.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -363,8 +363,6 @@
    </property>
   </action>
  </widget>
- <resources>
-  <include location="images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

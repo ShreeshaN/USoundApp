@@ -118,6 +118,7 @@ void ImageAcquisition::run()
         {
             currentImage = this->imageAcquisitionHandle.GrabImageAsync(0);
             currentImage = currentImage.ZoomImageSize(IMAGE_CONFIGURATION::IMAGE_RESOLUTION_WIDTH, IMAGE_CONFIGURATION::IMAGE_RESOLUTION_HEIGHT, "constant");
+            width = currentImage.Width(); height = currentImage.Height();
             if (imageRotation > 0.0){
                 currentImage = currentImage.RotateImage(imageRotation, "constant");
             }
@@ -133,8 +134,13 @@ void ImageAcquisition::run()
 
             if (enableGrid){
                 HalconCpp::HRegion *grid = new HalconCpp::HRegion();
+                HalconCpp::HTuple *tuple= new HalconCpp::HTuple;
+                tuple->Append(255.0);
+                tuple->Append(255.0);
+                tuple->Append(255.0);
+                HalconCpp::HString *str =  new HalconCpp::HString("fill");
                 HalconCpp::GenGridRegion(grid, IMAGE_CONFIGURATION::IMAGE_GRID_ROWS, IMAGE_CONFIGURATION::IMAGE_GRID_COLUMNS, "lines", currentImage.Width(), currentImage.Height());
-                currentImage = currentImage.PaintRegion(*grid, 255.0, "fill");
+                currentImage = currentImage.PaintRegion(*grid, *tuple, *str);
             }
 
             auto conversionStatus = HImage2QImage(currentImage, qImage);

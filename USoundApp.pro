@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 # Adding c++17 support
 CONFIG += c++17
+CONFIG += qwt
 
 TARGETDIR = ''
 
@@ -78,6 +79,7 @@ HEADERS += \
     doubleslider.h \
     doublespinboxcontainer.h \
     histogramwindow.h \
+    intslider.h \
     settings.h \
     settingsstore.h \
     singleton.h \
