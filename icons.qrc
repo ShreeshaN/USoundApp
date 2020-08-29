@@ -13,5 +13,7 @@
         <file>icons/flip-horizontal.png</file>
         <file>icons/flip-vertical.png</file>
         <file>icons/icon-grid.png</file>
+        <file>icons/line.png</file>
+        <file>icons/select.png</file>
     </qresource>
 </RCC>

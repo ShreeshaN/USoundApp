@@ -64,6 +64,7 @@ public:
     QCheckBox *monochromeCheckbox;
     QTreeWidgetItem *rgb;
     QCheckBox *rgbCheckbox;
+    QToolBar* toolBar;
 
     QLabel *imageLabel;
 
@@ -79,7 +80,7 @@ public:
     // Actions
     QAction *imageSaveButton, *recordButton, *recordPauseButton, *recordStopButton, *grayHistogramButton, *fixedAspectRatioButton,
     *rotateClockwise90Button, *rotateAntiClockwise90Button, *mirrorImageHorizontalButton, *mirrorImageVerticalButton, *resetImageButton,
-    *gridButton;
+    *gridButton, *selectButton, *lineButton;
     Qt::AspectRatioMode fixedAspectRatio=Qt::KeepAspectRatio;        
 
     // Chart window
@@ -101,6 +102,7 @@ public:
     CameraParameters getCameraParameters() const;
     void setCameraParameters(const CameraParameters &value);
     void restoreDeviceSpecificSettings();
+    void createToolBar();
 
 public slots:
     void renderImage(QImage qImage);
@@ -115,6 +117,8 @@ public slots:
     void mirrorImageVerticalSlot();
     void gridSlot();
     void resetImageSlot();
+    void selectSlot();
+    void lineSlot();
     void writeQueue();
     void updateAllParameters();
     void createHistogramWindow();

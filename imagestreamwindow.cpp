@@ -57,15 +57,18 @@ void ImageStreamWindow::restoreDeviceSpecificSettings(){
 
 void ImageStreamWindow::setupCameraWindow()
 {
+    // Add new ToolBar
+    toolBar = new QToolBar;
+    addToolBar(Qt::TopToolBarArea, toolBar);
 
-    imageSaveButton = this->menuBar()->addAction(tr("ImageSaveButton"));
-    imageSaveButton->setIcon(QIcon(":icons/icon-single-shot.png"));
-    // todo: Prathyush SP -> Fix issue with tooltip display
+    imageSaveButton = toolBar->addAction(tr("ImageSaveButton"));
+    imageSaveButton->setIcon(QIcon(":icons/icon-single-shot.png"));        
     imageSaveButton->setToolTip("Save frame");
     connect(imageSaveButton, SIGNAL(triggered()), this, SLOT(saveImage()));
 
-    recordButton = this->menuBar()->addAction(tr("RecordButton"));
+    recordButton = toolBar->addAction(tr("RecordButton"));
     recordButton->setIcon(QIcon(":icons/icon-media-record.png"));
+    recordButton->setToolTip("Start recording frames");
     connect(recordButton, SIGNAL(triggered()), this, SLOT(startVideoRecord()));
 
     QTimer *timer = new QTimer(this);
@@ -77,9 +80,10 @@ void ImageStreamWindow::setupCameraWindow()
     //    recordPauseButton->setDisabled(true);
     //    connect(recordPauseButton, SIGNAL(triggered()), this, SLOT(pauseVideoRecord()));
 
-    recordStopButton = this->menuBar()->addAction(tr("RecordStopButton"));
+    recordStopButton = toolBar->addAction(tr("RecordStopButton"));
     recordStopButton->setIcon(QIcon(":icons/icon-media-playback-stop.png"));
     recordStopButton->setDisabled(true);
+    recordStopButton->setToolTip("Stop recording frames");
     connect(recordStopButton, SIGNAL(triggered()), this, SLOT(stopVideoRecord()));
 
 
@@ -89,29 +93,48 @@ void ImageStreamWindow::setupCameraWindow()
 //    connect(fixedAspectRatioButton, SIGNAL(triggered()), this, SLOT(setFixedAspectRatio()));
 
     // Histogram
-    grayHistogramButton = this->menuBar()->addAction(tr("GrayHistogramButton"));
+    grayHistogramButton = toolBar->addAction(tr("GrayHistogramButton"));
     grayHistogramButton->setIcon(QIcon(":icons/icon-histogram.png"));
+    grayHistogramButton->setToolTip("Open Histogram");
     connect(grayHistogramButton, SIGNAL(triggered()), this, SLOT(createHistogramWindow()));
 
-    rotateClockwise90Button = this->menuBar()->addAction(tr("Rotate90Button"));
+    rotateClockwise90Button = toolBar->addAction(tr("Rotate90Button"));
     rotateClockwise90Button->setIcon(QIcon(":icons/rotate.png"));
+    rotateClockwise90Button->setToolTip("Rotate anticlockwise by 90");
     connect(rotateClockwise90Button, SIGNAL(triggered()), this, SLOT(rotateAntiClockwise90Deg()));
 
-    mirrorImageHorizontalButton = this->menuBar()->addAction(tr("MirrorImageHorizontalButton"));
+    mirrorImageHorizontalButton = toolBar->addAction(tr("MirrorImageHorizontalButton"));
     mirrorImageHorizontalButton->setIcon(QIcon(":icons/flip-horizontal.png"));
+    mirrorImageHorizontalButton->setToolTip("Flip horizontal");
+    mirrorImageHorizontalButton->setCheckable(true);
     connect(mirrorImageHorizontalButton, SIGNAL(triggered()), this, SLOT(mirrorImageHorizontalSlot()));
 
-    mirrorImageVerticalButton = this->menuBar()->addAction(tr("MirrorImageVerticalButton"));
+    mirrorImageVerticalButton = toolBar->addAction(tr("MirrorImageVerticalButton"));
     mirrorImageVerticalButton->setIcon(QIcon(":icons/flip-vertical.png"));
+    mirrorImageVerticalButton->setToolTip("Flip Vertical");
+    mirrorImageVerticalButton->setCheckable(true);
     connect(mirrorImageVerticalButton, SIGNAL(triggered()), this, SLOT(mirrorImageVerticalSlot()));
 
-    gridButton = this->menuBar()->addAction(tr("GridImage"));
+    gridButton = toolBar->addAction(tr("GridImageButton"));
     gridButton->setIcon(QIcon(":icons/icon-grid.png"));
+    gridButton->setToolTip("Enable Grid Lines");
+    gridButton->setCheckable(true);
     connect(gridButton, SIGNAL(triggered()), this, SLOT(gridSlot()));
 
-    resetImageButton = this->menuBar()->addAction(tr("ResetImage"));
+    resetImageButton = toolBar->addAction(tr("ResetImageButton"));
     resetImageButton->setIcon(QIcon(":icons/reset.png"));
+    resetImageButton->setToolTip("Reset");
     connect(resetImageButton, SIGNAL(triggered()), this, SLOT(resetImageSlot()));
+
+    selectButton =toolBar->addAction(tr("SelectButton"));
+    selectButton->setIcon(QIcon(":icons/select.png"));
+    selectButton->setToolTip("Select Lines");
+    connect(selectButton, SIGNAL(triggered()), this, SLOT(selectSlot()));
+
+    lineButton = toolBar->addAction(tr("LineButton"));
+    lineButton->setIcon(QIcon(":icons/line.png"));
+    lineButton->setToolTip("Draw Lines");
+    connect(lineButton, SIGNAL(triggered()), this, SLOT(lineSlot()));
 
 
     //    QOverload<int> qOverloadInt;
@@ -284,6 +307,23 @@ void ImageStreamWindow::setupCameraWindow()
 
     connect(imageAcquisitionThread, SIGNAL(renderHistogramSignal(QList<QLineSeries*>, int)), this, SLOT(renderHistogramSlot(QList<QLineSeries*>, int)));
     restoreDeviceSpecificSettings();
+//    createToolBar();
+}
+
+void ImageStreamWindow::createToolBar(){
+    toolBar = new QToolBar;
+    addToolBar(Qt::TopToolBarArea, toolBar);
+    toolBar->addAction(imageSaveButton);
+    toolBar->addAction(recordButton);
+    toolBar->addAction(recordStopButton);
+    toolBar->addAction(grayHistogramButton);
+    toolBar->addAction(rotateClockwise90Button);
+    toolBar->addAction(mirrorImageVerticalButton);
+    toolBar->addAction(mirrorImageHorizontalButton);
+    toolBar->addAction(gridButton);
+    toolBar->addAction(selectButton);
+    toolBar->addAction(lineButton);
+//    toolBar->addAction(lineAction);
 }
 
 void ImageStreamWindow::closeEvent(QCloseEvent *event)
@@ -492,6 +532,15 @@ void ImageStreamWindow::resetImageSlot()
     imageAcquisitionThread->enableGrid = false;
     qDebug() << "Reset Grid:  "+QString("%1").arg(imageAcquisitionThread->enableGrid);
 }
+
+void ImageStreamWindow::selectSlot(){
+    qDebug() << "Select Clicked";
+}
+
+void ImageStreamWindow::lineSlot(){
+    qDebug() << "Line Clicked";
+}
+
 
 
 
