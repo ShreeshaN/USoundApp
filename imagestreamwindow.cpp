@@ -22,6 +22,7 @@
 #include <QScrollBar>
 #include <defaultcameraparameternames.h>
 #include <settingsstore.h>
+#include <customscene.h>
 
 
 ImageStreamWindow::ImageStreamWindow(ImageAcquisition* imageAcquisitionThread, QWidget *parent) : QMainWindow(parent)
@@ -129,12 +130,24 @@ void ImageStreamWindow::setupCameraWindow()
     selectButton =toolBar->addAction(tr("SelectButton"));
     selectButton->setIcon(QIcon(":icons/select.png"));
     selectButton->setToolTip("Select Lines");
-    connect(selectButton, SIGNAL(triggered()), this, SLOT(selectSlot()));
+    selectButton->setCheckable(true);
+    selectButton->setData(int(CustomScene::SelectObject));
+//    connect(selectButton, SIGNAL(triggered()), this, SLOT(selectSlot()));
 
     lineButton = toolBar->addAction(tr("LineButton"));
     lineButton->setIcon(QIcon(":icons/line.png"));
     lineButton->setToolTip("Draw Lines");
-    connect(lineButton, SIGNAL(triggered()), this, SLOT(lineSlot()));
+    lineButton->setCheckable(true);
+    lineButton->setData(int(CustomScene::DrawLine));
+//    connect(lineButton, SIGNAL(triggered()), this, SLOT(lineSlot()));
+
+    actionGroup = new QActionGroup(this);
+    actionGroup->setExclusive(true);
+    actionGroup->addAction(lineButton);
+    actionGroup->addAction(selectButton);
+
+    connect(actionGroup, SIGNAL(triggered(QAction*)),
+            this, SLOT(actionGroupClicked(QAction*)));
 
 
     //    QOverload<int> qOverloadInt;
@@ -142,19 +155,29 @@ void ImageStreamWindow::setupCameraWindow()
     QWidget *widget = new QWidget(this);
     QHBoxLayout * hlayout = new QHBoxLayout(widget);
 
-
     this->setCentralWidget(widget);
+
+
+
+//    graphicsScene = new CustomScene(this);
+//    graphicsScene->setSceneRect(0,0,1200,1200);
+//    graphicsView = new QGraphicsView(graphicsScene);
+//    graphicsView->setRenderHints(QPainter::Antialiasing);
+//    this->setCentralWidget(graphicsView);
+
+
     // Setting up graphics view
     graphicsView = new QGraphicsView();
-    connect(graphicsView, SIGNAL(QGraphicsView::resizeEvent()), this, SLOT(saveImage()));
+//    connect(graphicsView, SIGNAL(QGraphicsView::resizeEvent()), this, SLOT(saveImage()));
 
     //    connect(graphicsView, SIGNAL(triggered()), this, SLOT(stopVideoRecord()));
     //    graphicsView->setVerticalScrollBar(new QScrollBar());
 
     //        this->setCentralWidget(graphicsView);
-    graphicsScene = new QGraphicsScene();
+    graphicsScene = new CustomScene(this);
 
     graphicsView->setScene(graphicsScene);
+    graphicsView->setRenderHints(QPainter::Antialiasing);
     graphicsPixmapItem = new QGraphicsPixmapItem();
 
     graphicsView->scene()->addItem(graphicsPixmapItem);
@@ -541,6 +564,10 @@ void ImageStreamWindow::lineSlot(){
     qDebug() << "Line Clicked";
 }
 
+void ImageStreamWindow::actionGroupClicked(QAction *action){
+    qDebug() << "In here";
+    graphicsScene->setMode(CustomScene::Mode(action->data().toInt()));
+}
 
 
 

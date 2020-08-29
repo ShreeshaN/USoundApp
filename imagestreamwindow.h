@@ -18,6 +18,7 @@
 #include "histogramwindow.h"
 #include <QtCharts/QChartView>
 #include <QPushButton>
+#include <customscene.h>
 //using namespace QtCharts;
 
 
@@ -69,8 +70,9 @@ public:
     QLabel *imageLabel;
 
     QGraphicsView *graphicsView;
-    QGraphicsScene *graphicsScene;
+    CustomScene *graphicsScene;
     QGraphicsPixmapItem *graphicsPixmapItem;
+    QActionGroup *actionGroup;
 
     QList<QGraphicsPixmapItem *> graphicsPixmapItemList;
     QList<ParameterContainer *> containers;
@@ -119,6 +121,7 @@ public slots:
     void resetImageSlot();
     void selectSlot();
     void lineSlot();
+    void actionGroupClicked(QAction*);
     void writeQueue();
     void updateAllParameters();
     void createHistogramWindow();
