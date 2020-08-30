@@ -57,6 +57,7 @@ else {
 
 SOURCES += \
     checkboxcontainer.cpp \
+    customscene.cpp \
     defaultcameraparameternames.cpp \
     defaults.cpp \
     doublespinboxcontainer.cpp \
@@ -73,6 +74,7 @@ SOURCES += \
 
 HEADERS += \
     checkboxcontainer.h \
+    customscene.h \
     defaultcameraparameternames.h \
     defaults.h \
     doubleslider.h \
