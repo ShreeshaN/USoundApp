@@ -7,6 +7,14 @@
 #include <QAction>
 #include <QGraphicsView>
 #include <QKeyEvent>
+#include <QList>
+
+class Line{
+public:
+    QGraphicsItem *item;
+    QPointF origPoint;
+    QPointF endPoint;
+};
 
 class CustomScene : public QGraphicsScene
 {
@@ -22,6 +30,8 @@ protected:
 private:
     Mode sceneMode;
     QPointF origPoint;
+    QPointF endPoint;
+    QMap<QGraphicsItem*, QLine*> lines;
     QGraphicsLineItem* itemToDraw;
     void makeItemsControllable(bool areControllable);
 };
