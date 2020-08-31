@@ -22,8 +22,6 @@
 //using namespace QtCharts;
 
 
-
-
 class ImageStreamWindow : public QMainWindow
 {
     Q_OBJECT
@@ -105,6 +103,7 @@ public:
     void setCameraParameters(const CameraParameters &value);
     void restoreDeviceSpecificSettings();
     void createToolBar();
+    void addToContainer(ParameterContainer *container, bool exists);
 
 public slots:
     void renderImage(QImage qImage);

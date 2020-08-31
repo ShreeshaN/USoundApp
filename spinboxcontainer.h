@@ -15,6 +15,7 @@
 #    include <HALCONCppxl/HalconCpp.h>
 #  endif
 #endif
+#include<intslider.h>
 
 
 class SpinboxContainer: public QSpinBox, public ParameterContainer
@@ -54,6 +55,9 @@ public:
     void setValueInHardware(std::string) override;
     void setValueInHardware(bool) override;
 
+    IntSlider *getIntSlider() const;
+    void setIntSlider(IntSlider *value);
+
 private:
     double paramValue;
     std::string cameraParameterName, uiDisplayName;
@@ -63,6 +67,7 @@ private:
     int maxVal, minVal;
     QOverload<int> qOverloadInt;
     HalconCpp::HTuple val;
+    IntSlider *intSlider;
 
 
 };

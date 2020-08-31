@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 # Adding c++17 support
 CONFIG += c++17
+CONFIG += qwt
 
 TARGETDIR = ''
 
@@ -60,6 +61,7 @@ SOURCES += \
     customscene.cpp \
     defaultcameraparameternames.cpp \
     defaults.cpp \
+    doubleslider.cpp \
     doublespinboxcontainer.cpp \
     histogramwindow.cpp \
     imageacquisition.cpp \
@@ -80,6 +82,7 @@ HEADERS += \
     doubleslider.h \
     doublespinboxcontainer.h \
     histogramwindow.h \
+    intslider.h \
     settings.h \
     settingsstore.h \
     singleton.h \

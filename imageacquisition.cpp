@@ -118,6 +118,7 @@ void ImageAcquisition::run()
         {
             currentImage = this->imageAcquisitionHandle.GrabImageAsync(0);
             currentImage = currentImage.ZoomImageSize(IMAGE_CONFIGURATION::IMAGE_RESOLUTION_WIDTH, IMAGE_CONFIGURATION::IMAGE_RESOLUTION_HEIGHT, "constant");
+            width = currentImage.Width(); height = currentImage.Height();
             if (imageRotation > 0.0){
                 currentImage = currentImage.RotateImage(imageRotation, "constant");
             }
@@ -133,8 +134,13 @@ void ImageAcquisition::run()
 
             if (enableGrid){
                 HalconCpp::HRegion *grid = new HalconCpp::HRegion();
+                HalconCpp::HTuple *tuple= new HalconCpp::HTuple;
+                tuple->Append(255.0);
+                tuple->Append(255.0);
+                tuple->Append(255.0);
+                HalconCpp::HString *str =  new HalconCpp::HString("fill");
                 HalconCpp::GenGridRegion(grid, IMAGE_CONFIGURATION::IMAGE_GRID_ROWS, IMAGE_CONFIGURATION::IMAGE_GRID_COLUMNS, "lines", currentImage.Width(), currentImage.Height());
-                currentImage = currentImage.PaintRegion(*grid, 255.0, "fill");
+                currentImage = currentImage.PaintRegion(*grid, *tuple, *str);
             }
 
             auto conversionStatus = HImage2QImage(currentImage, qImage);
@@ -282,55 +288,11 @@ bool ImageAcquisition::HImage2QImage(HalconCpp::HImage &from, QImage &to)
     return false;
 }
 
-void ImageAcquisition::setupCameraControls()
-{
-
-    // First set all default parameters.
-    HalconCpp::HTuple value;
-
-    //        Hue
-    //        Saturation
-    //        Brightness
-    //        Contrast
-    //        Monochrome
-    //        RGB
-    // The above parameters need to be set too, but Basler does not have a keyword matching these params
-    // If a wrong parameter name is entered the only watch to gracefully check it is using try catch
-    try {
-        //        value = this->getValueForParam(BaslerCameraParameterNames::GAIN);
-        //        cameraControls.setAnalogGain(value.D());
-
-        //        value = this->getValueForParam(BaslerCameraParameterNames::AUTOEXPOSURE);
-        //        QString::compare(value.S().Text(),"Off") == 0?cameraControls.setAutoExposure(false):cameraControls.setAutoExposure(true);
-
-
-        //        value = this->getValueForParam(BaslerCameraParameterNames::AUTOGAIN);
-        //        QString::compare(value.S().Text(),"Off") == 0?cameraControls.setAutoGain(false):cameraControls.setAutoGain(true);
-
-        ////        value = this->getValueForParam(BaslerCameraParameterNames::EXPOSURETIME);
-        ////        cameraControls.setExposureTime(value.D());
-
-        //        value = this->getValueForParam(BaslerCameraParameterNames::GAMMA);
-        //        cameraControls.setGamma(value.D());
-
-        //        value = this->getValueForParam(BaslerCameraParameterNames::ACQUISITIONFRAMERATE);
-        //        cameraControls.setAcquisitionFrameRate(value.D());
-
-        //        value = this->getValueForParam(BaslerCameraParameterNames::ACQUISITIONFRAMERATEENABLE);
-        //        cameraControls.setAcquisitionFrameRateEnable(value.I()==0?false:true);
-
-        //        value = this->getValueForParam(BaslerCameraParameterNames::RESULTINGFRAMERATE);
-        //        cameraControls.setResultingFrameRate(value.D());
-
-    } catch (HalconCpp::HException &e) {
-        qDebug() << "Exception occured while accessing camera parameter "<<e.ErrorMessage().Text() << e.ErrorCode();
-    }
-}
-
 HalconCpp::HTuple ImageAcquisition::getValueForParam(std::string paramString)
 {
     HalconCpp::HTuple paramValue;
     try {
+        qDebug() << "Param string" << paramString.c_str();
         paramValue = imageAcquisitionHandle.GetFramegrabberParam(paramString.c_str());
     } catch (std::exception &e) {
         qDebug() << e.what();
