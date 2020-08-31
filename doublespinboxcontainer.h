@@ -15,13 +15,22 @@
 #    include <HALCONCppxl/HalconCpp.h>
 #  endif
 #endif
-
+#include "doubleslider.h"
 
 class DoubleSpinboxContainer : public QDoubleSpinBox, public ParameterContainer
 {
     Q_OBJECT
 public:
-    DoubleSpinboxContainer(double defaultParameterValue, std::string cameraParameterName, std::string uiDisplayName, double minVal, double maxVal, double step ,ImageAcquisition* imageAcquisitionThread, QWidget *parent = nullptr);
+    DoubleSpinboxContainer(double defaultParameterValue, std::string cameraParameterName, std::string uiDisplayName, double minVal, double maxVal, double step, double multiplierForSlider, ImageAcquisition* imageAcquisitionThread, QWidget *parent = nullptr);
+
+    void updateParamValue() override;
+    void displayParamValue() override;
+    void setValueInHardware(int) override;
+    void setValueInHardware(double) override;
+    void setValueInHardware(std::string) override;
+    void setValueInHardware(bool) override;
+
+
     ImageAcquisition *getImageAcquisitionThread() const;
     void setImageAcquisitionThread(ImageAcquisition *value);
 
@@ -49,13 +58,11 @@ public:
     double getStep() const;
     void setStep(double value);
 
-    void updateParamValue() override;
-    void displayParamValue() override;
-    void setValueInHardware(int) override;
-    void setValueInHardware(double) override;
-    void setValueInHardware(std::string) override;
-    void setValueInHardware(bool) override;
+    DoubleSlider *getDoubleSlider() const;
+    void setDoubleSlider(DoubleSlider *value);
 
+    double getMultiplierForSlider() const;
+    void setMultiplierForSlider(double value);
 
 private:
     double paramValue;
@@ -66,6 +73,8 @@ private:
     double maxVal, minVal, step;
     QOverload<double> qOverloadDouble;
     HalconCpp::HTuple val;
+    DoubleSlider *doubleSlider;
+    double multiplierForSlider; // This is required because QT does not support setting double values for sliders, so a multiplying factor is taken into account
 
 };
 

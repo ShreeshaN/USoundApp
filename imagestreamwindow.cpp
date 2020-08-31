@@ -11,7 +11,6 @@
 #include<QDir>
 #include <QtGui>
 #include "usoundutils.h"
-#include "doubleslider.h"
 #include <queuewriter.h>
 #include<defaults.h>
 #include<QDir>
@@ -23,7 +22,6 @@
 #include <defaultcameraparameternames.h>
 #include <settingsstore.h>
 #include <QSplitter>
-#include<intslider.h>
 
 ImageStreamWindow::ImageStreamWindow(ImageAcquisition* imageAcquisitionThread, QWidget *parent) : QMainWindow(parent)
 {
@@ -158,12 +156,8 @@ void ImageStreamWindow::setupCameraWindow()
     exposureLayout->setMargin(0);
     SpinboxContainer *exposureContainer = new SpinboxContainer(3000,cameraParameters.EXPOSURETIME,cameraParameters.EXPOSURETIME,0,1000000,50,imageAcquisitionThread);
     addToContainer(exposureContainer,exposureContainer->getUiElement()->isEnabled());
-    IntSlider *exposureSlider = new IntSlider(exposureContainer->getParamValue(),0, 1000000, 50, Qt::Horizontal);
-    exposureSlider->setEnabled(exposureContainer->getUiElement()->isEnabled());
-    connect(exposureSlider, &IntSlider::valueChanged,exposureContainer->getUiElement(), &QSpinBox::setValue);
-    connect(exposureContainer->getUiElement(), qOverloadInt(&QSpinBox::valueChanged),exposureSlider,&IntSlider::setValue);
     exposureLayout->addWidget(exposureContainer->getUiElement());
-    exposureLayout->addWidget(exposureSlider);
+    exposureLayout->addWidget(exposureContainer->getIntSlider());
     exposureControls->addChild(exposureContainer->getQTreeWidgetItem());
     ccTreeWidget->setItemWidget(exposureContainer->getQTreeWidgetItem(), 1, exposureWidget);
 
@@ -172,14 +166,10 @@ void ImageStreamWindow::setupCameraWindow()
     QHBoxLayout * gainLayout = new QHBoxLayout(splitter);
     QWidget *gainWidget = new QWidget;
     gainWidget->setLayout(gainLayout);
-    DoubleSpinboxContainer *analogGainContainer = new DoubleSpinboxContainer(5,cameraParameters.GAIN,cameraParameters.GAIN,0,36,0.1,imageAcquisitionThread);
+    DoubleSpinboxContainer *analogGainContainer = new DoubleSpinboxContainer(5,cameraParameters.GAIN,cameraParameters.GAIN,0,36,0.1,10,imageAcquisitionThread);
     addToContainer(analogGainContainer,analogGainContainer->getUiElement()->isEnabled());
-    DoubleSlider *gainSlider = new DoubleSlider(analogGainContainer->getParamValue(),0, 360, 1, Qt::Horizontal);
-    gainSlider->setEnabled(analogGainContainer->getUiElement()->isEnabled());
-    connect(gainSlider, &DoubleSlider::doubleValueChanged,analogGainContainer->getUiElement(), &QDoubleSpinBox::setValue);
-    connect(analogGainContainer->getUiElement(), qOverloadDouble(&QDoubleSpinBox::valueChanged),gainSlider,&DoubleSlider::doubleValueChanged);
     gainLayout->addWidget(analogGainContainer->getUiElement());
-    gainLayout->addWidget(gainSlider);
+    gainLayout->addWidget(analogGainContainer->getDoubleSlider());
     exposureControls->addChild(analogGainContainer->getQTreeWidgetItem());
     ccTreeWidget->setItemWidget(analogGainContainer->getQTreeWidgetItem(), 1, gainWidget);
 
@@ -216,14 +206,10 @@ void ImageStreamWindow::setupCameraWindow()
     QHBoxLayout * hueLayout = new QHBoxLayout(splitter);
     QWidget *hueWidget = new QWidget;
     hueWidget->setLayout(hueLayout);
-    SpinboxContainer *hueContainer = new SpinboxContainer(0,cameraParameters.HUE, cameraParameters.HUE,-180,180,1, imageAcquisitionThread);
+    SpinboxContainer *hueContainer = new SpinboxContainer(0,cameraParameters.HUE, cameraParameters.HUE,-40,40,1, imageAcquisitionThread);
     addToContainer(hueContainer,hueContainer->getUiElement()->isEnabled());
-    IntSlider *hueSlider = new IntSlider(hueContainer->getParamValue(),-180, 180, 1, Qt::Horizontal);
-    hueSlider->setEnabled(hueContainer->getUiElement()->isEnabled());
-    connect(hueSlider, &IntSlider::valueChanged,hueContainer->getUiElement(), &QSpinBox::setValue);
-    connect(hueContainer->getUiElement(), qOverloadInt(&QSpinBox::valueChanged),hueSlider,&IntSlider::setValue);
     hueLayout->addWidget(hueContainer->getUiElement());
-    hueLayout->addWidget(hueSlider);
+    hueLayout->addWidget(hueContainer->getIntSlider());
     colorAppearance->addChild(hueContainer->getQTreeWidgetItem());
     ccTreeWidget->setItemWidget(hueContainer->getQTreeWidgetItem(), 1, hueWidget);
 
@@ -231,14 +217,10 @@ void ImageStreamWindow::setupCameraWindow()
     QHBoxLayout * saturationLayout = new QHBoxLayout(splitter);
     QWidget *saturationWidget = new QWidget;
     saturationWidget->setLayout(saturationLayout);
-    SpinboxContainer *saturationContainer = new SpinboxContainer(0,cameraParameters.SATURATION,cameraParameters.SATURATION,0,100,1, imageAcquisitionThread);
+    DoubleSpinboxContainer *saturationContainer = new DoubleSpinboxContainer(0,cameraParameters.SATURATION,cameraParameters.SATURATION,0,2,1, 10, imageAcquisitionThread);
     addToContainer(saturationContainer,saturationContainer->getUiElement()->isEnabled());
-    IntSlider *saturationSlider = new IntSlider(saturationContainer->getParamValue(),0, 100, 1, Qt::Horizontal);
-    saturationSlider->setEnabled(saturationContainer->getUiElement()->isEnabled());
-    connect(saturationSlider, &IntSlider::valueChanged,saturationContainer->getUiElement(), &QSpinBox::setValue);
-    connect(saturationContainer->getUiElement(), qOverloadInt(&QSpinBox::valueChanged),saturationSlider,&IntSlider::setValue);
     saturationLayout->addWidget(saturationContainer->getUiElement());
-    saturationLayout->addWidget(saturationSlider);
+    saturationLayout->addWidget(saturationContainer->getDoubleSlider());
     colorAppearance->addChild(saturationContainer->getQTreeWidgetItem());
     ccTreeWidget->setItemWidget(saturationContainer->getQTreeWidgetItem(), 1, saturationWidget);
 
@@ -249,12 +231,8 @@ void ImageStreamWindow::setupCameraWindow()
     brightnessWidget->setLayout(brightnessLayout);
     SpinboxContainer *brightnessContainer = new SpinboxContainer(0,cameraParameters.BRIGHTNESS, cameraParameters.BRIGHTNESS,0,100,1, imageAcquisitionThread);
     addToContainer(brightnessContainer,brightnessContainer->getUiElement()->isEnabled());
-    IntSlider *brightnessSlider = new IntSlider(brightnessContainer->getParamValue(),0, 100, 1, Qt::Horizontal);
-    brightnessSlider->setEnabled(brightnessContainer->getUiElement()->isEnabled());
-    connect(brightnessSlider, &IntSlider::valueChanged,brightnessContainer->getUiElement(), &QSpinBox::setValue);
-    connect(brightnessContainer->getUiElement(), qOverloadInt(&QSpinBox::valueChanged),brightnessSlider,&IntSlider::setValue);
     brightnessLayout->addWidget(brightnessContainer->getUiElement());
-    brightnessLayout->addWidget(brightnessSlider);
+    brightnessLayout->addWidget(brightnessContainer->getIntSlider());
     colorAppearance->addChild(brightnessContainer->getQTreeWidgetItem());
     ccTreeWidget->setItemWidget(brightnessContainer->getQTreeWidgetItem(), 1, brightnessWidget);
 
@@ -264,12 +242,8 @@ void ImageStreamWindow::setupCameraWindow()
     contrastWidget->setLayout(contrastLayout);
     SpinboxContainer *contrastContainer = new SpinboxContainer(0,cameraParameters.CONTRAST,cameraParameters.CONTRAST,0,100,1, imageAcquisitionThread);
     addToContainer(contrastContainer,contrastContainer->getUiElement()->isEnabled());
-    IntSlider *contrastSlider = new IntSlider(contrastContainer->getParamValue(),0, 100, 1, Qt::Horizontal);
-    contrastSlider->setEnabled(contrastContainer->getUiElement()->isEnabled());
-    connect(contrastSlider, &IntSlider::valueChanged,contrastContainer->getUiElement(), &QSpinBox::setValue);
-    connect(contrastContainer->getUiElement(), qOverloadInt(&QSpinBox::valueChanged),contrastSlider,&IntSlider::setValue);
     contrastLayout->addWidget(contrastContainer->getUiElement());
-    contrastLayout->addWidget(contrastSlider);
+    contrastLayout->addWidget(contrastContainer->getIntSlider());
     colorAppearance->addChild(contrastContainer->getQTreeWidgetItem());
     ccTreeWidget->setItemWidget(contrastContainer->getQTreeWidgetItem(), 1, contrastWidget);
 
@@ -278,15 +252,14 @@ void ImageStreamWindow::setupCameraWindow()
     QHBoxLayout * gammaLayout = new QHBoxLayout(splitter);
     QWidget *gammaWidget = new QWidget;
     gammaWidget->setLayout(gammaLayout);
-    DoubleSpinboxContainer *gammaContainer = new DoubleSpinboxContainer(0,cameraParameters.GAMMA,cameraParameters.GAMMA,0,4,0.1,imageAcquisitionThread);
+    DoubleSpinboxContainer *gammaContainer = new DoubleSpinboxContainer(0,cameraParameters.GAMMA,cameraParameters.GAMMA,0,4,0.1,10,imageAcquisitionThread);
     addToContainer(gammaContainer,gammaContainer->getUiElement()->isEnabled());
-    DoubleSlider *gammaSlider = new DoubleSlider(gammaContainer->getParamValue(),0, 40, 1, Qt::Horizontal);
-    connect(gammaSlider, &DoubleSlider::doubleValueChanged,gammaContainer->getUiElement(), &QDoubleSpinBox::setValue);
-    connect(gammaContainer->getUiElement(), qOverloadDouble(&QDoubleSpinBox::valueChanged),gammaSlider,&DoubleSlider::doubleValueChanged);
     gammaLayout->addWidget(gammaContainer->getUiElement());
-    gammaLayout->addWidget(gammaSlider);
+    gammaLayout->addWidget(gammaContainer->getDoubleSlider());
     colorAppearance->addChild(gammaContainer->getQTreeWidgetItem());
     ccTreeWidget->setItemWidget(gammaContainer->getQTreeWidgetItem(), 1, gammaWidget);
+
+
 
 
     // ACQUISITION FRAME RATE ENABLER
@@ -308,12 +281,8 @@ void ImageStreamWindow::setupCameraWindow()
     acquisitionFrameRateWidget->setLayout(acquisitionFrameRateLayout);
     SpinboxContainer *acquisitionFrameRateContainer = new SpinboxContainer(10,cameraParameters.ACQUISITIONFRAMERATE,cameraParameters.ACQUISITIONFRAMERATE,1,120,1, imageAcquisitionThread);
     addToContainer(acquisitionFrameRateContainer,acquisitionFrameRateContainer->getUiElement()->isEnabled());
-    IntSlider *acquisitionFrameRateSlider = new IntSlider(acquisitionFrameRateContainer->getParamValue(),1, 120, 1, Qt::Horizontal);
-    acquisitionFrameRateSlider->setEnabled(acquisitionFrameRateContainer->getUiElement()->isEnabled());
-    connect(acquisitionFrameRateSlider, &IntSlider::valueChanged,acquisitionFrameRateContainer->getUiElement(), &QSpinBox::setValue);
-    connect(acquisitionFrameRateContainer->getUiElement(), qOverloadInt(&QSpinBox::valueChanged),acquisitionFrameRateSlider,&IntSlider::setValue);
     acquisitionFrameRateLayout->addWidget(acquisitionFrameRateContainer->getUiElement());
-    acquisitionFrameRateLayout->addWidget(acquisitionFrameRateSlider);
+    acquisitionFrameRateLayout->addWidget(acquisitionFrameRateContainer->getIntSlider());
     colorAppearance->addChild(acquisitionFrameRateContainer->getQTreeWidgetItem());
     ccTreeWidget->setItemWidget(acquisitionFrameRateContainer->getQTreeWidgetItem(), 1, acquisitionFrameRateWidget);
 
@@ -353,6 +322,7 @@ void ImageStreamWindow::setupCameraWindow()
     connect(acquisitionFrameRateEnableContainer->getUiElement(), SIGNAL(clicked(bool)),this,SLOT(updateAllParameters()));
     connect(gammaContainer->getUiElement(), SIGNAL(valueChanged(double)),this,SLOT(updateAllParameters()));
     connect(acquisitionFrameRateContainer->getUiElement(), SIGNAL(valueChanged(int)),this,SLOT(updateAllParameters()));
+
     //    connect(monochromeContainer->getUiElement(), SIGNAL(clicked(bool)),this,SLOT(updateAllParameters()));
     //    connect(rgbContainer->getUiElement(), SIGNAL(clicked(bool)),this,SLOT(updateAllParameters()));
 

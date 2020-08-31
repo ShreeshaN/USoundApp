@@ -1,6 +1,6 @@
 #include "doublespinboxcontainer.h"
 
-DoubleSpinboxContainer::DoubleSpinboxContainer(double defaultParameterValue, std::string cameraParameterName,std::string uiDisplayName, double minVal, double maxVal, double step, ImageAcquisition *imageAcquisitionThread, QWidget *parent): QDoubleSpinBox(parent)
+DoubleSpinboxContainer::DoubleSpinboxContainer(double defaultParameterValue, std::string cameraParameterName,std::string uiDisplayName, double minVal, double maxVal, double step, double multiplierForSlider,ImageAcquisition *imageAcquisitionThread, QWidget *parent): QDoubleSpinBox(parent)
 {
     this->paramValue = defaultParameterValue;
     this->uiDisplayName = uiDisplayName;
@@ -13,6 +13,13 @@ DoubleSpinboxContainer::DoubleSpinboxContainer(double defaultParameterValue, std
     uiElement->setRange(minVal, maxVal);
     uiElement->setSingleStep(step);
     this->imageAcquisitionThread = imageAcquisitionThread;
+    this->multiplierForSlider = multiplierForSlider;
+
+
+    doubleSlider = new DoubleSlider(this->getParamValue(), minVal, maxVal*multiplierForSlider, step*multiplierForSlider, multiplierForSlider, Qt::Horizontal);
+    connect(doubleSlider, &DoubleSlider::doubleValueChanged,uiElement, &QDoubleSpinBox::setValue);
+    connect(uiElement, qOverloadDouble(&QDoubleSpinBox::valueChanged),doubleSlider,&DoubleSlider::setDoubleValue);
+
     updateParamValue();
     displayParamValue();
 
@@ -33,14 +40,13 @@ void DoubleSpinboxContainer::updateParamValue()
         {
             val = this->imageAcquisitionThread->getValueForParam(cameraParameterName);
             this->paramValue = val.D();
-            //        qDebug() << "Updating param"<<cameraParameterName.c_str() << "New value "<< paramValue;
-
         }
 
     } catch (HalconCpp::HException &e) {
-        if (e.ErrorCode() == 5330)
+        if (e.ErrorCode() == 5330) // Halcon error for invalid query string name or query string not supported by hardware
         {
             this->uiElement->setDisabled(true);
+            this->doubleSlider->setDisabled(true);
             this->setParameterAvailable(false);
             qDebug() << "Either parameter name is incorrect or the camera make does not support it>>"<< cameraParameterName.c_str()<< "<<. Currently, a default value is set";
         }
@@ -55,10 +61,16 @@ void DoubleSpinboxContainer::displayParamValue()
 {
     if(this->getParameterAvailable())
     {
+        // Signals should be emitted only when values are set from UI, not programatically.
+        // UI Element
         this->uiElement->blockSignals(true);
         this->uiElement->setValue(paramValue);
         this->uiElement->blockSignals(false);
-        // qDebug() << "Displaying value of "<<cameraParameterName.c_str() << "param value"<< paramValue;
+
+        // slider
+        this->doubleSlider->blockSignals(true);
+        this->doubleSlider->setSliderPosition(paramValue*10);
+        this->doubleSlider->blockSignals(false);
     }
 
 }
@@ -72,14 +84,36 @@ void DoubleSpinboxContainer::setValueInHardware(bool)
 {
 
 }
+
+DoubleSlider *DoubleSpinboxContainer::getDoubleSlider() const
+{
+    return doubleSlider;
+}
+
+void DoubleSpinboxContainer::setDoubleSlider(DoubleSlider *value)
+{
+    doubleSlider = value;
+}
+
+double DoubleSpinboxContainer::getMultiplierForSlider() const
+{
+    return multiplierForSlider;
+}
+
+void DoubleSpinboxContainer::setMultiplierForSlider(double value)
+{
+    multiplierForSlider = value;
+}
+
+
 void DoubleSpinboxContainer::setValueInHardware(std::string)
 {
-
+    
 }
 
 void DoubleSpinboxContainer::setValueInHardware(int)
 {
-
+    
 }
 
 

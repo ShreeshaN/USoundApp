@@ -60,6 +60,7 @@ SOURCES += \
     checkboxcontainer.cpp \
     defaultcameraparameternames.cpp \
     defaults.cpp \
+    doubleslider.cpp \
     doublespinboxcontainer.cpp \
     histogramwindow.cpp \
     imageacquisition.cpp \

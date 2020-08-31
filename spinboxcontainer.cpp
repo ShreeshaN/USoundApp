@@ -14,13 +14,18 @@ SpinboxContainer::SpinboxContainer(double defaultParameterValue, std::string cam
     uiElement->setRange(minVal, maxVal);
     uiElement->setSingleStep(step);
     this->imageAcquisitionThread = imageAcquisitionThread;
+
+    // Slider
+    intSlider = new IntSlider(this->getParamValue(),minVal, maxVal, step, Qt::Horizontal);
+    connect(intSlider, &IntSlider::valueChanged,uiElement, &QSpinBox::setValue);
+    connect(uiElement, qOverloadInt(&QSpinBox::valueChanged),intSlider,&IntSlider::setValue);
+
     updateParamValue();
     displayParamValue();
 
     // connect
     QObject::connect(this->uiElement, qOverloadInt(&QSpinBox::valueChanged),[=]{
         this->setValueInHardware((double)uiElement->value());
-        //     mssleep(150);
         this->updateParamValue();
         this->displayParamValue();
     });
@@ -43,6 +48,7 @@ void SpinboxContainer::updateParamValue()
         if (e.ErrorCode() == 5330)
         {
             this->uiElement->setDisabled(true);
+            this->intSlider->setDisabled(true);
             this->setParameterAvailable(false);
             qDebug() << "Either parameter name is incorrect or the camera make does not support it>>"<< cameraParameterName.c_str()<< "<<. Currently, a default value is set";
         }
@@ -56,10 +62,16 @@ void SpinboxContainer::displayParamValue()
 {
     if(this->getParameterAvailable())
     {
-        //    qDebug() << "Displaying value of "<<cameraParameterName.c_str() << "param value"<< paramValue;
+        // UI element
         this->uiElement->blockSignals(true);
         this->uiElement->setValue(paramValue);
         this->uiElement->blockSignals(false);
+
+
+        // SLider
+        this->intSlider->blockSignals(true);
+        this->intSlider->setSliderPosition(paramValue);
+        this->intSlider->blockSignals(false);
     }
 }
 
@@ -76,6 +88,16 @@ void SpinboxContainer::setValueInHardware(double paramValue)
 void SpinboxContainer::setValueInHardware(bool)
 {
 
+}
+
+IntSlider *SpinboxContainer::getIntSlider() const
+{
+    return intSlider;
+}
+
+void SpinboxContainer::setIntSlider(IntSlider *value)
+{
+    intSlider = value;
 }
 
 void SpinboxContainer::setValueInHardware(std::string)
