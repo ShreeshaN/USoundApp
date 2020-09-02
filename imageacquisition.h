@@ -51,6 +51,7 @@ private:
 //    CameraControls cameraControls;
     bool recording=false;
     bool supplyHistogramData=false;
+    bool supplyHistogramDataForLine=false;
 
 
 
@@ -69,6 +70,10 @@ public:
     bool mirrorImageHorizontal=false;
     bool mirrorImageVertical=false;
     double dynamicWidth=100.0, dynamicHeight=100.0;
+
+    // Coordinates for histogram
+    int x1,x2,y1,y2;
+    QList<QPair<int, int>> coordinates;
 
     // Member Functions
     bool HImage2QImage(HalconCpp::HImage &from, QImage &to);
@@ -101,10 +106,17 @@ public:
     QString getDeviceMake() const;
     void setDeviceMake(const QString &value);
 
+    bool getSupplyHistogramDataForLine() const;
+    void setSupplyHistogramDataForLine(bool value);
+
+    QList<QPair<int, int> > getCoordinates() const;
+    void setCoordinates(const QList<QPair<int, int> > &value);
+
 signals:
     void renderImageSignal(QImage);
     void updateStatusBarSignal(QString);
     void renderHistogramSignal(QList<QLineSeries*>, int);
+    void renderHistogramSignalForLine(QList<QLineSeries*>, int);
 
 
 protected:

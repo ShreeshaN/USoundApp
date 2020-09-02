@@ -153,9 +153,6 @@ void ImageStreamWindow::setupCameraWindow()
     graphicsView = new QGraphicsView();
     graphicsScene = new CustomScene(this);
 
-    QOverload<double> qOverloadDouble;
-    QOverload<int> qOverloadInt;
-
     QSplitter *splitter = new QSplitter(Qt::Horizontal);
     this->setCentralWidget(splitter);
 
@@ -365,6 +362,7 @@ void ImageStreamWindow::setupCameraWindow()
     //    connect(rgbContainer->getUiElement(), SIGNAL(clicked(bool)),this,SLOT(updateAllParameters()));
 
     connect(imageAcquisitionThread, SIGNAL(renderHistogramSignal(QList<QLineSeries*>, int)), this, SLOT(renderHistogramSlot(QList<QLineSeries*>, int)));
+    connect(imageAcquisitionThread, SIGNAL(renderHistogramSignalForLine(QList<QLineSeries*>, int)), this, SLOT(renderHistogramSlotForLine(QList<QLineSeries*>, int)));
     restoreDeviceSpecificSettings();
 //    createToolBar();
 }
@@ -607,7 +605,6 @@ void ImageStreamWindow::lineSlot(){
 }
 
 void ImageStreamWindow::actionGroupClicked(QAction *action){
-    qDebug() << "In here";
     graphicsScene->setMode(CustomScene::Mode(action->data().toInt()));
 }
 
@@ -639,31 +636,130 @@ void ImageStreamWindow::createHistogramWindow()
     chart->addSeries(series);
     chart->setTitle("Histogram");
     chart->createDefaultAxes();
-    chart->axes(Qt::Horizontal).first()->setRange(0, 255);
 
     chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
     histogramWindow->setCentralWidget(chartView);
     histogramWindow->resize(500, 400);
     histogramWindow->setWindowTitle(this->imageAcquisitionThread->getDeviceName());
-    this->imageAcquisitionThread->setSupplyHistogramData(true);
+    if(graphicsScene->getLines().size()==0) // Requesting Histogram for whole image
+    {
+        this->imageAcquisitionThread->setSupplyHistogramData(true);
+    }
+    else{ // Requesting Histogram for the line drawn on image
+        QLine *line = graphicsScene->getLines().last();
+        this->imageAcquisitionThread->x1=line->x1();
+        this->imageAcquisitionThread->x2=line->x2();
+        this->imageAcquisitionThread->y1=line->y1();
+        this->imageAcquisitionThread->y2=line->y2();
+        QList<QPair<int,int>> coordinates;
+        if(line->x2()-line->x1()==0) // Vertical Line
+        {
+            for(int y=line->y1();y<line->y2();y++)
+            {
+                coordinates.append(qMakePair(line->x1(),y));
+            }
+            this->imageAcquisitionThread->setCoordinates(coordinates);
+        }
+
+        else if(line->y2()-line->y1()==0) // Horizontal Line
+        {
+            for(int x=line->x1();x<line->x2();x++)
+            {
+                coordinates.append(qMakePair(x,line->y1()));
+            }
+            this->imageAcquisitionThread->setCoordinates(coordinates);
+        }
+        // 1. First decide axis (Whether its a horizontal line or vertical line.
+        //    If horizontal then iterate over x1 till x2. If vertical then iterate over y1 till y2
+        // 2. Then check if there is a need to flip x1y1 with x2y2.
+        //    Reason for this is, since we iterate from x1 till x2 or from y1 to y2,
+        //    we want to be sure that x1 and y1 is always lesser than x2 and y2
+        // 3. Then check if x2-x1>y2-y2, this condition is satisfied if the line looks horizontal.
+        //    In this case, iterate over x axis and find y cordinates, else iterate over y axis and find x coordinates
+        else{ // Rectangle
+            double lineSlope = (line->y2()-line->y1())/(double)(line->x2()-line->x1());
+            double intercept = line->y2() - (lineSlope*line->x2()); // Find y-intercept 'c' using y=mx+c formula
+            int newX1,newX2,newY1,newY2;
+            if(abs(line->x2() - line->x1()) > abs(line->y2()-line->y1())) // Line looks like horizontal. Therefore iterate over x1 and x2
+            {
+                // Meaning, the drawn line ends before the start point i.e start point > end point(wrt x coordinate, since line looks like horizontal).
+                // This condition makes sure x1y1 is always lesser than x2y2, by comparing the points x1 and x2
+                // THis is necessary because we iterate from x1 towards x2 so we want x1 to be lesser than x2
+                if(line->x1()>line->x2()){
+                    newX1 = line->x2(); newY1 = line->y2();
+                    newX2 = line->x1(); newY2 = line->y1();
+
+
+                }
+                else{ // Else, the drawn line ends after the start point
+                    newX1 = line->x1(); newY1 = line->y1();
+                    newX2 = line->x2(); newY2 = line->y2();
+
+                }
+
+                // Now iterate over the new x1 till x2, find y for every x and append them to coordinates list.
+                // These are the points lying on the diagonal
+                for(int x=newX1;x<newX2;x++)
+                {
+                    int y = (lineSlope * x) + intercept; // y=mc+c. If required, use ciel and floor values to round it off to nearest interest.
+                    coordinates.append(qMakePair(x,y));
+                }
+            }
+            else{ // Line looks vertical, therefore iterate over y1 and y2
+
+                // Meaning, the drawn line ends below the start point i.e start point > end point
+                // This condition makes sure x1y1 is always lesser than x2y2, by comparing the points y1 and y2
+                // THis is necessary becuase we iterate from y1 towards y2 so we want y1 to be lesser than y2
+                if(line->y1()>line->y2()){
+                    newX1 = line->x2(); newY1 = line->y2();
+                    newX2 = line->x1(); newY2 = line->y1();
+
+
+                }
+                else{ // Else, the line drawn ends above the start point
+                    newX1 = line->x1(); newY1 = line->y1();
+                    newX2 = line->x2(); newY2 = line->y2();
+
+
+                }
+                // Now iterate over the new y1 till y2, find x for every y and append them to coordinates list.
+                // These are the points lying on the diagonal
+                for(int y=newY1;y<newY2;y++)
+                {
+                    int x = (y-intercept)/lineSlope;
+                    coordinates.append(qMakePair(x,y));
+                }
+            }
+        }
+        this->imageAcquisitionThread->setCoordinates(coordinates);
+        this->imageAcquisitionThread->setSupplyHistogramDataForLine(true);
+    }
 }
 
 void ImageStreamWindow::renderHistogramSlot(QList<QLineSeries*> frequencies, int max)
 {
+        chartView->chart()->axes(Qt::Horizontal).first()->setRange(0, 255);
+        chartView->chart()->removeAllSeries();
+        for(int i=0;i<frequencies.size();i++)
+        {
+            chartView->chart()->addSeries(frequencies.at(i));
+        }
+        chartView->chart()->axes(Qt::Vertical).first()->setRange(0, QVariant(max));
+        //    chartView->chart()->legend()->markers(series)[0]->setVisible(false);
+        grayHistogramButton->setDisabled(true);
+        histogramWindow->show();
+}
 
+void ImageStreamWindow::renderHistogramSlotForLine(QList<QLineSeries *> intensities, int totalPoints)
+{
+    chartView->chart()->axes(Qt::Horizontal).first()->setRange(0, totalPoints);
     chartView->chart()->removeAllSeries();
-    //    for(int i=0;i<frequencies.size();i++)
-    //    {
-    //        series->append(i, frequencies[i]);
-    //    }
-    //        chartView->chart()->addSeries(series);
-
-    for(int i=0;i<frequencies.size();i++)
+    for(int i=0;i<intensities.size();i++)
     {
-        chartView->chart()->addSeries(frequencies.at(i));
+        chartView->chart()->addSeries(intensities.at(i));
     }
-    chartView->chart()->axes(Qt::Vertical).first()->setRange(0, QVariant(max));
+    chartView->chart()->axes(Qt::Vertical).first()->setRange(0, 255);
     //    chartView->chart()->legend()->markers(series)[0]->setVisible(false);
     grayHistogramButton->setDisabled(true);
     histogramWindow->show();

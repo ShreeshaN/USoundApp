@@ -125,6 +125,7 @@ public slots:
     void updateAllParameters();
     void createHistogramWindow();
     void renderHistogramSlot(QList<QLineSeries*>, int);
+    void renderHistogramSlotForLine(QList<QLineSeries*>, int);
 
 signals:
 

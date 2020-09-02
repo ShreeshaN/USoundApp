@@ -19,6 +19,7 @@ void HistogramWindow::setGrayHistogramButton(QAction *value)
 void HistogramWindow::closeEvent(QCloseEvent *event)
 {
     this->imageAcquisitionThread->setSupplyHistogramData(false);
+    this->imageAcquisitionThread->setSupplyHistogramDataForLine(false);
 //    Sleep(200);
     this->getGrayHistogramButton()->setDisabled(false);
 }

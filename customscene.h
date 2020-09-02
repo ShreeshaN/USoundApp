@@ -22,6 +22,9 @@ public:
     enum Mode {NoMode, SelectObject, DrawLine};
     CustomScene(QObject* parent = 0);
     void setMode(Mode mode);
+    QMap<QGraphicsItem *, QLine *> getLines() const;
+    void setLines(const QMap<QGraphicsItem *, QLine *> &value);
+
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);

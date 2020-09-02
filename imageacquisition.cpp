@@ -87,6 +87,16 @@ void ImageAcquisition::setDeviceMake(const QString &value)
 
 
 // Constructor
+bool ImageAcquisition::getSupplyHistogramDataForLine() const
+{
+    return supplyHistogramDataForLine;
+}
+
+void ImageAcquisition::setSupplyHistogramDataForLine(bool value)
+{
+    supplyHistogramDataForLine = value;
+}
+
 ImageAcquisition::ImageAcquisition(QString deviceType,QString deviceMake, QString deviceName, QObject *parent): QThread(parent)
 {
     HalconCpp::HFramegrabber imageAcquisitionHandle(HalconCpp::HString(deviceType.toUtf8().constData()).Text(),
@@ -99,6 +109,16 @@ ImageAcquisition::ImageAcquisition(QString deviceType,QString deviceMake, QStrin
     this->deviceName = deviceName;
     this->deviceType = deviceType;
     this->deviceMake = deviceMake;
+}
+
+QList<QPair<int, int> > ImageAcquisition::getCoordinates() const
+{
+    return coordinates;
+}
+
+void ImageAcquisition::setCoordinates(const QList<QPair<int, int> > &value)
+{
+    coordinates = value;
 }
 
 
@@ -199,7 +219,43 @@ void ImageAcquisition::run()
                 emit renderHistogramSignal(absoluteHistFrequencies, max);
                 absoluteHistFrequencies.clear();
             }
+            if(getSupplyHistogramDataForLine())
+            {
+                // Data for this histogram is calculated in ImageStreamWindow.cpp createHistogramWindow function
+                int channels=currentImage.CountChannels().L();
+                if(channels == 3)
+                {
+                    for(int c=1;c<=channels;c++)
+                    {
+                        QLineSeries *series = new QLineSeries();
+                        QPen pen = series->pen();
+                        pen.setBrush(QBrush(colors.at(c-1).toUtf8().constData()));
+                        series->setPen(pen);
+                        absoluteHistFrequencies.append(series);
+                    }
+                    for(int l=0; l<coordinates.size();l++)
+                    {
+                        int row = coordinates.at(l).second;
+                        int column = coordinates.at(l).first;
+                        HalconCpp::HTuple pixelIntensity = currentImage.GetGrayval(row,column);
+                        absoluteHistFrequencies.at(0)->append(l,pixelIntensity.LArr()[0]);
+                        absoluteHistFrequencies.at(1)->append(l,pixelIntensity.LArr()[1]);
+                        absoluteHistFrequencies.at(2)->append(l,pixelIntensity.LArr()[2]);
+                    }
+                }
+                else{
+                    QLineSeries *series = new QLineSeries();
+                    for(int l=0; l<coordinates.size();l++)
+                    {
+                        int pixelIntensity = currentImage.GetGrayval(coordinates.at(l).second, coordinates.at(l).first);
+                        series->append(l, pixelIntensity);
+                    }
+                    absoluteHistFrequencies.append(series);
+                }
 
+                emit renderHistogramSignalForLine(absoluteHistFrequencies, coordinates.size());
+                absoluteHistFrequencies.clear();
+            }
             counter++;
         }        
 
